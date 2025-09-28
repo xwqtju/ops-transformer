@@ -23,8 +23,6 @@ x = combineOut + residualX\\
 y = \frac{x}{RMS(x)} * gamma,\quad\text{where}RMS(x) = \sqrt{\frac{1}{H}\sum_{i=1}^{H}x_{i}^{2}+normEps}
 $$
 
-注意该接口必须与aclnnMoeDistributeDispatchV2配套使用，相当于按MoeDistributeDispatchV2算子收集数据的路径原路返还。
-
 
 ## 参数说明
 
@@ -284,7 +282,7 @@ $$
 
 ## 约束说明
 
-- aclnnMoeDistributeDispatchV2接口与aclnnMoeDistributeCombineAddRmsNorm接口必须配套使用，具体参考[调用示例](#调用示例)。
+- MoeDistributeDispatchV2算子与MoeDistributeCombineAddRmsNorm算子必须配套使用，具体参考[调用示例](#调用示例)。
 
 - 调用接口过程中使用的groupEp、epWorldSize、moeExpertNum、groupTp、tpWorldSize、expertShardType、sharedExpertNum、sharedExpertRankNum、globalBs参数取值所有卡需保持一致，网络中不同层中也需保持一致，且和aclnnMoeDistributeDispatchV2对应参数也保持一致。
 

@@ -22,9 +22,9 @@ $$
 
 > 说明：
 >
-> aclnnMoeDistributeCombineV2、aclnnMoeDistributeCombineAddRmsNorm算子在后续文档中统称为CombineV2系列算子。
+> MoeDistributeCombineV2、MoeDistributeCombineAddRmsNorm算子在后续文档中统称为CombineV2系列算子。
 
-相较于aclnnMoeDistributeDispatch接口，该接口变更如下：
+相较于MoeDistributeDispatch算子，该算子功能变更如下：
 
 -   输出了更详细的token信息辅助CombineV2系列算子高效地进行全卡同步，因此原接口中shape为(Bs \* K,)的expandIdx出参替换为shape为(A \* 128,)的assistInfoForCombineOut参数；
 -   新增commAlg入参，代替HCCL_INTRA_PCIE_ENABLE和HCCL_INTRA_ROCE_ENABLE环境变量。
@@ -238,7 +238,7 @@ $$
 
 ## 约束说明
 
-- aclnnMoeDistributeDispatchV2接口与CombineV2系列算子接口必须配套使用，具体参考[调用示例](#调用示例)。
+- MoeDistributeDispatchV2算子与CombineV2系列算子接口必须配套使用，具体参考[调用示例](#调用示例)。
 
 - 在不同产品型号、不同通信算法或不同版本中，aclnnMoeDistributeDispatchV2的Tensor输出assistInfoForCombineOut、epRecvCounts、tpRecvCounts、expandScales中的元素值可能不同，使用时直接将上述Tensor传给aclnnMoeDistributeCombineV2对应参数即可，模型其他业务逻辑不应对其存在依赖。
 

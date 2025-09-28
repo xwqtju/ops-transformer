@@ -21,8 +21,8 @@ $$
 
 注意该接口必须与aclnnMoeDistributeDispatchV2配套使用，相当于按MoeDistributeDispatchV2算子收集数据的路径原路返还。
 
-相较于aclnnMoeDistributeCombine接口，该接口变更如下：
--   输入了更详细的token信息辅助aclnnMoeDistributeCombineV2高效地进行全卡同步，因此原接口中shape为(Bs \* K,)的expandIdx入参替换为shape为(A \* 128,)的assistInfoForCombine参数；
+相较于MoeDistributeCombine算子，该算子功能变更如下：
+-   输入了更详细的token信息辅助MoeDistributeCombineV2高效地进行全卡同步，因此原接口中shape为(Bs \* K,)的expandIdx入参替换为shape为(A \* 128,)的assistInfoForCombine参数；
 -   新增sharedExpertXOptional入参，支持在sharedExpertNum为0时，由用户输入共享专家计算后的token；
 -   新增commAlg入参，代替HCCL_INTRA_PCIE_ENABLE和HCCL_INTRA_ROCE_ENABLE环境变量。
 
@@ -249,7 +249,7 @@ $$
 
 ## 约束说明
 
-- aclnnMoeDistributeDispatchV2接口与aclnnMoeDistributeCombineV2接口必须配套使用，具体参考[调用示例](#调用示例)。
+- MoeDistributeDispatchV2算子与MoeDistributeCombineV2算子必须配套使用，具体参考[调用示例](#调用示例)。
 
 - 在不同产品型号、不同通信算法或不同版本中，aclnnMoeDistributeDispatchV2的Tensor输出assistInfoForCombineOut、epRecvCounts、tpRecvCounts、expandScales中的元素值可能不同，使用时直接将上述Tensor传给aclnnMoeDistributeCombineV2对应参数即可，模型其他业务逻辑不应对其存在依赖。
 
