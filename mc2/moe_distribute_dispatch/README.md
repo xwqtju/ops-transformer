@@ -17,9 +17,6 @@
 
 算子功能：对Token数据进行量化（可选），当存在TP域通信时，先进行EP（Expert Parallelism）域的AllToAllV通信，再进行TP（Tensor Parallelism）域的AllGatherV通信；当不存在TP域通信时，进行EP（Expert Parallelism）域的AllToAllV通信。
 
-注意该接口必须与aclnnMoeDistributeCombine配套使用。
-
-
 ## 参数说明
 
 <table style="undefined;table-layout: fixed; width: 1576px">
@@ -221,7 +218,7 @@
 
 ## 约束说明
 
-- aclnnMoeDistributeDispatch接口与aclnnMoeDistributeCombine接口必须配套使用，具体参考[调用示例](#调用示例)。
+- MoeDistributeDispatch算子与MoeDistributeCombine算子必须配套使用，具体参考[调用示例](#调用示例)。
 
 - 在不同产品型号、不同通信算法或不同版本中，aclnnMoeDistributeDispatch的Tensor输出expandIdx、epRecvCounts、tpRecvCounts、expandScales中的的元素值可能不同，使用时直接将上述Tensor传给aclnnMoeDistributeCombine对应参数即可，模型其他业务逻辑不应对其存在依赖。
 

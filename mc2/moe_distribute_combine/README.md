@@ -16,10 +16,6 @@
 
 算子功能：当存在TP域通信时，先进行ReduceScatterV通信，再进行AlltoAllV通信，最后将接收的数据整合（乘权重再相加）；当不存在TP域通信时，进行AlltoAllV通信，最后将接收的数据整合（乘权重再相加）。
 
-注意该接口必须与aclnnMoeDistributeDispatch配套使用，相当于按MoeDistributeDispatch算子收集数据的路径原路返还。
-
-
-
 ## 参数说明
 
 <table style="undefined;table-layout: fixed; width: 1576px">
@@ -229,7 +225,7 @@
 
 ## 约束说明
 
-- aclnnMoeDistributeDispatch接口与aclnnMoeDistributeCombine接口必须配套使用，具体参考[调用示例](#调用示例)。
+- MoeDistributeDispatch算子与MoeDistributeCombine算子必须配套使用，具体参考[调用示例](#调用示例)。
 
 - 在不同产品型号、不同通信算法或不同版本中，aclnnMoeDistributeDispatch的Tensor输出expandIdx、epRecvCounts、tpRecvCounts、expandScales中的元素值可能不同，使用时直接将上述Tensor传给aclnnMoeDistributeCombine对应参数即可，模型其他业务逻辑不应对其存在依赖。
 
