@@ -1,4 +1,4 @@
-# aclnnMlaPrologV2WeightNz
+# aclnnMlaPrologV2
 ## 产品支持情况
 
 |产品      | 是否支持 |
