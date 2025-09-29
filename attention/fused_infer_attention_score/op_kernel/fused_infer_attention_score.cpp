@@ -15,6 +15,7 @@
 
 #include "kernel_operator.h"
 #include "kernel_operator_list_tensor_intf.h"
+#include "fused_infer_attention_score_tilingkey.h"
 // ifa must include before pfa
 #define FIA_ENABLE_MLA
 #include "../../incre_flash_attention/op_kernel/incre_flash_attention.cpp"
