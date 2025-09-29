@@ -34,7 +34,6 @@
 #else
 #include "unpad_paged_attention_decoder.h"
 #endif
-#endif // CCE_AICORE 310
 using namespace AscendC;
 
 #define NEED_CUBE_TILING (true)
