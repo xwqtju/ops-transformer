@@ -15,6 +15,7 @@
 
 #include "kernel_operator.h"
 #include "prompt_flash_attention_tilingkey.h"
+#if (__CCE_AICORE__ > 200)
 #include "prompt_flash_attention_base.h"
 #include "prompt_flash_attention_bnstilling_n_s_no_tail.h"
 #include "prompt_flash_attention_bnstilling_n_s_tail.h"
@@ -192,12 +193,6 @@ extern "C" __global__ __aicore__ void prompt_flash_attention_FIAS(__gm__ uint8_t
                                                              __gm__ uint8_t* workspace, __gm__ uint8_t* tiling)
 {
     {
-    #if (__CCE_AICORE__ == 310) || (defined __DAV_310R6__)
-        prompt_flash_attention_FIAS_regbase(query, key, value, pseShift, attenMask, actualSeqLengths, actualSeqLengthsKV,
-            deq_scale1, quant_scale1, deq_scale2, quant_scale2, quant_offset2, antiquant_scale, antiquant_offset,
-            blocktable, queryPaddingSize, kvPaddingSize, key_antiquant_scale, key_antiquant_offset, value_antiquant_scale, 
-            value_antiquant_offset, keySharedPrefix, valueSharedPrefix, actualSharedPrefixLen, queryRope, keyRope, attentionOut,
-            softmaxLse, workspace, tiling);
     #elif (__CCE_AICORE__ > 200)
         GET_TILING_DATA_MEMBER(PromptFlashAttentionTilingData, promptAttentionBaseParams, baseParams, tiling);
         auto maskByteNum = baseParams.maskTypeByteNum;
@@ -205,8 +200,6 @@ extern "C" __global__ __aicore__ void prompt_flash_attention_FIAS(__gm__ uint8_t
         __gm__ uint8_t* user = GetUserWorkspace(workspace);
         KERNEL_TASK_TYPE_DEFAULT(KERNEL_TYPE_MIX_AIC_1_2);
         #if (ORIG_DTYPE_QUERY == DT_FLOAT16) && (ORIG_DTYPE_KEY != DT_INT4)
-            TILING_KEY_IS(QFP16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_TAIL_OLDTILING);
-            TILING_KEY_IS(QFP16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_NOTAIL_OLDTILING);
             TILING_KEY_IS(QFP16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_TAIL_NEWTILING);
             TILING_KEY_IS(QFP16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_NOTAIL_NEWTILING);
             TILING_KEY_IS(QFP16_KVFP16_OUTFP16_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_BNSD_NEWTILING);
@@ -215,24 +208,7 @@ extern "C" __global__ __aicore__ void prompt_flash_attention_FIAS(__gm__ uint8_t
             TILING_KEY_IS(QFP16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_CUBEVECTORDIFF_NEWTILING);
             TILING_KEY_IS(QFP16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_BASICAPI_BASE_API_CUBEVECTORDIFF_NEWTILING);
             TILING_KEY_IS(QFP16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_BASICAPI_CUBEVECTORDIFF_NEWTILING);
-            TILING_KEY_IS(QFP16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_BASICAPI_MLA_CUBEVECTORDIFF_NEWTILING);
-            #if TILING_KEY_VAR == QFP16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_TAIL_OLDTILING
-                // split NS no tail
-                if (maskByteNum == FLOAT16BYTENUM) {
-                    INVOKE_PFA_GENERAL_OP_IMPL(PromptFlashAttentionSplitNSNoTail, half, half, CubeFormat::ND, half);
-                }
-                else {
-                    INVOKE_PFA_GENERAL_OP_IMPL(PromptFlashAttentionSplitNSNoTail, half, bool, CubeFormat::ND, half);
-                }
-            #elif TILING_KEY_VAR == QFP16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_NOTAIL_OLDTILING
-                // split NS with tail
-                if (maskByteNum == FLOAT16BYTENUM) {
-                    INVOKE_PFA_GENERAL_OP_IMPL(PromptFlashAttentionSplitNSTail, half, half, CubeFormat::ND, half);
-                }
-                else {
-                    INVOKE_PFA_GENERAL_OP_IMPL(PromptFlashAttentionSplitNSTail, half, bool, CubeFormat::ND, half);
-                }
-            #elif TILING_KEY_VAR == QFP16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_TAIL_NEWTILING
+            #if TILING_KEY_VAR == QFP16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_TAIL_NEWTILING
                 // Non-BNSD layout, split NS no tail
                 if (maskByteNum == FLOAT16BYTENUM) {
                     INVOKE_PFA_GENERAL_OP_IMPL(PromptFlashAttentionBNSTillingNSNoTail, half, half, CubeFormat::ND, half);
@@ -284,8 +260,6 @@ extern "C" __global__ __aicore__ void prompt_flash_attention_FIAS(__gm__ uint8_t
                 INVOKE_PFA_GENERAL_OP_IMPL_BASE_API(PromptFlashAttentionBaseApiHighPrecisionNoMask, PFAHighPrecisionBaseType<PromptFlashAttentionBaseApiTilingData, float, half, half, half, half, float>);
             #elif TILING_KEY_VAR == QFP16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_BASICAPI_CUBEVECTORDIFF_NEWTILING
                 INVOKE_PFA_GENERAL_OP_IMPL_BASE_API(PromptFlashAttentionBaseApiHighPerformance, PFATypeNew<PromptFlashAttentionBaseApiTilingData, half, half, half, half, half, float, half>);
-            #elif TILING_KEY_VAR == QFP16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_BASICAPI_MLA_CUBEVECTORDIFF_NEWTILING
-                INVOKE_PFA_GENERAL_OP_IMPL_MLA(PromptFlashAttentionBaseMLA, PFAMLAType<PromptFlashAttentionBaseApiTilingData>);
             #endif
     
             #if (ORIG_DTYPE_QUERY == DT_FLOAT16) && (ORIG_DTYPE_KEY != DT_INT4) && (ORIG_DTYPE_ATTENTION_OUT == DT_FLOAT16)
