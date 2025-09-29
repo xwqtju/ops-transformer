@@ -2080,7 +2080,6 @@ extern "C" __global__ __aicore__ void incre_flash_attention_FIAS(
 #endif
 
 #endif // new template
-#endif // CCE_AICORE 310
 }
 
 extern "C" __global__ __aicore__ void
