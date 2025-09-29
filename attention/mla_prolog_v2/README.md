@@ -1,10 +1,15 @@
-# MlaPrologV2WeightNz
+# MlaPrologV2
 ## 产品支持情况
 
 |产品      | 是否支持 |
 |:----------------------------|:-----------:|
+|<term>昇腾910_95 AI处理器</term>|      ×     |
 |<term>Atlas A3 训练系列产品/Atlas A3 推理系列产品</term>|      √     |
 |<term>Atlas A2 训练系列产品/Atlas 800I A2 推理产品/A200I A2 Box 异构组件</term>|      √     |
+|<term>Atlas 200I/500 A2 推理产品</term>|      ×     |
+|<term>Atlas 推理系列产品</term>|      ×     |
+|<term>Atlas 训练系列产品</term>|      ×     |
+|<term>Atlas 200I/300/500 推理产品</term>|      ×     |
 ## 功能说明
 -  **算子功能**：推理场景，Multi-Head Latent Attention前处理的计算。主要计算过程分为四路，首先对输入$x$乘以$W^{DQ}$进行下采样和RmsNorm后分为两路，第一路乘以$W^{UQ}$和$W^{UK}$经过两次上采样后得到$q^N$；第二路乘以$W^{QR}$后经过旋转位置编码（ROPE）得到$q^R$；第三路是输入$x$乘以$W^{DKV}$进行下采样和RmsNorm后传入Cache中得到$k^C$；第四路是输入$x$乘以$W^{KR}$后经过旋转位置编码后传入另一个Cache中得到$k^R$。
 -  **计算公式**：
@@ -468,7 +473,6 @@
 
 ## 调用说明
 
-
 <table class="tg"><thead>
   <tr>
     <th class="tg-0lax">调用方式</th>
@@ -479,7 +483,7 @@
   <tr>
     <td class="tg-9wq8" rowspan="10">aclnn接口</td>
     <td class="tg-0pky">
-    <a href="./examples/test_mla_prolog_v2_nq_bsh.cpp">MlaPrologV2非量化（BSH）接口测试用例代码
+    <a href="./examples/test_aclnn_mla_prolog_v2.cpp">MlaPrologV2接口测试用例代码
     </a>
     </td>
     <td class="tg-lboi" rowspan="10">通过
@@ -488,60 +492,8 @@
     接口方式调用算子
   </td>
   </tr>
-  <tr>
-    <td class="tg-0pky">
-    <a href="./examples/test_mla_prolog_v2_nq_tnd.cpp">MlaPrologV2非量化（TND）接口测试用例代码
-    </a>
-    </td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">
-    <a href="./examples/test_mla_prolog_v2_pqkvnq_bsh.cpp">MlaPrologV2半量化KV非量化（BSH）接口测试用例代码
-    </a>
-    </td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">
-    <a href="./examples/test_mla_prolog_v2_pqkvnq_tnd.cpp">MlaPrologV2半量化KV非量化（TND）接口测试用例代码
-    </a>
-   </td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">
-    <a href="./examples/test_mla_prolog_v2_pqkvq_bsh.cpp">MlaPrologV2半量化KV量化（BSH）接口测试用例代码
-    </a>
-    </td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">
-    <a href="./examples/test_mla_prolog_v2_pqkvq_tnd.cpp">MlaPrologV2半量化KV量化（TND）接口测试用例代码
-    </a>
-    </td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">
-    <a href="./examples/test_mla_prolog_v2_fqkvnq_bsh.cpp">MlaPrologV2全量化KV非量化（BSH）接口测试用例代码
-    </a>
-    </td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">
-    <a href="./examples/test_mla_prolog_v2_fqkvnq_tnd.cpp">MlaPrologV2全量化KV非量化（TND）接口测试用例代码
-    </a>
-  </td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">
-    <a href="./examples/test_mla_prolog_v2_fqkvq_bsh.cpp">MlaPrologV2全量化KV量化（BSH）接口测试用例代码
-    </a>
-    </td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">
-    <a href="./examples/test_mla_prolog_v2_fqkvq_tnd.cpp">MlaPrologV2全量化KV量化（TND）接口测试用例代码
-    </a>
-  </td>
-  </tr>
+
+
 </tbody></table>
 
 <!-- ## 参考资源
