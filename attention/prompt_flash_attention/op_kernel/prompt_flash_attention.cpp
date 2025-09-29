@@ -193,7 +193,7 @@ extern "C" __global__ __aicore__ void prompt_flash_attention_FIAS(__gm__ uint8_t
                                                              __gm__ uint8_t* workspace, __gm__ uint8_t* tiling)
 {
     {
-    #elif (__CCE_AICORE__ > 200)
+    #if (__CCE_AICORE__ > 200)
         GET_TILING_DATA_MEMBER(PromptFlashAttentionTilingData, promptAttentionBaseParams, baseParams, tiling);
         auto maskByteNum = baseParams.maskTypeByteNum;
     
@@ -504,8 +504,6 @@ extern "C" __global__ __aicore__ void prompt_flash_attention_FIAS(__gm__ uint8_t
             #endif
         #endif
         #if (ORIG_DTYPE_QUERY == DT_BF16) && (ORIG_DTYPE_KEY != DT_INT4)
-            TILING_KEY_IS(QBF16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_TAIL_OLDTILING);
-            TILING_KEY_IS(QBF16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_NOTAIL_OLDTILING);
             TILING_KEY_IS(QBF16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_TAIL_NEWTILING);
             TILING_KEY_IS(QBF16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_NOTAIL_NEWTILING);
             TILING_KEY_IS(QBF16_KVFP16_OUTFP16_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_BNSD_NEWTILING);
@@ -527,12 +525,7 @@ extern "C" __global__ __aicore__ void prompt_flash_attention_FIAS(__gm__ uint8_t
             TILING_KEY_IS(QFP16_KVFP16_OUTFP16_TND_ENABLEATTNETIONMASK_HIGHPERFORMANCE_PA_NZ_MDL_NOTAIL_CUBEVECTORDIFF_OLDTILING);
             TILING_KEY_IS(QFP16_KVFP16_OUTFP16_NTD_TND_HIGHPERFORMANCE_PA_NZ_MDL_CUBEVECTORDIFF_OLDTILING);
             TILING_KEY_IS(QFP16_KVFP16_OUTFP16_NTD_TND_ENABLEATTNETIONMASK_HIGHPERFORMANCE_PA_NZ_MDL_NOTAIL_CUBEVECTORDIFF_OLDTILING);
-            #if TILING_KEY_VAR == QBF16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_TAIL_OLDTILING
-                // split NS no tail
-                INVOKE_PFA_GENERAL_OP_IMPL(PromptFlashAttentionSplitNSNoTail, bfloat16_t, bool, CubeFormat::ND, bfloat16_t);
-            #elif TILING_KEY_VAR == QBF16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_NOTAIL_OLDTILING
-                INVOKE_PFA_GENERAL_OP_IMPL(PromptFlashAttentionSplitNSTail, bfloat16_t, bool, CubeFormat::ND, bfloat16_t);
-            #elif TILING_KEY_VAR == QBF16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_TAIL_NEWTILING
+            #if TILING_KEY_VAR == QBF16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_TAIL_NEWTILING
                 // Non-BNSD layout, split NS no tail
                 INVOKE_PFA_GENERAL_OP_IMPL(PromptFlashAttentionBNSTillingNSNoTail, bfloat16_t, bool, CubeFormat::ND, bfloat16_t);
             #elif TILING_KEY_VAR == QBF16_KVFP16_OUTFP16_BNSD_HIGHPERFORMANCE_HIGHLEVELAPI_MDL_NOTAIL_NEWTILING
