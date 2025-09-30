@@ -2232,7 +2232,7 @@ bool MatmulV3BaseTiling::IsSupportSingleCoreSplitK() const
     }
     constexpr uint64_t splitKThres = 1024; // 1024: 切K阈值
     constexpr uint64_t splitBaseThres = BASIC_BLOCK_SIZE_128 * 3; // 3*128: 33算法 step=3
-    constexpr uint64_t splitKCubeThres = 5; // 5: cube dound阈值
+    constexpr uint64_t splitKCubeThres = 5; // 5: cube bound阈值
     bool isMKNLargeEnough = ((args_.mValue * args_.kValue >= splitKCubeThres * splitBaseThres * splitBaseThres) &&
         (args_.nValue >= splitKThres) &&
         (args_.mValue >= splitBaseThres) &&
