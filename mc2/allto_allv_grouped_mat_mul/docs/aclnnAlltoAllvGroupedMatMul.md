@@ -25,7 +25,7 @@
 
 ## 函数原型
 
-每个算子分为两段式接口，必须先调用“aclnnAlltoAllvGroupedMatMulGetWorkspaceSize”接口获取入参并根据计算流程计算所需workspace大小，再调用“aclnnAlltoAllvGroupedMatMul”接口执行计算。本示例代码仅支持Atlas A3。
+每个算子分为两段式接口，必须先调用“aclnnAlltoAllvGroupedMatMulGetWorkspaceSize”接口获取入参并根据计算流程计算所需workspace大小，再调用“aclnnAlltoAllvGroupedMatMul”接口执行计算。
 
 ```cpp
 aclnnStatus aclnnAlltoAllvGroupedMatMulGetWorkspaceSize(
