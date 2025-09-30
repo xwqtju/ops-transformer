@@ -255,7 +255,7 @@ aclnnStatus aclnnBatchMatMulReduceScatterAlltoAll(
 
 ## 调用示例
 
-示例代码如下，仅供参考，具体编译和执行过程请参考编译与运行样例。
+示例代码如下，仅供参考，具体编译和执行过程请参考编译与运行样例。本示例代码仅支持Atlas A3。
 
 - <term>Atlas A3 训练系列产品/Atlas A3 推理系列产品</term>：
 ```Cpp
