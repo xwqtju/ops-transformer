@@ -27,7 +27,7 @@ $$
 
 ## 函数原型
 
-每个算子分为两段式接口，必须先调用“aclnnBatchMatMulReduceScatterAlltoAllGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnBatchMatMulReduceScatterAlltoAll”接口执行计算。
+每个算子分为两段式接口，必须先调用“aclnnBatchMatMulReduceScatterAlltoAllGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnBatchMatMulReduceScatterAlltoAll”接口执行计算。本示例代码仅支持Atlas A3。
 
 ```cpp
 aclnnStatus aclnnBatchMatMulReduceScatterAlltoAllGetWorkspaceSize(

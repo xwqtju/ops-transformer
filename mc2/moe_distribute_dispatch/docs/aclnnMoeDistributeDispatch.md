@@ -158,7 +158,7 @@
 ## 调用示例
 
 - <term>Atlas A3 训练系列产品/Atlas A3 推理系列产品</term>：示例代码请参考aclnnMoeDistributeDispatchV2接口调用过程，仅供参考，请根据实际情况配置；
-- 本示例代码仅支持A3
+- 本示例代码仅支持Atlas A3
 
 - 文件准备：    
   1.新建combineDemo目录，按照下方指导在combineDemo下新建aclnnCombineDemo.cpp，buildCombine.sh，rank_table_m2.json文件并修改。
