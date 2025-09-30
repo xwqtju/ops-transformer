@@ -247,6 +247,9 @@ int LaunchOneThreadAlltoAllvGmm(Args &args)
 
 int main(int argc, char *argv[])
 {
+    #ifndef ASCEND910_93
+        CHECK_RET(false, LOG_PRINT("[INFO] This example is implemented based on Atlas A3 and must be run on Atlas A3 \n"); return -1);
+    #endif
     int ret = aclInit(nullptr);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("[ERROR] aclInit failed. ret = %d \n", ret); return ret);
     aclrtStream stream[EP_WORLD_SIZE];
