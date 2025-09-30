@@ -4,12 +4,17 @@
 
 | 产品                                                         | 是否支持 |
 | :----------------------------------------------------------- | :------: |
+| <term>昇腾910_95 AI处理器</term>                             |    √     |
 | <term>Atlas A3 训练系列产品/Atlas A3 推理系列产品</term>     |    √     |
 | <term>Atlas A2 训练系列产品/Atlas 800I A2 推理产品/A200I A2 Box 异构组件</term> |    √     |
+| <term>Atlas 200I/500 A2 推理产品</term>                      |    ×     |
+| <term>Atlas 推理系列产品 </term>                             |    ×     |
+| <term>Atlas 训练系列产品</term>                              |    ×     |
+| <term>Atlas 200/300/500 推理产品</term>                      |    ×     |
 
 ## 功能说明
 
-- 算子功能：MoE的routing计算，根据[aclnnMoeGatingTopKSoftmaxV2](../moe_gating_top_k_softmax_v2/docs/aclnnMoeGatingTopKSoftmaxV2.md)的计算结果做routing处理，支持不量化和动态量化模式。本接口针对V2接口[aclnnMoeInitRoutingV2](../moe_init_routing_v2/docs/aclnnMoeInitRoutingV2.md)做了如下功能变更，请根据实际情况选择合适的接口：
+- 算子功能：MoE的routing计算，根据[aclnnMoeGatingTopKSoftmaxV2](../moe_gating_top_k_softmax_v2/readme.md)的计算结果做routing处理，支持不量化和动态量化模式。本接口针对V2接口[aclnnMoeInitRoutingV2](../moe_init_routing_v2/readme.md)做了如下功能变更，请根据实际情况选择合适的接口：
 
     1.增加动态量化功能，支持输出expendX的 int8动态量化输出
 
@@ -252,3 +257,10 @@
     - activeExpertRangeOptional取值范围为[0, 128]
     - H=2048
     - quantMode=-1
+
+## 调用说明
+
+| 调用方式   | 样例代码           | 说明                                         |
+| ---------------- | --------------------------- | --------------------------------------------------- |
+| aclnn接口  | [test_aclnn_moe_init_routing_v3](examples/test_aclnn_moe_init_routing_v3.cpp) | 通过[aclnnMoeInitRoutingV3](docs/aclnnMoeInitRoutingV3.md)接口方式调用AddLayerNormQuant算子。 |
+| 图模式 | [test_geir_moe_init_routing_v3](examples/test_geir_moe_init_routing_v3.cpp)  | 通过[算子IR](op_graph/moe_init_routing_v3.h)构图方式调用MoeInitRoutingV3算子。         |
