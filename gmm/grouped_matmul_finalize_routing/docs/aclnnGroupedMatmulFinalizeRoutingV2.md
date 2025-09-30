@@ -52,6 +52,13 @@ aclnnStatus aclnnGroupedMatmulFinalizeRoutingV2(
     uint64_t       workspaceSize,
     aclOpExecutor *executor,
     aclrtStream    stream)
+<<<<<<< HEAD
+=======
+    void*          workspace,
+    uint64_t       workspaceSize,
+    aclOpExecutor *executor,
+    aclrtStream    stream)
+>>>>>>> 36a93df (update aclnn)
 ```
 
 
