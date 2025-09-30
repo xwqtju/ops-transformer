@@ -20,7 +20,7 @@ $$
 
 ## 函数原型
 
-每个算子分为两段式接口，必须先调用“aclnnMatmulReduceScatterGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnMatmulReduceScatter”接口执行计算。本示例代码仅支持Atlas A3。
+每个算子分为两段式接口，必须先调用“aclnnMatmulReduceScatterGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnMatmulReduceScatter”接口执行计算。
 
 ```cpp
 aclnnStatus aclnnMatmulReduceScatterGetWorkspaceSize(
@@ -224,7 +224,7 @@ aclnnStatus aclnnMatmulReduceScatter(
 
 ## 调用示例
 
-示例代码如下，仅供参考，具体编译和执行过程请参考编译与运行样例。
+示例代码如下，仅供参考，具体编译和执行过程请参考编译与运行样例。本示例代码仅支持Atlas A3。
 
 - <term>Atlas A2 训练系列产品/Atlas 800I A2 推理产品/A200I A2 Box 异构组件</term>、<term>Atlas A3 训练系列产品/Atlas A3 推理系列产品</term>：
     ```Cpp

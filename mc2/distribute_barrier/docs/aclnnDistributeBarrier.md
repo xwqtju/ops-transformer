@@ -13,7 +13,7 @@
 
 ## 函数原型
 
-每个算子分为两段式接口，必须先调用 “aclnnDistributeBarrierGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnDistributeBarrier”接口执行计算。本示例代码仅支持Atlas A3。
+每个算子分为两段式接口，必须先调用 “aclnnDistributeBarrierGetWorkspaceSize”接口获取计算所需workspace大小以及包含了算子计算流程的执行器，再调用“aclnnDistributeBarrier”接口执行计算。
 
 ```cpp
 aclnnStatus aclnnDistributeBarrierGetWorkspaceSize(
@@ -171,6 +171,8 @@ aclnnStatus aclnnDistributeBarrier(
     - 可以连续调用，入图时，需将上个算子的输入、下个算子的输出作为入参传入接口。
 
 ## 调用示例
+
+- 本示例代码仅支持Atlas A3。
 
 - 文件准备：    
   1.新建barrierDemo目录，按照下方指导在barrierDemo下新建aclnnBarrierDemo.cpp，buildBarrier.sh文件并按照如下代码修改。
