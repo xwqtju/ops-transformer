@@ -18,6 +18,7 @@
 #include <thread>
 #include "../op_host/op_api/aclnn_inplace_weight_quant_matmul_all_reduce_add_rms_norm.h"
 
+namespace {
 int ndev = 8;
 
 #define CHECK_RET(cond, return_expr) \
@@ -252,6 +253,7 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     aclrtResetDevice(args.rankId);
     return 0;
 }
+} // namespace
 
 int main(int argc, char *argv[]) {
     int ret;

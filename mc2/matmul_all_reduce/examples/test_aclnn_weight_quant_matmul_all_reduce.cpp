@@ -19,6 +19,7 @@
 #include <cstring>
 #include "../op_host/op_api/aclnn_weight_quant_matmul_all_reduce.h"
 
+namespace {
 int ndev = 8;
 
 #define CHECK_RET(cond, return_expr) \
@@ -209,6 +210,7 @@ int launchOneThreadweightQuantmatmulAllReduce(Args &args) {
     aclrtResetDevice(args.rankId);
     return 0;
 }
+} //namespace
 
 int main(int argc, char *argv[]) {
     int ret;

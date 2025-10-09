@@ -18,6 +18,7 @@
 #include <thread>
 #include "../op_host/op_api/aclnn_matmul_all_reduce_v2.h"
 
+namespace {
 int ndev = 8;
 
 #define CHECK_RET(cond, return_expr) \
@@ -178,6 +179,7 @@ int launchOneThreadMatmulAllReduce(Args &args) {
     aclrtResetDevice(args.rankId);
     return 0;
 }
+} //namespace
 
 int main(int argc, char *argv[]) {
     int ret;

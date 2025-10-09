@@ -18,6 +18,7 @@
 #include <thread>
 #include "../op_host/op_api/aclnn_matmul_all_reduce.h"
 
+namespace {
 int ndev = 8;
 
 #define CHECK_RET(cond, return_expr) \
@@ -165,6 +166,7 @@ int launchOneThreadMatmulAllReduce(Args &args) {
     aclrtResetDevice(args.rankId);
     return 0;
 }
+} // namespace
 
 int main(int argc, char *argv[]) {
     // 本样例基于Atlas A2实现，必须在Atlas A2上运行

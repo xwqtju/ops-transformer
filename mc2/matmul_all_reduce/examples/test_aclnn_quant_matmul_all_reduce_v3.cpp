@@ -19,6 +19,7 @@
 #include "aclnnop/aclnn_trans_matmul_weight.h"
 #include "../op_host/op_api/aclnn_quant_matmul_all_reduce_v3.h"
 
+namespace {
 int ndev = 8;
 
 #define ACL_CHECK(ret)                                                                                     \
@@ -292,6 +293,7 @@ int launchOneThreadQuantMatmulAllReduce(Args &args) {
     aclrtResetDevice(args.rankId);
     return 0;
 }
+} //namespace
 
 int main(int argc, char *argv[]) {
     int ret;
