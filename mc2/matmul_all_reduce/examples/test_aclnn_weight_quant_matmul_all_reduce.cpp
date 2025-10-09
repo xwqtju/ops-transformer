@@ -16,7 +16,7 @@
 #include <iostream>
 #include <vector>
 #include <thread>
-#include <string.h>
+#include <cstring>
 #include "../op_host/op_api/aclnn_weight_quant_matmul_all_reduce.h"
 
 int ndev = 8;

@@ -2202,7 +2202,7 @@ bool MatmulV3BaseTiling::IsSupportSingleCoreSplitSmallK(uint64_t xDim, uint64_t 
     bool isDTypeFormatSupport = args_.aFormat == ge::FORMAT_ND && args_.bFormat == ge::FORMAT_ND &&
                                 (args_.aType == ge::DT_FLOAT16 || args_.aType == ge::DT_BF16) &&
                                 (args_.bType == ge::DT_FLOAT16 || args_.bType == ge::DT_BF16);
-    // 条件1： M,N 被128整除，K=1536 （对应DeepSeekV3 的Prefill阶段）
+    // 条件1： M,N 被128整除，K=1536
     bool isSmallKwithLargeMN = (args_.kValue == SINGLE_CORE_SPLIT_SMALL_K) &&
                             (args_.mValue % ALIGN_128 == 0 && args_.nValue % ALIGN_128 == 0);
     // 条件2： N>>M 且 M = 384 或 M>>N 且 N = 384;
