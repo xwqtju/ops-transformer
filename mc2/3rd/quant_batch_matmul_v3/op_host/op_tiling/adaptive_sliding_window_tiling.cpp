@@ -12,11 +12,11 @@
  * \file adaptive_sliding_window_tiling.cc
  * \brief
  */
+#include "adaptive_sliding_window_tiling.h"
 #include "common/op_host/op_tiling/tiling_type.h"
 #include "quant_batch_matmul_v3_checker.h"
 #include "ops_legacy/op_tiling/op_cache_tiling.h"
 #include "log/log.h"
-#include "adaptive_sliding_window_tiling.h"
 #include "mc2_log.h"
 
 using Ops::Transformer::MathUtil;

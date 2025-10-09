@@ -14,10 +14,10 @@
  */
 
 #include "quant_batch_matmul_v3_tiling.h"
-#include "ops_legacy/op_tiling/op_cache_tiling.h"
 #include <map>
 #include <numeric>
 
+#include "ops_legacy/op_tiling/op_cache_tiling.h"
 #include "tiling_base/tiling_templates_registry.h"
 #include "tiling_base/tiling_type.h"
 #include "graph/utils/type_utils.h"
