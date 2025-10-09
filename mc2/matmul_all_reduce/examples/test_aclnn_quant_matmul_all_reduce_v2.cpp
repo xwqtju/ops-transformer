@@ -20,7 +20,7 @@
 #include "../op_host/op_api/aclnn_quant_matmul_all_reduce_v2.h"
 
 namespace {
-int ndev = 8;
+static int ndev = 8;
 
 #define ACL_CHECK(ret)                                                                                     \
     do {                                                                                                   \
@@ -209,7 +209,8 @@ int launchOneThreadQuantMatmulAllReduce(Args &args) {
     ret = aclnnQuantMatmulAllReduceV2(workspaceAddr, workspaceSize, executor, args.stream);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnQuantMatmulAllReduceV2 failed. ERROR: %d\n", ret); return ret);
     //（固定写法）同步等待任务执行结束
-    ret = aclrtSynchronizeStreamWithTimeout(args.stream, 10000);
+    constexpr int TIMEOUT_MS = 10000;
+    ret = aclrtSynchronizeStreamWithTimeout(args.stream, TIMEOUT_MS);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSynchronizeStream failed. ERROR: %d\n", ret); return ret);
     LOG_PRINT("device%d aclnnQuantMatmulAllReduceV2 execute success \n", args.rankId);
     // 释放device资源，需要根据具体API的接口定义修改

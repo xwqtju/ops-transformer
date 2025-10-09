@@ -19,7 +19,7 @@
 #include "../op_host/op_api/aclnn_inplace_weight_quant_matmul_all_reduce_add_rms_norm.h"
 
 namespace {
-int ndev = 8;
+static int ndev = 8;
 
 #define CHECK_RET(cond, return_expr) \
 do {                               \
@@ -87,7 +87,6 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     std::vector<int64_t> x3Shape = {32, 128};
     std::vector<int64_t> residualShape = {1, 32, 128};
     std::vector<int64_t> gammaShape = {128};
-    std::vector<int64_t> yShape = {1, 32, 128};
     std::vector<int64_t> normOutShape = {1, 32, 128};
     void *x1DeviceAddr = nullptr;
     void *x2DeviceAddr = nullptr;
@@ -97,7 +96,6 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     void *x3DeviceAddr = nullptr;
     void *residualDeviceAddr = nullptr;
     void *gammaDeviceAddr = nullptr;
-    void *yDeviceAddr = nullptr;
     void *normOutDeviceAddr = nullptr;
     aclTensor *x1 = nullptr;
     aclTensor *x2 = nullptr;
@@ -107,7 +105,6 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     aclTensor *x3 = nullptr;
     aclTensor *residual = nullptr;
     aclTensor *gamma = nullptr;
-    aclTensor *y = nullptr;
     aclTensor *normOut = nullptr;
 
     int64_t commTurn = 0;
@@ -126,7 +123,6 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     long long x3ShapeSize = GetShapeSize(x3Shape);
     long long residualShapeSize = GetShapeSize(residualShape);
     long long gammaShapeSize = GetShapeSize(gammaShape);
-    long long yShapeSize = GetShapeSize(yShape);
     long long normOutShapeSize = GetShapeSize(normOutShape);
     std::vector<int16_t> x1HostData(x1ShapeSize, 1);
     std::vector<int8_t> x2HostData(x2ShapeSize, 1);
@@ -136,7 +132,6 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     std::vector<int16_t> x3HostData(x3ShapeSize, 1);
     std::vector<int16_t> residualHostData(residualShapeSize, 1);
     std::vector<int16_t> gammaHostData(gammaShapeSize, 1);
-    std::vector<int16_t> yHostData(yShapeSize, 0);
     std::vector<int16_t> normOutHostData(normOutShapeSize, 0);
     // 创建 tensor
     ret = CreateAclTensor(x1HostData, x1Shape, &x1DeviceAddr, aclDataType::ACL_FLOAT16, &x1);
@@ -156,8 +151,6 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     ret = CreateAclTensor(residualHostData, residualShape, &residualDeviceAddr, aclDataType::ACL_FLOAT16, &residual);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
     ret = CreateAclTensor(gammaHostData, gammaShape, &gammaDeviceAddr, aclDataType::ACL_FLOAT16, &gamma);
-    CHECK_RET(ret == ACL_SUCCESS, return ret);
-    ret = CreateAclTensor(yHostData, yShape, &yDeviceAddr, aclDataType::ACL_FLOAT16, &y);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
     ret = CreateAclTensor(normOutHostData, normOutShape, &normOutDeviceAddr, aclDataType::ACL_FLOAT16, &normOut);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
@@ -179,7 +172,8 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     ret = aclnnInplaceWeightQuantMatmulAllReduceAddRmsNorm(workspaceAddr, workspaceSize, executor, args.stream);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnWeightQuantMatmulAllReduceAddRmsNorm failed. ERROR: %d\n", ret); return ret);
     //（固定写法）同步等待任务执行结束
-    ret = aclrtSynchronizeStreamWithTimeout(args.stream, 10000);
+    constexpr int TIMEOUT_MS = 10000;
+    ret = aclrtSynchronizeStreamWithTimeout(args.stream, TIMEOUT_MS);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSynchronizeStream failed. ERROR: %d\n", ret); return ret);
     LOG_PRINT("device%d aclnnWeightQuantMatmulAllReduceAddRmsNorm execute success \n", args.rankId);
     // 释放device资源，需要根据具体API的接口定义修改
@@ -208,9 +202,6 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     if (gamma != nullptr) {
         aclDestroyTensor(gamma);
     }
-    if (y != nullptr) {
-        aclDestroyTensor(y);
-    }
     if (normOut != nullptr) {
         aclDestroyTensor(normOut);
     }
@@ -237,9 +228,6 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     }
     if (gammaDeviceAddr != nullptr) {
         aclrtFree(gammaDeviceAddr);
-    }
-    if (yDeviceAddr != nullptr) {
-        aclrtFree(yDeviceAddr);
     }
     if (normOutDeviceAddr != nullptr) {
         aclrtFree(normOutDeviceAddr);

@@ -19,7 +19,7 @@
 #include "../op_host/op_api/aclnn_weight_quant_matmul_all_reduce_add_rms_norm.h"
 
 namespace {
-int ndev = 8;
+static int ndev = 8;
 
 #define CHECK_RET(cond, return_expr) \
 do {                               \
@@ -84,7 +84,6 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     std::vector<int64_t> biasShape = {128};
     std::vector<int64_t> antiquantScaleShape = {128};
     std::vector<int64_t> antiquantOffsetShape = {128};
-    std::vector<int64_t> x3Shape = {32, 128};
     std::vector<int64_t> residualShape = {1, 32, 128};
     std::vector<int64_t> gammaShape = {128};
     std::vector<int64_t> yShape = {1, 32, 128};
@@ -94,7 +93,6 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     void *biasDeviceAddr = nullptr;
     void *antiquantScaleDeviceAddr = nullptr;
     void *antiquantOffsetDeviceAddr = nullptr;
-    void *x3DeviceAddr = nullptr;
     void *residualDeviceAddr = nullptr;
     void *gammaDeviceAddr = nullptr;
     void *yDeviceAddr = nullptr;
@@ -104,7 +102,6 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     aclTensor *bias = nullptr;
     aclTensor *antiquantScale = nullptr;
     aclTensor *antiquantOffset = nullptr;
-    aclTensor *x3 = nullptr;
     aclTensor *residual = nullptr;
     aclTensor *gamma = nullptr;
     aclTensor *y = nullptr;
@@ -123,7 +120,6 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     long long biasShapeSize = GetShapeSize(biasShape);
     long long antiquantScaleShapeSize = GetShapeSize(antiquantScaleShape);
     long long antiquantOffsetShapeSize = GetShapeSize(antiquantOffsetShape);
-    long long x3ShapeSize = GetShapeSize(x3Shape);
     long long residualShapeSize = GetShapeSize(residualShape);
     long long gammaShapeSize = GetShapeSize(gammaShape);
     long long yShapeSize = GetShapeSize(yShape);
@@ -133,7 +129,6 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     std::vector<int16_t> biasHostData(biasShapeSize, 1);
     std::vector<int16_t> antiquantScaleHostData(antiquantScaleShapeSize, 1);
     std::vector<int16_t> antiquantOffsetHostData(antiquantOffsetShapeSize, 1);
-    std::vector<int16_t> x3HostData(x3ShapeSize, 1);
     std::vector<int16_t> residualHostData(residualShapeSize, 1);
     std::vector<int16_t> gammaHostData(gammaShapeSize, 1);
     std::vector<int16_t> yHostData(yShapeSize, 0);
@@ -150,8 +145,6 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     CHECK_RET(ret == ACL_SUCCESS, return ret);
     ret = CreateAclTensor(antiquantOffsetHostData, antiquantOffsetShape, &antiquantOffsetDeviceAddr,
                         aclDataType::ACL_FLOAT16, &antiquantOffset);
-    CHECK_RET(ret == ACL_SUCCESS, return ret);
-    ret = CreateAclTensor(x3HostData, x3Shape, &x3DeviceAddr, aclDataType::ACL_FLOAT16, &x3);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
     ret = CreateAclTensor(residualHostData, residualShape, &residualDeviceAddr, aclDataType::ACL_FLOAT16, &residual);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
@@ -178,7 +171,8 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     ret = aclnnWeightQuantMatmulAllReduceAddRmsNorm(workspaceAddr, workspaceSize, executor, args.stream);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnWeightQuantMatmulAllReduceAddRmsNorm failed. ERROR: %d\n", ret); return ret);
     //（固定写法）同步等待任务执行结束
-    ret = aclrtSynchronizeStreamWithTimeout(args.stream, 10000);
+    constexpr int TIMEOUT_MS = 10000;
+    ret = aclrtSynchronizeStreamWithTimeout(args.stream, TIMEOUT_MS);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSynchronizeStream failed. ERROR: %d\n", ret); return ret);
     LOG_PRINT("device%d aclnnWeightQuantMatmulAllReduceAddRmsNorm execute success \n", args.rankId);
     // 释放device资源，需要根据具体API的接口定义修改
@@ -197,9 +191,6 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     }
     if (antiquantOffset != nullptr) {
         aclDestroyTensor(antiquantOffset);
-    }
-    if (x3 != nullptr) {
-        aclDestroyTensor(x3);
     }
     if (residual != nullptr) {
         aclDestroyTensor(residual);
@@ -227,9 +218,6 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     }
     if (antiquantOffsetDeviceAddr != nullptr) {
         aclrtFree(antiquantOffsetDeviceAddr);
-    }
-    if (x3DeviceAddr != nullptr) {
-        aclrtFree(x3DeviceAddr);
     }
     if (residualDeviceAddr != nullptr) {
         aclrtFree(residualDeviceAddr);

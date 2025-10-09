@@ -19,7 +19,7 @@
 #include "../op_host/op_api/aclnn_matmul_all_reduce_add_rms_norm.h"
 
 namespace {
-int ndev = 8;
+static int ndev = 8;
 
 #define CHECK_RET(cond, return_expr) \
 do {                               \
@@ -152,7 +152,8 @@ int launchOneThreadMatmulAllReduceAddRmsNorm(Args &args) {
     ret = aclnnMatmulAllReduceAddRmsNorm(workspaceAddr, workspaceSize, executor, args.stream);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnMatmulAllReduceAddRmsNorm failed. ERROR: %d\n", ret); return ret);
     //（固定写法）同步等待任务执行结束
-    ret = aclrtSynchronizeStreamWithTimeout(args.stream, 10000);
+    constexpr int TIMEOUT_MS = 10000;
+    ret = aclrtSynchronizeStreamWithTimeout(args.stream, TIMEOUT_MS);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSynchronizeStream failed. ERROR: %d\n", ret); return ret);
     LOG_PRINT("device%d aclnnMatmulAllReduceAddRmsNorm execute success \n", args.rankId);
     // 释放device资源，需要根据具体API的接口定义修改

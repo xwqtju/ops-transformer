@@ -19,7 +19,7 @@
 #include "../op_host/op_api/aclnn_inplace_matmul_all_reduce_add_rms_norm.h"
 
 namespace {
-int ndev = 8;
+static int ndev = 8;
 
 #define CHECK_RET(cond, return_expr) \
 do {                               \
@@ -84,21 +84,18 @@ int launchOneThreadMatmulAllReduceAddRmsNorm(Args &args) {
     std::vector<int64_t> biasShape = {128};
     std::vector<int64_t> residualShape = {1, 32, 128};
     std::vector<int64_t> gammaShape = {128};
-    std::vector<int64_t> yShape = {1, 32, 128};
     std::vector<int64_t> normOutShape = {1, 32, 128};
     void *x1DeviceAddr = nullptr;
     void *x2DeviceAddr = nullptr;
     void *biasDeviceAddr = nullptr;
     void *residualDeviceAddr = nullptr;
     void *gammaDeviceAddr = nullptr;
-    void *yDeviceAddr = nullptr;
     void *normOutDeviceAddr = nullptr;
     aclTensor *x1 = nullptr;
     aclTensor *x2 = nullptr;
     aclTensor *bias = nullptr;
     aclTensor *residual = nullptr;
     aclTensor *gamma = nullptr;
-    aclTensor *y = nullptr;
     aclTensor *normOut = nullptr;
 
     int64_t commTurn = 0;
@@ -113,14 +110,12 @@ int launchOneThreadMatmulAllReduceAddRmsNorm(Args &args) {
     long long biasShapeSize = GetShapeSize(biasShape);
     long long residualShapeSize = GetShapeSize(residualShape);
     long long gammaShapeSize = GetShapeSize(gammaShape);
-    long long yShapeSize = GetShapeSize(yShape);
     long long normOutShapeSize = GetShapeSize(normOutShape);
     std::vector<int16_t> x1HostData(x1ShapeSize, 1);
     std::vector<int16_t> x2HostData(x2ShapeSize, 1);
     std::vector<int16_t> biasHostData(biasShapeSize, 1);
     std::vector<int16_t> residualHostData(residualShapeSize, 1);
     std::vector<int16_t> gammaHostData(gammaShapeSize, 1);
-    std::vector<int16_t> yHostData(yShapeSize, 0);
     std::vector<int16_t> normOutHostData(normOutShapeSize, 0);
     // 创建 tensor
     ret = CreateAclTensor(x1HostData, x1Shape, &x1DeviceAddr, aclDataType::ACL_FLOAT16, &x1);
@@ -132,8 +127,6 @@ int launchOneThreadMatmulAllReduceAddRmsNorm(Args &args) {
     ret = CreateAclTensor(residualHostData, residualShape, &residualDeviceAddr, aclDataType::ACL_FLOAT16, &residual);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
     ret = CreateAclTensor(gammaHostData, gammaShape, &gammaDeviceAddr, aclDataType::ACL_FLOAT16, &gamma);
-    CHECK_RET(ret == ACL_SUCCESS, return ret);
-    ret = CreateAclTensor(yHostData, yShape, &yDeviceAddr, aclDataType::ACL_FLOAT16, &y);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
     ret = CreateAclTensor(normOutHostData, normOutShape, &normOutDeviceAddr, aclDataType::ACL_FLOAT16, &normOut);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
@@ -153,7 +146,8 @@ int launchOneThreadMatmulAllReduceAddRmsNorm(Args &args) {
     ret = aclnnInplaceMatmulAllReduceAddRmsNorm(workspaceAddr, workspaceSize, executor, args.stream);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnInplaceMatmulAllReduceAddRmsNorm failed. ERROR: %d\n", ret); return ret);
     //（固定写法）同步等待任务执行结束
-    ret = aclrtSynchronizeStreamWithTimeout(args.stream, 10000);
+    constexpr int TIMEOUT_MS = 10000;
+    ret = aclrtSynchronizeStreamWithTimeout(args.stream, TIMEOUT_MS);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSynchronizeStream failed. ERROR: %d\n", ret); return ret);
     LOG_PRINT("device%d aclnnInplaceMatmulAllReduceAddRmsNorm execute success \n", args.rankId);
     // 释放device资源，需要根据具体API的接口定义修改
@@ -173,9 +167,6 @@ int launchOneThreadMatmulAllReduceAddRmsNorm(Args &args) {
     if (gamma != nullptr) {
         aclDestroyTensor(gamma);
     }
-    if (y != nullptr) {
-        aclDestroyTensor(y);
-    }
     if (normOut != nullptr) {
         aclDestroyTensor(normOut);
     }
@@ -193,9 +184,6 @@ int launchOneThreadMatmulAllReduceAddRmsNorm(Args &args) {
     }
     if (gammaDeviceAddr != nullptr) {
         aclrtFree(gammaDeviceAddr);
-    }
-    if (yDeviceAddr != nullptr) {
-        aclrtFree(yDeviceAddr);
     }
     if (normOutDeviceAddr != nullptr) {
         aclrtFree(normOutDeviceAddr);

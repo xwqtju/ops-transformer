@@ -20,7 +20,7 @@
 #include "../op_host/op_api/aclnn_quant_matmul_all_reduce.h"
 
 namespace {
-int ndev = 8;
+static int ndev = 8;
 
 #define ACL_CHECK(ret)                                                                                     \
     do {                                                                                                   \
@@ -200,6 +200,7 @@ int launchOneThreadQuantMatmulAllReduce(Args &args) {
     ret = aclnnQuantMatmulAllReduce(workspaceAddr, workspaceSize, executor, args.stream);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnQuantMatmulAllReduce failed. ERROR: %d\n", ret); return ret);
     //（固定写法）同步等待任务执行结束
+    constexpr int TIMEOUT_MS = 10000;
     ret = aclrtSynchronizeStreamWithTimeout(args.stream, 10000);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSynchronizeStream failed. ERROR: %d\n", ret); return ret);
     LOG_PRINT("device%d aclnnQuantMatmulAllReduce execute success \n", args.rankId);
