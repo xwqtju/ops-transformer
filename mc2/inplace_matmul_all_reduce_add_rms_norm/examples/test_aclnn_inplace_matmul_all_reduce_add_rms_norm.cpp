@@ -70,8 +70,7 @@ struct Args {
 };
 
 int launchOneThreadMatmulAllReduceAddRmsNorm(Args &args) {
-    int ret;
-    ret = aclrtSetCurrentContext(args.context);
+    int ret = aclrtSetCurrentContext(args.context);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSetCurrentContext failed. ERROR: %d\n", ret); return ret);
     char hcom_name[128];
     ret = HcclGetCommName(args.hcclComm, hcom_name);

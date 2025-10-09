@@ -69,9 +69,22 @@ struct Args {
     aclrtContext context;
 };
 
+static inline void FreeTensor(void *tensor)
+{
+    if (tensor != nullptr) {
+        aclDestroyTensor(tensor);
+    }
+}
+
+static inline void FreeDevice(void *deviceAddr)
+{
+    if (deviceAddr != nullptr) {
+        aclrtFree(deviceAddr);
+    }
+}
+
 int launchOneThreadMatmulAllReduce(Args &args) {
-    int ret;
-    ret = aclrtSetCurrentContext(args.context);
+    int ret = aclrtSetCurrentContext(args.context);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSetCurrentContext failed. ERROR: %d\n", ret); return ret);
     char hcom_name[128];
     ret = HcclGetCommName(args.hcclComm, hcom_name);
@@ -141,36 +154,16 @@ int launchOneThreadMatmulAllReduce(Args &args) {
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSynchronizeStream failed. ERROR: %d\n", ret); return ret);
     LOG_PRINT("device%d aclnnMatmulAllReduceV2 execute success \n", args.rankId);
     // 释放device资源，需要根据具体API的接口定义修改
-    if (x1 != nullptr) {
-        aclDestroyTensor(x1);
-    }
-    if (x2 != nullptr) {
-        aclDestroyTensor(x2);
-    }
-    if (bias != nullptr) {
-        aclDestroyTensor(bias);
-    }
-    if (x3 != nullptr) {
-        aclDestroyTensor(x3);
-    }
-    if (out != nullptr) {
-        aclDestroyTensor(out);
-    }
-    if (x1DeviceAddr != nullptr) {
-        aclrtFree(x1DeviceAddr);
-    }
-    if (x2DeviceAddr != nullptr) {
-        aclrtFree(x2DeviceAddr);
-    }
-    if (biasDeviceAddr != nullptr) {
-        aclrtFree(biasDeviceAddr);
-    }
-    if (x3DeviceAddr != nullptr) {
-        aclrtFree(x3DeviceAddr);
-    }
-    if (outDeviceAddr != nullptr) {
-        aclrtFree(outDeviceAddr);
-    }
+    FreeTensor(x1);
+    FreeTensor(x2);
+    FreeTensor(bias);
+    FreeTensor(x3);
+    FreeTensor(out);
+    FreeDevice(x1DeviceAddr);
+    FreeDevice(x2DeviceAddr);
+    FreeDevice(biasDeviceAddr);
+    FreeDevice(x3DeviceAddr);
+    FreeDevice(outDeviceAddr);
     if (workspaceSize > 0) {
         aclrtFree(workspaceAddr);
     }

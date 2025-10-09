@@ -121,8 +121,7 @@ int CreateAclTensor(const std::vector<T> &hostData, const std::vector<int64_t> &
 }
 
 int launchOneThreadQuantMatmulAllReduce(Args &args) {
-    int ret;
-    ret = aclrtSetCurrentContext(args.context);
+    int ret = aclrtSetCurrentContext(args.context);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSetCurrentContext failed. ERROR: %d\n", ret); return ret);
     char hcom_name[128];
     ret = HcclGetCommName(args.hcclComm, hcom_name);
@@ -201,7 +200,7 @@ int launchOneThreadQuantMatmulAllReduce(Args &args) {
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnQuantMatmulAllReduce failed. ERROR: %d\n", ret); return ret);
     //（固定写法）同步等待任务执行结束
     constexpr int TIMEOUT_MS = 10000;
-    ret = aclrtSynchronizeStreamWithTimeout(args.stream, 10000);
+    ret = aclrtSynchronizeStreamWithTimeout(args.stream, TIMEOUT_MS);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSynchronizeStream failed. ERROR: %d\n", ret); return ret);
     LOG_PRINT("device%d aclnnQuantMatmulAllReduce execute success \n", args.rankId);
     // 释放device资源，需要根据具体API的接口定义修改

@@ -69,9 +69,22 @@ struct Args {
     aclrtContext context;
 };
 
+static inline void FreeTensor(void *tensor)
+{
+    if (tensor != nullptr) {
+        aclDestroyTensor(tensor);
+    }
+}
+
+static inline void FreeDevice(void *deviceAddr)
+{
+    if (deviceAddr != nullptr) {
+        aclrtFree(deviceAddr);
+    }
+}
+
 int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
-    int ret;
-    ret = aclrtSetCurrentContext(args.context);
+    int ret = aclrtSetCurrentContext(args.context);
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSetCurrentContext failed. ERROR: %d\n", ret); return ret);
     char hcom_name[128];
     ret = HcclGetCommName(args.hcclComm, hcom_name);
@@ -176,61 +189,24 @@ int launchOneThreadweightQuantmatmulAllReduceAddRmsNorm(Args &args) {
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSynchronizeStream failed. ERROR: %d\n", ret); return ret);
     LOG_PRINT("device%d aclnnWeightQuantMatmulAllReduceAddRmsNorm execute success \n", args.rankId);
     // 释放device资源，需要根据具体API的接口定义修改
-
-    if (x1 != nullptr) {
-        aclDestroyTensor(x1);
-    }
-    if (x2 != nullptr) {
-        aclDestroyTensor(x2);
-    }
-    if (bias != nullptr) {
-        aclDestroyTensor(bias);
-    }
-    if (antiquantScale != nullptr) {
-        aclDestroyTensor(antiquantScale);
-    }
-    if (antiquantOffset != nullptr) {
-        aclDestroyTensor(antiquantOffset);
-    }
-    if (residual != nullptr) {
-        aclDestroyTensor(residual);
-    }
-    if (gamma != nullptr) {
-        aclDestroyTensor(gamma);
-    }
-    if (y != nullptr) {
-        aclDestroyTensor(y);
-    }
-    if (normOut != nullptr) {
-        aclDestroyTensor(normOut);
-    }
-    if (x1DeviceAddr != nullptr) {
-        aclrtFree(x1DeviceAddr);
-    }
-    if (x2DeviceAddr != nullptr) {
-        aclrtFree(x2DeviceAddr);
-    }
-    if (biasDeviceAddr != nullptr) {
-        aclrtFree(biasDeviceAddr);
-    }
-    if (antiquantScaleDeviceAddr != nullptr) {
-        aclrtFree(antiquantScaleDeviceAddr);
-    }
-    if (antiquantOffsetDeviceAddr != nullptr) {
-        aclrtFree(antiquantOffsetDeviceAddr);
-    }
-    if (residualDeviceAddr != nullptr) {
-        aclrtFree(residualDeviceAddr);
-    }
-    if (gammaDeviceAddr != nullptr) {
-        aclrtFree(gammaDeviceAddr);
-    }
-    if (yDeviceAddr != nullptr) {
-        aclrtFree(yDeviceAddr);
-    }
-    if (normOutDeviceAddr != nullptr) {
-        aclrtFree(normOutDeviceAddr);
-    }
+    FreeTensor(x1);
+    FreeTensor(x2);
+    FreeTensor(bias);
+    FreeTensor(antiquantScale);
+    FreeTensor(antiquantOffset);
+    FreeTensor(residual);
+    FreeTensor(gamma);
+    FreeTensor(y);
+    FreeTensor(normOut);
+    FreeDevice(x1DeviceAddr);
+    FreeDevice(x2DeviceAddr);
+    FreeDevice(biasDeviceAddr);
+    FreeDevice(antiquantScaleDeviceAddr);
+    FreeDevice(antiquantOffsetDeviceAddr);
+    FreeDevice(residualDeviceAddr);
+    FreeDevice(gammaDeviceAddr);
+    FreeDevice(yDeviceAddr);
+    FreeDevice(normOutDeviceAddr);
     if (workspaceSize > 0) {
         aclrtFree(workspaceAddr);
     }
