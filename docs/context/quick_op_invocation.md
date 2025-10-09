@@ -17,12 +17,13 @@
    - Gawk
    - googletest（仅执行UT时依赖，建议版本 [release-1.11.0](https://github.com/google/googletest/releases/tag/release-1.11.0)）
 
-   上述依赖包可通过项目根目录下install\_deps.sh安装，命令如下：
+   上述依赖包可通过项目根目录install\_deps.sh安装，命令如下，若遇到不支持系统，请参考该文件自行适配。
    ```bash
    bash install_deps.sh
    ```
 
 2. **安装驱动与固件（运行态依赖）**
+
    运行算子时必须安装驱动与固件，若仅编译算子，可跳过本操作，安装指导详见《[CANN 软件安装指南](https://www.hiascend.com/document/redirect/CannCommunityInstSoftware)》
 
 ## 环境准备
