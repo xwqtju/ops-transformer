@@ -89,7 +89,7 @@ int CreateWeightNzAclTensor(const std::vector<T> &hostData, const std::vector<in
     aclOpExecutor *executor;
     void *transWorkspaceAddr = nullptr;
     ret = aclnnTransMatmulWeightGetWorkspaceSize(*tensor, &transWorkspaceSize, &executor);
-    CHECK_RET(ret == ACL_SUCCESS && transWorkspaceSize > 0, 
+    CHECK_RET(ret == ACL_SUCCESS && transWorkspaceSize > static_cast<uint64_t>(0), 
               printf("[ERROR] aclnnTransMatmulWeightGetWorkspaceSize failed. ret = %d \n", ret); return ret);
     ACL_CHECK(aclrtMalloc(&transWorkspaceAddr, transWorkspaceSize, ACL_MEM_MALLOC_HUGE_FIRST));
     ret = aclnnTransMatmulWeight(transWorkspaceAddr, transWorkspaceSize, executor, args.stream);
@@ -217,7 +217,7 @@ int launchOneThreadQuantMatmulAllReduce(Args &args) {
     CHECK_RET(ret == ACL_SUCCESS,
               LOG_PRINT("aclnnQuantMatmulAllReduceV3GetWorkspaceSize failed. ERROR: %d\n", ret); return ret);
     // 根据第一段接口计算出的workspaceSize申请device内存
-    if (workspaceSize > 0) {
+    if (workspaceSize > static_cast<uint64_t>(0)) {
         ret = aclrtMalloc(&workspaceAddr, workspaceSize, ACL_MEM_MALLOC_HUGE_FIRST);
         CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("allocate workspace failed. ERROR: %d\n", ret); return ret);
     }
@@ -284,7 +284,7 @@ int launchOneThreadQuantMatmulAllReduce(Args &args) {
     if (outDeviceAddr != nullptr) {
         aclrtFree(outDeviceAddr);
     }
-    if (workspaceSize > 0) {
+    if (workspaceSize > static_cast<uint64_t>(0)) {
         aclrtFree(workspaceAddr);
     }
     aclrtDestroyStream(args.stream);
@@ -314,7 +314,7 @@ int main(int argc, char *argv[]) {
     Args args[ndev];
     aclrtStream stream[ndev];
     aclrtContext context[ndev];
-    for (uint32_t rankId = 0; rankId < ndev; rankId++) {
+    for (uint32_t rankId = 0; rankId < static_cast<uint32_t>(ndev); rankId++) {
         ret = aclrtSetDevice(rankId);
         CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSetDevice failed. ERROR: %d\n", ret); return ret);
         ret = aclrtCreateContext(&context[rankId], rankId);
@@ -324,7 +324,7 @@ int main(int argc, char *argv[]) {
     }
     // 启动多线程
     std::vector<std::unique_ptr<std::thread>> threads(ndev);
-    for (uint32_t rankId = 0; rankId < ndev; rankId++) {
+    for (uint32_t rankId = 0; rankId < static_cast<uint32_t>(ndev); rankId++) {
         args[rankId].rankId = rankId;
         args[rankId].hcclComm = comms[rankId];
         args[rankId].stream = stream[rankId];
@@ -332,7 +332,7 @@ int main(int argc, char *argv[]) {
         threads[rankId].reset(
                 new(std::nothrow) std::thread(&launchOneThreadQuantMatmulAllReduce, std::ref(args[rankId])));
     }
-    for (uint32_t rankId = 0; rankId < ndev; rankId++) {
+    for (uint32_t rankId = 0; rankId < static_cast<uint32_t>(ndev); rankId++) {
         threads[rankId]->join();
     }
     aclFinalize();
