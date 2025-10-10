@@ -829,35 +829,16 @@ bool CheckTempLimit(WeightQuantBatchMatmulInfo* inputParams)
     return true;
 }
 
-bool CheckNzSupportedScenarios(WeightQuantBatchMatmulInfo* inputParams, platform_ascendc::SocVersion socVersion)
+bool CheckNzSupportedScenarios(WeightQuantBatchMatmulInfo* inputParams)
 {
-    if (socVersion == platform_ascendc::SocVersion::ASCEND910_95) {
-        // WeightNZ only support the following scenarios:
-        // (1) Weight in int4 dtye with per-channel or per-group quantization without transA, transB or C8.
-        // (2) Weight in fp4 dtye with per-group or MX quantization without transA, transB or C8.
-        OP_TILING_CHECK(
-            (inputParams->transB || inputParams->transA || inputParams->cDtype == ge::DT_INT8 ||
-             !(((inputParams->antiQuantType == QuantType::PER_GROUP ||
-                 inputParams->antiQuantType == QuantType::PER_CHANNEL) &&
-                (inputParams->bDtype == ge::DT_INT4 || inputParams->bDtype == ge::DT_INT32)) ||
-               ((inputParams->antiQuantType == QuantType::MX || inputParams->antiQuantType == QuantType::PER_GROUP) &&
-                (inputParams->bDtype == ge::DT_FLOAT4_E2M1 || inputParams->bDtype == ge::DT_FLOAT4_E1M2 ||
-                 inputParams->bDtype == ge::DT_FLOAT)))),
-            OP_LOGE(
-                inputParams->opName,
-                "WeightNZ supports S4/FP4_E2M1/FP4_E1M2 weights only, with non-transposed A/B, no C8, "
-                "and excludes per-tensor quantization."),
-            return ge::GRAPH_FAILED);
-    } else {
-        OP_TILING_CHECK(
-            (inputParams->antiQuantType == QuantType::PER_GROUP && inputParams->transA &&
-             inputParams->bDtype != ge::DT_INT4) ||
-                inputParams->cDtype == ge::DT_INT8 || inputParams->antiQuantType == QuantType::PER_TENSOR,
-            OP_LOGE(
-                inputParams->opName,
-                "WeightNZ cannot support per-group with transA int8, cannot support int8 output or per-tensor"),
-            return ge::GRAPH_FAILED);
-    }
+    OP_TILING_CHECK(
+        (inputParams->antiQuantType == QuantType::PER_GROUP && inputParams->transA &&
+         inputParams->bDtype != ge::DT_INT4) ||
+            inputParams->cDtype == ge::DT_INT8 || inputParams->antiQuantType == QuantType::PER_TENSOR,
+        OP_LOGE(
+            inputParams->opName,
+            "WeightNZ cannot support per-group with transA int8, cannot support int8 output or per-tensor"),
+        return ge::GRAPH_FAILED);
     return true;
 }
 
@@ -888,7 +869,7 @@ ge::graphStatus CheckPara(gert::TilingContext* context, platform_ascendc::SocVer
         return ge::GRAPH_FAILED);
     if (inputParams.bFormat == ge::FORMAT_FRACTAL_NZ) {
         OP_TILING_CHECK(
-            !CheckNzSupportedScenarios(&inputParams, socVersion),
+            !CheckNzSupportedScenarios(&inputParams),
             OP_LOGE(inputParams.opName, "WeightNZ cannot be supported in this scenario"),
             return ge::GRAPH_FAILED);
     }
@@ -899,12 +880,6 @@ ge::graphStatus CheckPara(gert::TilingContext* context, platform_ascendc::SocVer
             OP_LOGE(
                 inputParams.opName,
                 "Weight FP8_E5M2/FP8_E4M3/HIFLOAT8 input cannot support transA, int8 output or weightNz"),
-            return ge::GRAPH_FAILED);
-    }
-    if (socVersion == platform_ascendc::SocVersion::ASCEND910_95) {
-        OP_TILING_CHECK(
-            !CheckTempLimit(&inputParams),
-            OP_LOGE(inputParams.opName, "Input cannot meet the condition of this version"),
             return ge::GRAPH_FAILED);
     }
     return ge::GRAPH_SUCCESS;

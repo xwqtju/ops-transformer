@@ -760,9 +760,6 @@ static bool CheckAscendCScenario(
     const aclTensor* x1, const aclTensor* x2, const aclTensor* bias, const MmOpInfo& mmOpInfo, const bool adjX1,
     const bool adjX2)
 {
-    if (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910_95) {
-        return true;
-    }
     if ((GetCurrentPlatformInfo().GetSocVersion() != SocVersion::ASCEND910B &&
          GetCurrentPlatformInfo().GetSocVersion() != SocVersion::ASCEND910_93) ||
         mmOpInfo.support_info.self_format != ge::FORMAT_ND || mmOpInfo.support_info.mat2_format != ge::FORMAT_ND) {
@@ -885,7 +882,6 @@ bool CheckSocIfBatchMatMulToMul91095(const aclTensor* self, const aclTensor* mat
 
 using CheckSocIfBatchMatMulToMulFunc = bool (*)(const aclTensor* self, const aclTensor* mat2, bool adjX1, bool adjX2);
 const static std::map<SocVersion, CheckSocIfBatchMatMulToMulFunc> CheckSocIfBatchMatMulToMulFuncMap = {
-    {SocVersion::ASCEND910_95, CheckSocIfBatchMatMulToMul91095},
     {SocVersion::ASCEND910B, CheckSocIfBatchMatMulToMul910B},
     {SocVersion::ASCEND910_93, CheckSocIfBatchMatMulToMul910B},
 };
@@ -904,13 +900,6 @@ const aclTensor* GetBatchMatmulOp(
 {
     auto bmmOpOut = selfTransdata;
     if (CheckAscendCScenario(selfTransdata, mat2Transdata, bias, matmulOpInfo, adjX1, adjX2)) {
-        if (GetCurrentPlatformInfo().GetSocVersion() ==
-                SocVersion::ASCEND910_95 && // 1.多维*2维(左非转置)2.多维*多维batch为1
-            (GetBatchDimAll(mat2Transdata) <= 1 &&
-             (!adjX1 || GetBatchDimAll(selfTransdata) <= 1))) { // 仅910_95路由该场景
-            return TransBmm2Mm(
-                selfTransdata, mat2Transdata, bias, matmulOpInfo.enableHf32, adjX1, adjX2, offsetX, executor);
-        }
         OP_LOGI("Hit batch_mat_mul_v3 scenario.");
         bmmOpOut = l0op::BatchMatMulV3Nd(
             selfTransdata, mat2Transdata, bias, nullptr, adjX1, adjX2, offsetX, matmulOpInfo.enableHf32, executor);

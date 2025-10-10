@@ -74,16 +74,9 @@ static const std::initializer_list<DataType> ASCEND910B_X_DTYPE_SUPPORT_LIST = {
 static const std::initializer_list<DataType> ASCEND310P_X_DTYPE_SUPPORT_LIST = {DataType::DT_FLOAT16};
 static const std::initializer_list<DataType> ASCEND910B_WEIGHT_DTYPE_SUPPORT_LIST = {
     DataType::DT_INT8, DataType::DT_INT4};
-static const std::initializer_list<DataType> ASCEND910_95_WEIGHT_DTYPE_SUPPORT_LIST = {
-    DataType::DT_INT8,          DataType::DT_INT4,     DataType::DT_FLOAT8_E5M2,
-    DataType::DT_FLOAT8_E4M3FN, DataType::DT_HIFLOAT8, DataType::DT_FLOAT4_E2M1};
-static const std::initializer_list<DataType> ASCEND910_95_ANTIQUANT_SCALE_DTYPE_SUPPORT_LIST = {
-    DataType::DT_FLOAT16, DataType::DT_BF16, DataType::DT_FLOAT8_E8M0};
 static const std::initializer_list<DataType> ASCEND310P_WEIGHT_DTYPE_SUPPORT_LIST = {DataType::DT_INT8};
 static const std::initializer_list<DataType> ASCEND910B_Y_DTYPE_SUPPORT_LIST = {
     DataType::DT_FLOAT16, DataType::DT_BF16, DataType::DT_INT8};
-static const std::initializer_list<DataType> ASCEND910_95_Y_DTYPE_SUPPORT_LIST = {
-    DataType::DT_FLOAT16, DataType::DT_BF16};
 static const std::initializer_list<DataType> ASCEND310P_Y_DTYPE_SUPPORT_LIST = {DataType::DT_FLOAT16};
 static const std::initializer_list<DataType> EMPTY_LIST = {};
 static const std::vector<uint64_t> DIM_RANGE_WITHOUT_BATCH = {INPUT_DIM_MIN_VALUE, INPUT_DIM_MAX_VALUE};
@@ -100,8 +93,6 @@ static inline const std::initializer_list<DataType>& GetAntiQuantScaleDtypeSuppo
             return ASCEND910B_AQSCALE_DTYPE_SUPPORT_LIST;
         case SocVersion::ASCEND310P:
             return ASCEND310P_X_DTYPE_SUPPORT_LIST;
-        case SocVersion::ASCEND910_95:
-            return ASCEND910_95_ANTIQUANT_SCALE_DTYPE_SUPPORT_LIST;
         default: {
             OP_LOGE(ACLNN_ERR_RUNTIME_ERROR, "support for %s is not implemented", op::ToString(socVersion).GetString());
             return EMPTY_LIST;
@@ -115,7 +106,6 @@ static inline const std::initializer_list<DataType>& GetXDtypeSupportList()
     switch (socVersion) {
         case SocVersion::ASCEND910B:
         case SocVersion::ASCEND910_93:
-        case SocVersion::ASCEND910_95:
             return ASCEND910B_X_DTYPE_SUPPORT_LIST;
         case SocVersion::ASCEND310P:
             return ASCEND310P_X_DTYPE_SUPPORT_LIST;
@@ -133,8 +123,6 @@ static inline const std::initializer_list<DataType>& GetYDtypeSupportList()
         case SocVersion::ASCEND910B:
         case SocVersion::ASCEND910_93:
             return ASCEND910B_Y_DTYPE_SUPPORT_LIST;
-        case SocVersion::ASCEND910_95:
-            return ASCEND910_95_Y_DTYPE_SUPPORT_LIST;
         case SocVersion::ASCEND310P:
             return ASCEND310P_Y_DTYPE_SUPPORT_LIST;
         default: {
@@ -151,8 +139,6 @@ static inline const std::initializer_list<DataType>& GetWeightDtypeSupportList()
         case SocVersion::ASCEND910B:
         case SocVersion::ASCEND910_93:
             return ASCEND910B_WEIGHT_DTYPE_SUPPORT_LIST;
-        case SocVersion::ASCEND910_95:
-            return ASCEND910_95_WEIGHT_DTYPE_SUPPORT_LIST;
         case SocVersion::ASCEND310P:
             return ASCEND310P_WEIGHT_DTYPE_SUPPORT_LIST;
         default: {
@@ -535,14 +521,6 @@ static bool CheckXWeight(const aclTensor* x, const aclTensor* weight, bool trans
                 "In the int4 scenario, if weight is not transposed, n[%ld] should be an even number ", nWeight);
             return false;
         }
-
-        if (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910_95 &&
-            weight->GetStorageFormat() == Format::FORMAT_FRACTAL_NZ && transposeWeight) {
-            OP_LOGE(
-                ACLNN_ERR_PARAM_INVALID,
-                "ascend910_95 does not support w4 tranB when weight's dtype is FORMAT_FRACTAL_NZ!");
-            return false;
-        }
     }
 
     return true;
@@ -585,9 +563,7 @@ static bool CheckShapeForPerGrp(const aclTensor* weight, int antiquantGroupSize)
 {
     int64_t kWeight = GetWeightK(weight);
     int64_t nWeight = GetWeightN(weight);
-    // ASCEND910_95 nz没有该限制
-    if ((antiquantGroupSize != 0) && (kWeight % antiquantGroupSize) != 0 &&
-        GetCurrentPlatformInfo().GetSocVersion() != SocVersion::ASCEND910_95) {
+    if ((antiquantGroupSize != 0) && (kWeight % antiquantGroupSize) != 0) {
         OP_LOGE(
             ACLNN_ERR_PARAM_INVALID,
             "when weight's dtype is [int4], weight's format is [FRACTAL_NZ], antiquantGroupSize is larger than 0,"
@@ -628,8 +604,7 @@ static bool CheckValForWeightInt4Nz(
                 (transposeX ? "transposed" : "not transposed"), (transposeWeight ? "transposed" : "not transposed"));
             return false;
         }
-        if ((antiquantGroupSize != ANTIQUANT_GRP_SIZE128) && (antiquantGroupSize != ANTIQUANT_GRP_SIZE64) &&
-            (socVersion != SocVersion::ASCEND910_95)) {
+        if ((antiquantGroupSize != ANTIQUANT_GRP_SIZE128) && (antiquantGroupSize != ANTIQUANT_GRP_SIZE64)) {
             OP_LOGE(
                 ACLNN_ERR_PARAM_INVALID,
                 "when weight's dtype is [int4], weight's format is [FRACTAL_NZ], antiquantGroupSize should be "
@@ -648,7 +623,7 @@ static bool CheckValForWeightInt4Nz(
             return false;
         }
         // per-channel场景
-        if (!transposeWeight && (socVersion != SocVersion::ASCEND910_95)) {
+        if (!transposeWeight) {
             OP_LOGE(
                 ACLNN_ERR_PARAM_INVALID,
                 "when weight's dtype is [int4], weight's format is [FRACTAL_NZ], and antiquantGroupSize is 0, "
@@ -724,7 +699,6 @@ static aclnnStatus CheckSocValid()
     switch (socVersion) {
         case SocVersion::ASCEND910B:
         case SocVersion::ASCEND910_93:
-        case SocVersion::ASCEND910_95:
         case SocVersion::ASCEND310P:
             break;
         default: {
@@ -759,14 +733,6 @@ static bool CheckOptionalNotNull(const aclTensor* quantScaleOptional, const aclT
 static bool CheckAntiquantForFixpipe(const aclTensor* antiquantScale, const aclTensor* antiquantOffsetOptional)
 {
     if (antiquantOffsetOptional->GetDataType() == DataType::DT_INT32) {
-        if (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910_95) {
-            OP_LOGE(
-                ACLNN_ERR_PARAM_INVALID,
-                "antiquantOffset's dtype only support DT_FLOAT16 and DT_BF16, "
-                "actual antiquantOffset's dtype is DT_INT32.");
-            return false;
-        }
-
         if (antiquantScale->GetDataType() != DataType::DT_UINT64 &&
             antiquantScale->GetDataType() != DataType::DT_INT64) {
             OP_LOGE(
@@ -858,20 +824,11 @@ static bool CheckBiasDtypeValid(const aclTensor* x, const aclTensor* biasOptiona
         return false;
     }
     if (x->GetDataType() == DataType::DT_BF16) {
-        if (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910_95) {
-            if (biasOptional->GetDataType() != DataType::DT_BF16 && biasOptional->GetDataType() != DataType::DT_FLOAT) {
-                OP_LOGE(
-                    ACLNN_ERR_PARAM_INVALID, "biasOptional's dtype should be [DT_FLOAT]/[DT_BF16], actual is [%s].",
-                    op::ToString(biasOptional->GetDataType()).GetString());
-                return false;
-            }
-        } else {
-            if (biasOptional->GetDataType() != DataType::DT_FLOAT) {
-                OP_LOGE(
-                    ACLNN_ERR_PARAM_INVALID, "biasOptional's dtype should be [DT_FLOAT], actual is [%s].",
-                    op::ToString(biasOptional->GetDataType()).GetString());
-                return false;
-            }
+        if (biasOptional->GetDataType() != DataType::DT_FLOAT) {
+            OP_LOGE(
+                ACLNN_ERR_PARAM_INVALID, "biasOptional's dtype should be [DT_FLOAT], actual is [%s].",
+                op::ToString(biasOptional->GetDataType()).GetString());
+            return false;
         }
     }
     return true;
@@ -919,17 +876,6 @@ static bool CheckDtypeValid(
         return false;
     }
 
-    if (weight != nullptr && weight->GetStorageFormat() == Format::FORMAT_FRACTAL_NZ &&
-        GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910_95) {
-        if (weight->GetDataType() != DataType::DT_INT4 && weight->GetDataType() != DataType::DT_FLOAT4_E2M1) {
-            OP_LOGE(
-                ACLNN_ERR_PARAM_INVALID,
-                "when weight's format is FRACTAL_NZ, weight's dtype only support DT_INT4 and DT_FLOAT4_E2M1, actual is "
-                "[%s].",
-                op::ToString(weight->GetDataType()).GetString());
-            return false;
-        }
-    }
     return true;
 }
 
@@ -1375,9 +1321,7 @@ static aclnnStatus TensorPreProcess(TupleTensor mandatoryTensors, TupleTensor op
     auto& tensorQuantScaleOptional = std::get<INDEX_QUANT_SCALE_BAK_IN_OPTIONAL_TUPLE>(optionalTensors);
     // 将int32的输入weight dtype修改为int4。同时ViewShape,ViewStrides也从int32修改为int4所对应的。
     // 采用float32承载float4_e2m1数据，对于float32采用相同处理流程
-    if (weight->GetDataType() == DataType::DT_INT32 ||
-        (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910_95 &&
-         weight->GetDataType() == DataType::DT_FLOAT)) {
+    if (weight->GetDataType() == DataType::DT_INT32) {
         CHECK_RET(PackedWeightPreProcess(weight, tensorWeight, executor) == ACLNN_SUCCESS, ACLNN_ERR_PARAM_INVALID);
     } else if (
         weight->GetStorageFormat() == Format::FORMAT_FRACTAL_NZ &&
@@ -1405,15 +1349,6 @@ static aclnnStatus TensorPreProcess(TupleTensor mandatoryTensors, TupleTensor op
     if (quantScaleOptional != nullptr && quantScaleOptional->GetDataType() == DataType::DT_INT64) {
         bool ret = CastQuantScaleOptionalToUint64(quantScaleOptional, tensorQuantScaleOptional, executor);
         CHECK_RET(ret, ACLNN_ERR_INNER_NULLPTR);
-    }
-
-    // microscaling场景，采用uint8承载float8_e8m0数据，此处需修正antiquantScale dtype
-    if (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910_95 &&
-        weight->GetDataType() == DataType::DT_FLOAT && antiquantScaleRef->GetDataType() == DataType::DT_UINT8) {
-        CHECK_RET(
-            ModifyTensorDtype(antiquantScaleRef, nullptr, DataType::DT_FLOAT8_E8M0, executor) == ACLNN_SUCCESS,
-            ACLNN_ERR_PARAM_INVALID);
-        OP_LOGD("The conversion of antiquantScale from uint8 to fp8 is completed.");
     }
 
     return ACLNN_SUCCESS;
