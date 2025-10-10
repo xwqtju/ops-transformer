@@ -9,7 +9,7 @@
  */
 #include <cstring>
 #include "graph/types.h"
-#include "aclnn_mla_prolog_v2_weight_nz.h"
+#include "aclnn_mla_prolog_v3.h"
 
 #include "opdev/make_op_executor.h"
 #include "opdev/op_dfx.h"
@@ -46,7 +46,7 @@ extern aclnnStatus aclnnInnerMlaPrologV2(void *workspace, uint64_t workspaceSize
                                          const aclrtStream stream);
 
 
-aclnnStatus aclnnMlaPrologV2WeightNzGetWorkspaceSize(
+aclnnStatus aclnnMlaPrologV3GetWorkspaceSize(
     const aclTensor *tokenX,
     const aclTensor *weightDq,
     const aclTensor *weightUqQr,
@@ -69,6 +69,8 @@ aclnnStatus aclnnMlaPrologV2WeightNzGetWorkspaceSize(
     double rmsnormEpsilonCq,
     double rmsnormEpsilonCkv,
     char *cacheModeOptional,
+    double qcQrScale,
+    double kcScale,
     const aclTensor *queryOut,
     const aclTensor *queryRopeOut,
     const aclTensor *dequantScaleQNopeOutOptional,
@@ -82,22 +84,19 @@ aclnnStatus aclnnMlaPrologV2WeightNzGetWorkspaceSize(
     } else {
         std::vector<int64_t> shape = {0};
         int64_t addr = 0xff;
-        dequantScaleQNopeOutHolder = aclCreateTensor(shape.data(), shape.size(), aclDataType::ACL_FLOAT, shape.data(), 0, ACL_FORMAT_ND,
-                                     shape.data(), shape.size(), static_cast<void *>(&addr));
+        dequantScaleQNopeOutHolder = aclCreateTensor(shape.data(), shape.size(), aclDataType::ACL_FLOAT,
+            shape.data(), 0, ACL_FORMAT_ND, shape.data(), shape.size(), static_cast<void *>(&addr));
     }
     if (tokenX ->GetDataType() == ge::DT_INT8 && kvCacheRef ->GetDataType() == ge::DT_INT8 && !isDequantScaleQNope) {
         OP_LOGE(ACLNN_ERR_PARAM_NULLPTR, "Check dequantScaleQNopeOut != nullptr failed!");
     }
 
-    const double qc_qr_scale = 1.0f;
-    const double kc_scale = 1.0f;
-
     aclnnStatus ret = aclnnInnerMlaPrologV2GetWorkspaceSize(
         tokenX, weightDq, weightUqQr, weightUk, weightDkvKr, rmsnormGammaCq, rmsnormGammaCkv, ropeSin, ropeCos,
         cacheIndex, kvCacheRef, krCacheRef, dequantScaleXOptional, dequantScaleWDqOptional, dequantScaleWUqQrOptional,
         dequantScaleWDkvKrOptional, quantScaleCkvOptional, quantScaleCkrOptional, smoothScalesCqOptional,
-        rmsnormEpsilonCq, rmsnormEpsilonCkv, cacheModeOptional, qc_qr_scale, kc_scale, queryOut, queryRopeOut, dequantScaleQNopeOutHolder,
-        workspaceSize, executor);
+        rmsnormEpsilonCq, rmsnormEpsilonCkv, cacheModeOptional, qcQrScale, kcScale,
+        queryOut, queryRopeOut, dequantScaleQNopeOutHolder, workspaceSize, executor);
 
     if (!isDequantScaleQNope) {
         aclDestroyTensor(dequantScaleQNopeOutHolder);
@@ -105,7 +104,7 @@ aclnnStatus aclnnMlaPrologV2WeightNzGetWorkspaceSize(
     return ret;
 }
 
-aclnnStatus aclnnMlaPrologV2WeightNz(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor,
+aclnnStatus aclnnMlaPrologV3(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor,
                                      const aclrtStream stream)
 {
     return aclnnInnerMlaPrologV2(workspace, workspaceSize, executor, stream);
