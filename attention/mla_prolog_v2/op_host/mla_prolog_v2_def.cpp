@@ -133,6 +133,8 @@ public:
         this->Attr("rmsnorm_epsilon_cq").AttrType(OPTIONAL).Float(1e-05f);
         this->Attr("rmsnorm_epsilon_ckv").AttrType(OPTIONAL).Float(1e-05f);
         this->Attr("cache_mode").AttrType(OPTIONAL).String("BNSD");
+        this->Attr("qc_qr_scale").AttrType(OPTIONAL).Float(1.0f);
+        this->Attr("kc_scale").AttrType(OPTIONAL).Float(1.0f);
         OpAICoreConfig aicore_config;
         aicore_config.DynamicCompileStaticFlag(true)
             .DynamicFormatFlag(true)

@@ -71,6 +71,8 @@ constexpr uint32_t DEQUANT_SCALE_Q_NOPE_OUTPUT_INDEX = 4;
 constexpr uint32_t RMS_NORM_EPSILON_CQ_ATTR_INDEX = 0;
 constexpr uint32_t RMS_NORM_EPSILON_CKV_ATTR_INDEX = 1;
 constexpr uint32_t CACHE_MODE_ATTR_INDEX = 2;
+constexpr uint32_t QC_QR_SCALE_ATTR_INDEX = 3;
+constexpr uint32_t KC_SCALE_ATTR_INDEX = 4;
 
 constexpr uint32_t MLA_PROLOG_DIM_INDEX_0 = 0;
 constexpr uint32_t MLA_PROLOG_DIM_INDEX_1 = 1;
@@ -120,6 +122,10 @@ TILING_DATA_FIELD_DEF(float, reciprocalCq);       // 1 / headSizeCq
 TILING_DATA_FIELD_DEF(float, epsilonCq);
 TILING_DATA_FIELD_DEF(float, reciprocalCkv);      // 1 / headSizeCkv
 TILING_DATA_FIELD_DEF(float, epsilonCkv);
+TILING_DATA_FIELD_DEF(float, qcQrScale);        // query scale correction factor
+TILING_DATA_FIELD_DEF(float, kcScale);          // key scale correction factor
+TILING_DATA_FIELD_DEF(bool, isQcQrScaleEnable);  // is query scale correction enable
+TILING_DATA_FIELD_DEF(bool, isKcScaleEnable);    // is key scale correction enable
 END_TILING_DATA_DEF
 REGISTER_TILING_DATA_CLASS(MlaPrologBaseParamsOp, MlaPrologBaseParams)
 
@@ -248,6 +254,8 @@ struct MlaPrologContext {
     const float *rmsNormEspilonCq;
     const float *rmsNormEspilonCkv;
     const char *cacheMode;
+    const float *qcQrScale;
+    const float *kcScale;
 
     size_t *workSpaces;
     uint64_t tilingKey;
@@ -302,6 +310,8 @@ private:
     float epsilonCq_ = 1.0;
     float reciprocalCkv_ = 0.00001f;
     float epsilonCkv_ = 1.0;
+    float qcQrScale_ = 1.0;
+    float kcScale_ = 1.0;
 
     ge::DataType mmDateType_ = ge::DT_BF16;
     bool enableDequantOpt_ = false;
