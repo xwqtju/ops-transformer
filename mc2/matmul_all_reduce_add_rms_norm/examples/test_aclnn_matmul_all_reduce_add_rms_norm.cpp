@@ -69,7 +69,7 @@ struct Args {
     aclrtContext context;
 };
 
-static inline void FreeTensor(void *tensor)
+static inline void FreeTensor(aclTensor *tensor)
 {
     if (tensor != nullptr) {
         aclDestroyTensor(tensor);

@@ -120,7 +120,7 @@ int CreateAclTensor(const std::vector<T> &hostData, const std::vector<int64_t> &
     return 0;
 }
 
-static inline void FreeTensor(void *tensor)
+static inline void FreeTensor(aclTensor *tensor)
 {
     if (tensor != nullptr) {
         aclDestroyTensor(tensor);
