@@ -42,8 +42,6 @@ aclnnStatus aclnnGroupedMatmulFinalizeRoutingV3GetWorkspaceSize(
     bool               transposeX1,
     bool               transposeX2,
     int64_t            groupListType,
-<<<<<<< HEAD
-=======
     const aclTensor   *x,
     aclTensor         *w,
     const aclTensor   *scaleOptional,
@@ -62,7 +60,6 @@ aclnnStatus aclnnGroupedMatmulFinalizeRoutingV3GetWorkspaceSize(
     bool               transposeX,
     bool               transposeW,
     int64_t            groupListType,
->>>>>>> 36a93df (update aclnn)
     const aclIntArray *tuningConfigOptional,
     aclTensor         *out,
     uint64_t          *workspaceSize,
