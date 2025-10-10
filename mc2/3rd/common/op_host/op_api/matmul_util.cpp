@@ -762,13 +762,12 @@ static bool CheckAscendCScenario(
     const bool transposeX2)
 {
     if ((GetCurrentPlatformInfo().GetSocVersion() != SocVersion::ASCEND910B &&
-         GetCurrentPlatformInfo().GetSocVersion() != SocVersion::ASCEND910_93 &&
-         GetCurrentPlatformInfo().GetSocVersion() != SocVersion::ASCEND910_95) ||
+         GetCurrentPlatformInfo().GetSocVersion() != SocVersion::ASCEND910_93) ||
         mmOpInfo.support_info.self_format != ge::FORMAT_ND) {
         OP_LOGI("Not mat_mul_v3 case for unsupported SOC version or unsupported Format.");
         return false;
     }
-    bool alwaysUseV3 = GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910_95;
+    bool alwaysUseV3 = false;
     return (alwaysUseV3 || CheckHitV3Shape(x1, x2, bias, mmOpInfo, transposeX1, transposeX2));
 }
 
@@ -1362,8 +1361,7 @@ const aclTensor* ExecGemmV3Op(
 
 bool IsInputSupportFp32() {
   if (op::GetCurrentPlatformInfo().GetSocVersion() != op::SocVersion::ASCEND910B &&
-      op::GetCurrentPlatformInfo().GetSocVersion() != op::SocVersion::ASCEND910_93 &&
-      op::GetCurrentPlatformInfo().GetSocVersion() != op::SocVersion::ASCEND910_95) {
+      op::GetCurrentPlatformInfo().GetSocVersion() != op::SocVersion::ASCEND910_93) {
     return false;
   }
   return true;
@@ -1422,8 +1420,7 @@ bool NeedToConvertBias(const aclTensor *self, const aclTensor *mat1, const aclTe
 
   bool isSplitK = false;
   if (op::GetCurrentPlatformInfo().GetSocVersion() != op::SocVersion::ASCEND910B &&
-      op::GetCurrentPlatformInfo().GetSocVersion() != op::SocVersion::ASCEND910_93 &&
-      op::GetCurrentPlatformInfo().GetSocVersion() != op::SocVersion::ASCEND910_95) {
+      op::GetCurrentPlatformInfo().GetSocVersion() != op::SocVersion::ASCEND910_93) {
     isSplitK = IsSplitk(&Tensor_matl, &Tensor_mat2);;
   }
   op::Shape selfShape = self->GetViewShape();
@@ -1485,9 +1482,6 @@ bool IsSplitk(const TensorInfo* self, const TensorInfo* mat2) {
 }
 
 bool IsFormatSupportNd(const aclTensor *self, const aclTensor *mat2) {
-  if (GetCurrentPlatformInfo().GetSocVersion() == SocVersion::ASCEND910_95) {
-    return true;
-  }
   if (GetCurrentPlatformInfo().GetSocVersion() != SocVersion::ASCEND910B &&
       GetCurrentPlatformInfo().GetSocVersion() != SocVersion::ASCEND910_93) {
     op::Shape selfShape = self->GetViewShape();
@@ -1853,8 +1847,7 @@ const aclTensor *ContiguousBias(const aclTensor *self, const aclTensor *bias, ac
     auto contiguousBias = l0op::Contiguous(bias, executor);
     CHECK_RET(contiguousBias != nullptr, nullptr);
     // bias为bf16时cast为fp32保证精度
-    if ((contiguousBias->GetDataType() == DataType::DT_BF16 &&
-          GetCurrentPlatformInfo().GetSocVersion() != SocVersion::ASCEND910_95)||
+    if ((contiguousBias->GetDataType() == DataType::DT_BF16)||
         self->GetDataType() == DataType::DT_FLOAT) {
         contiguousBias = l0op::Cast(contiguousBias, op::DataType::DT_FLOAT, executor);
         CHECK_RET(contiguousBias != nullptr, nullptr);
