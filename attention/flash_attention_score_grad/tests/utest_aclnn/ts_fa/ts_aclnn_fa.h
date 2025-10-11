@@ -9,7 +9,7 @@
  */
 
 /*!
- * \file ts_fa.h
+ * \file ts_aclnn_fa.h
  * \brief FlashAttentionScore / FlashAttentionScoreGrad UTest 相关基类定义.
  */
 
@@ -19,24 +19,23 @@
 #include "fa_case.h"
 #include "aclnn_fa_case.h"
 
-using FaParam = ops::adv::tests::fa::FaParam;
+using AclnnFaParam = ops::adv::tests::fa::AclnnFaParam;
 using PseShapeType = ops::adv::tests::fa::FaParam::PseShapeType;
 using DropMaskShapeType = ops::adv::tests::fa::FaParam::DropMaskShapeType;
 using PaddingMaskShapeType = ops::adv::tests::fa::FaParam::PaddingMaskShapeType;
 using AttenMaskShapeType = ops::adv::tests::fa::FaParam::AttenMaskShapeType;
 using PrefixShapeType = ops::adv::tests::fa::FaParam::PrefixShapeType;
 using LayoutType = ops::adv::tests::fa::FaParam::LayoutType;
-using FaCase = ops::adv::tests::fa::FaCase;
+using AclnnFaCase = ops::adv::tests::fa::AclnnFaCase;
 using ExpectInfoWithSocversion = ops::adv::tests::utils::ExpectInfoWithSocversion;
 using OpInfoWithSocversion = ops::adv::tests::utils::OpInfoWithSocversion;
 
-class Ts_Fa : public Ts<FaCase> {};
-class Ts_Fa_Ascend910B1 : public Ts_Ascend910B1<FaCase> {};
-class Ts_Fa_Ascend910B2 : public Ts_Ascend910B2<FaCase> {};
-class Ts_Fa_Ascend910B3 : public Ts_Ascend910B3<FaCase> {};
-class Ts_Fa_Ascend910_9591 : public Ts_Ascend910_9591<FaCase> {};
+class Ts_Aclnn_Fa : public Ts<AclnnFaCase> {};
+class Ts_Aclnn_Fa_Ascend910B1 : public Ts_Ascend910B1<AclnnFaCase> {};
+class Ts_Aclnn_Fa_Ascend910B2 : public Ts_Ascend910B2<AclnnFaCase> {};
+class Ts_Aclnn_Fa_Ascend910B3 : public Ts_Ascend910B3<AclnnFaCase> {};
 
-class Ts_Fa_WithParam : public Ts_WithParam<FaCase> {};
-class Ts_Fa_WithParam_Ascend910B1 : public Ts_WithParam_Ascend910B1<FaCase> {};
-class Ts_Fa_WithParam_Ascend910B2 : public Ts_WithParam_Ascend910B2<FaCase> {};
-class Ts_Fa_WithParam_Ascend910B3 : public Ts_WithParam_Ascend910B3<FaCase> {};
+class Ts_Aclnn_Fa_WithParam : public Ts_WithParam<AclnnFaCase> {};
+class Ts_Aclnn_Fa_WithParam_Ascend910B1 : public Ts_WithParam_Ascend910B1<AclnnFaCase> {};
+class Ts_Aclnn_Fa_WithParam_Ascend910B2 : public Ts_WithParam_Ascend910B2<AclnnFaCase> {};
+class Ts_Aclnn_Fa_WithParam_Ascend910B3 : public Ts_WithParam_Ascend910B3<AclnnFaCase> {};

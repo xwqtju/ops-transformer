@@ -9,25 +9,25 @@
  */
 
 /*!
- * \file ts_fas.h
- * \brief FlashAttentionScore UTest 基类定义.
+ * \file ts_aclnn_fag.h
+ * \brief FlashAttentionScoreGrad UTest 相关基类定义.
  */
 
-#include "ts_fa/ts_fa.h"
-#include "fas_case.h"
-#include "../../../op_kernel/flash_attention_score_tiling.h"
+#pragma once
 
-using FasCase = ops::adv::tests::fas::FasCase;
+#include "ts_fa/ts_aclnn_fa.h"
+#include "aclnn_fag_case.h"
+
+using AclnnFagCase = ops::adv::tests::fag::AclnnFagCase;
 using ExpectInfoWithSocversion = ops::adv::tests::utils::ExpectInfoWithSocversion;
 using OpInfoWithSocversion = ops::adv::tests::utils::OpInfoWithSocversion;
 
-class Ts_Fas : public Ts<FasCase> {};
-class Ts_Fas_Ascend910B1 : public Ts_Ascend910B1<FasCase> {};
-class Ts_Fas_Ascend910B2 : public Ts_Ascend910B2<FasCase> {};
-class Ts_Fas_Ascend910B3 : public Ts_Ascend910B3<FasCase> {};
-class Ts_Fas_Ascend910_9591 : public Ts_Ascend910_9591<FasCase> {};
+class Ts_Aclnn_Fag : public Ts<AclnnFagCase> {};
+class Ts_Aclnn_Fag_Ascend910B1 : public Ts_Ascend910B1<AclnnFagCase> {};
+class Ts_Aclnn_Fag_Ascend910B2 : public Ts_Ascend910B2<AclnnFagCase> {};
+class Ts_Aclnn_Fag_Ascend910B3 : public Ts_Ascend910B3<AclnnFagCase> {};
 
-class Ts_Fas_WithParam : public Ts_WithParam<FasCase> {};
-class Ts_Fas_WithParam_Ascend910B1 : public Ts_WithParam_Ascend910B1<FasCase> {};
-class Ts_Fas_WithParam_Ascend910B2 : public Ts_WithParam_Ascend910B2<FasCase> {};
-class Ts_Fas_WithParam_Ascend910B3 : public Ts_WithParam_Ascend910B3<FasCase> {};
+class Ts_Aclnn_Fag_WithParam : public Ts_WithParam<AclnnFagCase> {};
+class Ts_Aclnn_Fag_WithParam_Ascend910B1 : public Ts_WithParam_Ascend910B1<AclnnFagCase> {};
+class Ts_Aclnn_Fag_WithParam_Ascend910B2 : public Ts_WithParam_Ascend910B2<AclnnFagCase> {};
+class Ts_Aclnn_Fag_WithParam_Ascend910B3 : public Ts_WithParam_Ascend910B3<AclnnFagCase> {};
