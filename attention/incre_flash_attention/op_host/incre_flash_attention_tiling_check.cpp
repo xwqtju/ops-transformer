@@ -1949,9 +1949,19 @@ ge::graphStatus IFATiling::CheckGqaTensorEmpty() const
 ge::graphStatus IFATiling::CheckGqaHeadsNum() const
 {
     switch (numHeads_) {
+        case 8U:
+            OP_CHECK_IF(numKvHeads_ != 1U, OP_LOGE(context_->opName,
+                "When numHead = 8, the key/value's heads num should be 1, but now it's %u in IFA GQA with KV NZ.",
+                    numKvHeads_), return ge::GRAPH_FAILED);
+            break;
         case 10U:
             OP_CHECK_IF(numKvHeads_ != 1U, OP_LOGE(context_->opName,
                 "When numHead = 10, the key/value's heads num should be 1, but now it's %u in IFA GQA with KV NZ.",
+                    numKvHeads_), return ge::GRAPH_FAILED);
+            break;
+        case 16U:
+            OP_CHECK_IF((numKvHeads_ != 1U && numKvHeads_ != 2U), OP_LOGE(context_->opName,
+                "When numHead = 16, the key/value's heads num should be 1 or 2, but now it's %u in IFA GQA with KV NZ.",
                     numKvHeads_), return ge::GRAPH_FAILED);
             break;
         case 64U:
@@ -1972,7 +1982,7 @@ ge::graphStatus IFATiling::CheckGqaHeadsNum() const
         default:
             OP_LOGE(context_->opName,
                 "Parameters the query's heads num = %u, the key/value's heads num = %u is not expected in IFA GQA with KV NZ."
-                "Expect [10, 1], [64, 8], [80, 8], [128, 16].", numHeads_, numKvHeads_);
+                "Expect [8, 1], [10, 1], [16, 1], [16, 2], [64, 8], [80, 8], [128, 16].", numHeads_, numKvHeads_);
             return ge::GRAPH_FAILED;
     }
     return ge::GRAPH_SUCCESS;
