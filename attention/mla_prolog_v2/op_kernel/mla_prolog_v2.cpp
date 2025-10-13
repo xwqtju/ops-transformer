@@ -62,7 +62,7 @@ mla_prolog_v2(
     const optiling::MlaPrologBaseParams *__restrict tilingDataBaseParams = &tilingDataIn.baseParams;
 
     TPipe pipe;
-    if constexpr (Scenario == 1U && QuantMode == 0U) {
+    if constexpr (Scenario == SCENARIO::NO_QUANT) {
         MlaPrologVecS1CubS2<MLAPType<bfloat16_t, bfloat16_t, bfloat16_t, cacheMode,
             EnableDequantOpt, EnableGroupComputeOpt, emptyMode>> op(&pipe, tilingData, tilingDataBaseParams);
         op.Init(tokenX, weightDq, weightUqQr, weightUk, weightDkvKr, rmsnormGammaCq, rmsnormGammaCkv, ropeSin,
@@ -71,7 +71,7 @@ mla_prolog_v2(
                 dequantScaleQNopeOut, workspace);
         op.Process();
 
-    } else if constexpr (Scenario == 2U && QuantMode == 0U) {
+    } else if constexpr (Scenario == SCENARIO::QUANT && QuantMode == QUANT_MODE::PARTIAL_QUANT_KV_NO_QUANT) {
         MlaPrologVecS1CubS2<MLAPType<bfloat16_t, int8_t, bfloat16_t, cacheMode,
             EnableDequantOpt, EnableGroupComputeOpt, emptyMode>> op(&pipe, tilingData, tilingDataBaseParams);
         op.Init(tokenX, weightDq, weightUqQr, weightUk, weightDkvKr, rmsnormGammaCq, rmsnormGammaCkv, ropeSin,
@@ -80,7 +80,7 @@ mla_prolog_v2(
                 dequantScaleQNopeOut, workspace);
         op.Process();
 
-    } else if constexpr (Scenario == 2U && QuantMode == 1U) {
+    } else if constexpr (Scenario == SCENARIO::QUANT && QuantMode == QUANT_MODE::PARTIAL_QUANT_KV_QUANT) {
         MlaPrologVecS1CubS2<MLAPType<bfloat16_t, int8_t, int8_t, cacheMode,
             EnableDequantOpt, EnableGroupComputeOpt, emptyMode>> op(&pipe, tilingData, tilingDataBaseParams);
         op.Init(tokenX, weightDq, weightUqQr, weightUk, weightDkvKr, rmsnormGammaCq, rmsnormGammaCkv, ropeSin,
@@ -89,7 +89,7 @@ mla_prolog_v2(
                 dequantScaleQNopeOut, workspace);
         op.Process();
 
-    } else if constexpr (Scenario == 2U && QuantMode == 2U) {
+    } else if constexpr (Scenario == SCENARIO::QUANT && QuantMode == FULL_QUANT_KV_NO_QUANT) {
         MlaPrologVecS1CubS2<MLAPType<int8_t, int8_t, bfloat16_t, cacheMode,
             EnableDequantOpt, EnableGroupComputeOpt, emptyMode>> op(&pipe, tilingData, tilingDataBaseParams);
         op.Init(tokenX, weightDq, weightUqQr, weightUk, weightDkvKr, rmsnormGammaCq, rmsnormGammaCkv, ropeSin,
@@ -98,7 +98,7 @@ mla_prolog_v2(
                 dequantScaleQNopeOut, workspace);
         op.Process();
 
-    } else if constexpr (Scenario == 2U && QuantMode == 3U) {
+    } else if constexpr (Scenario == SCENARIO::QUANT && QuantMode == FULL_QUANT_KV_QUANT) {
         MlaPrologVecS1CubS2<MLAPType<int8_t, int8_t, int8_t, cacheMode,
             EnableDequantOpt, EnableGroupComputeOpt, emptyMode>> op(&pipe, tilingData, tilingDataBaseParams);
         op.Init(tokenX, weightDq, weightUqQr, weightUk, weightDkvKr, rmsnormGammaCq, rmsnormGammaCkv, ropeSin,
