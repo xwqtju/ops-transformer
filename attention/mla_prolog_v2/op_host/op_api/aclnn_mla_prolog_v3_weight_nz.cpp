@@ -46,7 +46,7 @@ extern aclnnStatus aclnnInnerMlaPrologV2(void *workspace, uint64_t workspaceSize
                                          const aclrtStream stream);
 
 
-aclnnStatus aclnnMlaPrologV3GetWorkspaceSize(
+aclnnStatus aclnnMlaPrologV3WeightNzGetWorkspaceSize(
     const aclTensor *tokenX,
     const aclTensor *weightDq,
     const aclTensor *weightUqQr,
