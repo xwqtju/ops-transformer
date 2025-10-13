@@ -61,6 +61,11 @@ graphStatus MlaV2HostExecuteFunc(OpExecuteContext *host_api_ctx)
     OP_CHECK_IF(apiRet != GRAPH_SUCCESS, OP_LOGE("aclnnfallback", "Context get attr failed"),
         return GRAPH_FAILED);
 
+    const double *getQcQrScale = host_api_ctx->GetAttrs()->GetAttrPointer<double>(ATTR_QC_QR_SCALE_INDEX);
+    const double *getKcScale = host_api_ctx->GetAttrs()->GetAttrPointer<double>(ATTR_KC_SCALE_INDEX);
+    OP_CHECK_IF(getQcQrScale == nullptr || getKcScale == nullptr, OP_LOGE("aclnnfallback", "Context get attr failed"),
+        return GRAPH_FAILED);
+
     apiRet = EXEC_OPAPI_CMD(
         aclnnMlaPrologV2WeightNz, param.tokenX, param.weightDq, param.weightUqQr, param.weightUk, param.weightDkvKr,
         param.rmsnormGammaCq, param.rmsnormGammaCkv, param.ropeSin, param.ropeCos, param.cacheIndex,
