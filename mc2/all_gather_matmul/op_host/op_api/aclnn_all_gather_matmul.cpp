@@ -168,6 +168,8 @@ static aclnnStatus CheckParams(const aclTensor *x1, const aclTensor *x2, const a
     "Features and accuracy are not guaranteed if inputting bias with values other than 0s.");
   }
 
+  OP_CHECK_WRONG_DIMENSION(bias, 1, return false);
+
   CHECK_RET(CheckDtypeValid(x1, x2, bias, output), ACLNN_ERR_PARAM_INVALID);
 
   CHECK_RET(CheckAttr(streamMode), ACLNN_ERR_PARAM_INVALID);

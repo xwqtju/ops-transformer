@@ -219,7 +219,7 @@ aclnnStatus aclnnAllGatherMatmul(
         <td>streamMode不在合法范围内。</td>
     </tr>
     <tr>
-        <td>x1是空tensor。</td>
+        <td>x1是空tensor且k为空。</td>
     </tr>
     </tbody>
     </table>
