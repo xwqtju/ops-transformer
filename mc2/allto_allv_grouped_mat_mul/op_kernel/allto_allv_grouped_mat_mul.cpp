@@ -103,6 +103,5 @@ extern "C" __global__ __aicore__ void allto_allv_grouped_mat_mul(
         INVOKE_ALLTOALLV_GROUPED_MATMUL_OP_IMPL();
         return;
     }
-
     return;
 }
