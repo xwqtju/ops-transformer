@@ -49,6 +49,8 @@ static graphStatus MoeDistributeCombineExecuteFunc(OpExecuteContext* host_api_ct
   const auto group_list = host_api_ctx->GetOptionalInputTensor(static_cast<size_t>(9));
 
   const auto expand_scales = host_api_ctx->GetOptionalInputTensor(static_cast<size_t>(10));
+
+  const auto wait_cost = host_api_ctx->GetOptionalInputTensor(static_cast<size_t>(11));
   
   const auto y = host_api_ctx->GetOutputTensor(static_cast<size_t>(0));
   OP_CHECK_IF(y == nullptr, OP_LOGE(MoeDistributeCombineInfo,"y is null"), return ge::GRAPH_FAILED);
@@ -101,7 +103,7 @@ static graphStatus MoeDistributeCombineExecuteFunc(OpExecuteContext* host_api_ct
   OP_CHECK_IF(group_list_type_ptr == nullptr, OP_LOGE(MoeDistributeCombineInfo,"group_list_type is null"), return ge::GRAPH_FAILED);
 
   const auto api_ret = EXEC_OPAPI_CMD(aclnnMoeDistributeCombine, expand_x, expert_ids, expand_idx, ep_send_counts,
-    expert_scales, tp_send_counts, x_active_mask, activation_scale, weight_scale, group_list, expand_scales, 
+    expert_scales, tp_send_counts, x_active_mask, activation_scale, weight_scale, group_list, expand_scales, wait_cost,
     group_ep, *ep_word_size, *ep_rank_id, *moe_expert_num, group_tp, *tp_word_size, *tp_rank_id,
     *expert_shard_type, *shared_expert_num, *shared_expert_rank_num, *global_bs_ptr, *out_dtype_ptr, 
     *comm_quant_mode_ptr, *group_list_type_ptr, y);

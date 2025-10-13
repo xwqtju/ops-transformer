@@ -57,7 +57,7 @@ template <TemplateMC2TypeClass>
 class MoeDistributeDispatch {
 public:
     __aicore__ inline MoeDistributeDispatch() {};
-    __aicore__ inline void Init(GM_ADDR x, GM_ADDR expertIds, GM_ADDR scales, GM_ADDR expandXOut, 
+    __aicore__ inline void Init(GM_ADDR x, GM_ADDR expertIds, GM_ADDR scales, GM_ADDR waitCost, GM_ADDR expandXOut, 
         GM_ADDR dynamicScalesOut, GM_ADDR expandIdxOut, GM_ADDR expertTokenNumsOut, 
         GM_ADDR sendCountsOut, GM_ADDR tpSendCountsOut, GM_ADDR workspaceGM, TPipe *pipe, 
         const MoeDistributeDispatchTilingData *tilingData);
@@ -127,10 +127,11 @@ private:
     GlobalTensor<ExpandXOutType> windowInQuantTensor_;
     GlobalTensor<int32_t> windowInstatusTensor_;
     GlobalTensor<float> windowInstatusFp32Tensor_;
-
     GlobalTensor<ExpandXOutType> winTpGatherOutGMTensor_;
     GlobalTensor<float> fpWinTpGatherOutGMTensor_;
     GlobalTensor<int32_t> winTpEpCntGMTensor_;
+    GlobalTensor<uint64_t> waitCostGMTensor_;
+    GlobalTensor<int32_t> waitCostU32GMTensor_;
 
     LocalTensor<ExpandXOutType> xTmpTensor_;
     LocalTensor<int32_t> tpTmpTensor_;
@@ -148,6 +149,9 @@ private:
     LocalTensor<int32_t> dstExpIdTensor_;
     LocalTensor<int32_t> subExpIdTensor_;
     LocalTensor<float> workLocalTensor_;
+    LocalTensor<uint64_t> waitCostU64Tensor_;
+    LocalTensor<int32_t> waitCostU32Tensor_;
+
     TBuf<> dynamicScalesBuf_;
     TBuf<> expertCountBuf_;
     TBuf<> expertIdsBuf_;
@@ -162,6 +166,7 @@ private:
     TBuf<> subExpBuf_;
     TBuf<> workLocalBuf_;
     TBuf<> gatherTmpBuf_;
+    TBuf<> waitCostBuf_;
     TQueBind<QuePosition::VECIN, QuePosition::VECOUT, 1> xQueue_; // 非量化使用，量化场景接收也可使用
     TQue<QuePosition::VECIN, 1> xInQueue_; // 量化使用，量化前的输入
     TQue<QuePosition::VECOUT, 1> xOutQueue_; // 量化使用，量化后的输出
@@ -177,6 +182,7 @@ private:
     GM_ADDR tpStatusWindowGM_;
     GM_ADDR tpLocalWindowGM_;
     GM_ADDR tpLocalStatusWindowGM_;
+    GM_ADDR waitCostGM_; 
 
     DataCopyExtParams dataCopyParamsFloat_;
 
@@ -227,12 +233,14 @@ private:
     uint32_t gatherCount_{0};
     uint32_t expertTokenNumsType_{1};
     uint32_t preCnt_{0};
+    uint32_t waitCostSize_{0}; 
+    bool isWaitCost=false;
     __gm__ HcclOpResParam *winContext_[COMM_NUM]{nullptr, nullptr};
 };
 
 template <TemplateMC2TypeClass>
 __aicore__ inline void MoeDistributeDispatch<TemplateMC2TypeFunc>::Init(
-    GM_ADDR x, GM_ADDR expertIds, GM_ADDR scales, GM_ADDR expandXOut, GM_ADDR dynamicScalesOut,
+    GM_ADDR x, GM_ADDR expertIds, GM_ADDR scales, GM_ADDR waitCost, GM_ADDR expandXOut, GM_ADDR dynamicScalesOut,
     GM_ADDR expandIdxOut, GM_ADDR expertTokenNumsOut, GM_ADDR sendCountsOut, GM_ADDR tpSendCountsOut,
     GM_ADDR workspaceGM, TPipe *pipe, const MoeDistributeDispatchTilingData *tilingData)
 {
@@ -280,6 +288,8 @@ __aicore__ inline void MoeDistributeDispatch<TemplateMC2TypeFunc>::Init(
     axisK_ = tilingData->moeDistributeDispatchInfo.k;
     aivNum_ = tilingData->moeDistributeDispatchInfo.aivNum;
     tpWorldSize_ = tilingData->moeDistributeDispatchInfo.tpWorldSize;
+    waitCostSize_ = epWorldSize_;
+    isWaitCost = (waitCost != nullptr);
     xGMTensor_.SetGlobalBuffer((__gm__ XType*)x);
     expertIdsGMTensor_.SetGlobalBuffer((__gm__ int32_t*)expertIds);
     expandXOutGMTensor_.SetGlobalBuffer((__gm__ ExpandXOutType*)expandXOut);
@@ -304,10 +314,17 @@ __aicore__ inline void MoeDistributeDispatch<TemplateMC2TypeFunc>::Init(
         fpWinTpGatherOutGMTensor_.SetGlobalBuffer((__gm__ float*)tpWindowGM_);
         winTpEpCntGMTensor_.SetGlobalBuffer((__gm__ int32_t*)(tpStatusWindowGM_ + TP_STATE_SIZE));
     }
+    if (isWaitCost) {
+        waitCostGMTensor_.SetGlobalBuffer((__gm__ uint64_t*)waitCost);
+        waitCostU32GMTensor_.SetGlobalBuffer((__gm__ int32_t*)waitCost);
+    }
     expandXOutGM_ = expandXOut;
     expandIdxOutGM_ = expandIdxOut; // 无GlobalTensor
     sendCountsOutGM_ = sendCountsOut; // 无GlobalTensor
     sendTpCountOutGM_ = tpSendCountsOut;
+    if (isWaitCost) {
+        waitCostGM_ = waitCost;
+    }
     isQuant_ = StaticQuant | DynamicQuant;
     hSize_ = axisH_ * sizeof(XType);
     hOutSize_ = axisH_ * sizeof(ExpandXOutType); // 如有量化，需要量化后通信
@@ -365,6 +382,13 @@ __aicore__ inline void MoeDistributeDispatch<TemplateMC2TypeFunc>::Init(
 
     tpipe_->InitBuffer(expertCountBuf_, expertIdsSize); // BS * K * 4
     expertCountTensor_ = expertCountBuf_.Get<int32_t>();
+
+    if (isWaitCost) {
+        tpipe_->InitBuffer(waitCostBuf_, waitCostSize_ * sizeof(uint64_t));
+        waitCostU64Tensor_ = waitCostBuf_.Get<uint64_t>();
+        waitCostU32Tensor_ = waitCostU64Tensor_.template ReinterpretCast<int32_t>();
+        Duplicate<int32_t>(waitCostU32Tensor_, 0, waitCostSize_ * 2);
+    } 
 
     // reduceSum计算所需的Tensor空间，取最大统一前面申请
     int32_t reduceSumCalMaxCnt = (epWorldSize_ > expertIdsCnt_) ? epWorldSize_ : expertIdsCnt_;
@@ -693,6 +717,7 @@ __aicore__ inline void MoeDistributeDispatch<TemplateMC2TypeFunc>::WaitDispatch(
     DataCopyParams intriParams{static_cast<uint16_t>(recStatusNumPerCore_), 1,
                                static_cast<uint16_t>((recvWinBlockNum_ > 512) ? 7 : 15), 0}; // srcStride为15个block
     SyncFunc<AscendC::HardEvent::S_V>();
+    auto start = GetSystemCycle() / 50;
     while ((sumOfFlag < minTarget) || (sumOfFlag > maxTarget)) {
         DataCopy(statusFp32Tensor_, windowInstatusFp32Tensor_[startStatusIndex * stateOffset_ / sizeof(float)], intriParams);
         SyncFunc<AscendC::HardEvent::MTE2_V>();
@@ -703,6 +728,20 @@ __aicore__ inline void MoeDistributeDispatch<TemplateMC2TypeFunc>::WaitDispatch(
         SyncFunc<AscendC::HardEvent::V_S>();
         sumOfFlag = statusSumOutTensor.GetValue(0);
     }
+    
+    auto end = GetSystemCycle() / 50; //zly
+    auto duration = end - start; //zly
+    //auto curServerId = rankId_ / SERVER_RANK_SIZE;
+    //auto id = curServerId * SERVER_RANK_SIZE + destRankIdx;
+    
+    if (isWaitCost){
+        Duplicate<int32_t>(waitCostU32Tensor_, 0, waitCostSize_ * 2);
+        //waitCostU32Tensor_.SetValue(id*2, duration);
+	    AscendC::SetAtomicAdd<int32_t>();
+	    AscendC::DataCopy(waitCostU32GMTensor_, waitCostU32Tensor_, waitCostSize_*2);
+        AscendC::SetAtomicNone();
+    }
+
     SyncAll<true>();
 }
 

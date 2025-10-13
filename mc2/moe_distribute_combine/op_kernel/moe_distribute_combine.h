@@ -53,7 +53,7 @@ class MoeDistributeCombine {
 public:
     __aicore__ inline MoeDistributeCombine() {};
     __aicore__ inline void Init(GM_ADDR expandX, GM_ADDR expertIds, GM_ADDR expandIdx, GM_ADDR epSendCount,
-        GM_ADDR tpSendCount, GM_ADDR scales, GM_ADDR XOut, GM_ADDR workspaceGM, TPipe *pipe,
+        GM_ADDR tpSendCount, GM_ADDR scales, GM_ADDR waitCost, GM_ADDR XOut, GM_ADDR workspaceGM, TPipe *pipe,
         const MoeDistributeCombineTilingData *tilingData);
     __aicore__ inline void Process();
 private:
@@ -224,7 +224,7 @@ private:
 
 template <TemplateMC2TypeClass>
 __aicore__ inline void MoeDistributeCombine<TemplateMC2TypeFunc>::Init(GM_ADDR expandX, GM_ADDR expertIds,
-    GM_ADDR expandIdx, GM_ADDR epSendCount, GM_ADDR tpSendCount, GM_ADDR scales, GM_ADDR XOut, GM_ADDR workspaceGM,
+    GM_ADDR expandIdx, GM_ADDR epSendCount, GM_ADDR tpSendCount, GM_ADDR scales, GM_ADDR waitCost, GM_ADDR XOut, GM_ADDR workspaceGM,
     TPipe *pipe, const MoeDistributeCombineTilingData *tilingData)
 {
     tpipe_ = pipe;

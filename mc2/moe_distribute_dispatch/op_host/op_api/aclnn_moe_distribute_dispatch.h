@@ -57,7 +57,7 @@ extern "C" {
  */
 ACLNN_API aclnnStatus aclnnMoeDistributeDispatchGetWorkspaceSize(const aclTensor* x, const aclTensor* expertIds,
     const aclTensor* scales, const aclTensor* xActiveMask,
-    const aclTensor* expertScales,
+    const aclTensor* expertScales, const aclTensor* waitCost,
     const char* groupEp, int64_t epWorldSize, int64_t epRankId,
     int64_t moeExpertNum, const char* groupTp, int64_t tpWorldSize,
     int64_t tpRankId, int64_t expertShardType, int64_t sharedExpertNum, 

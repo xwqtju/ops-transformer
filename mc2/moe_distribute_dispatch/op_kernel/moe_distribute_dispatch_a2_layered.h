@@ -69,7 +69,7 @@ inline __aicore__ T RoundUp(const T val, const T align) {
 
 public:
     __aicore__ inline MoeDistributeDispatchA2Layered() {};
-    __aicore__ inline void Init(GM_ADDR x, GM_ADDR expertIds, GM_ADDR scales, GM_ADDR expertScales, GM_ADDR expandXOut,
+    __aicore__ inline void Init(GM_ADDR x, GM_ADDR expertIds, GM_ADDR scales, GM_ADDR expertScales, GM_ADDR waitCost, GM_ADDR expandXOut,
         GM_ADDR dynamicScalesOut, GM_ADDR expandIdxOut, GM_ADDR expertTokenNumsOut, GM_ADDR epRecvCountsOut,
         GM_ADDR expandScales, GM_ADDR workspaceGM, TPipe *pipe, GM_ADDR tilingGM, GM_ADDR contextGM0);
     __aicore__ inline void Process();
@@ -107,6 +107,8 @@ private:
     GlobalTensor<uint32_t> expertToServerGlobalTensor_;
     GlobalTensor<uint64_t> readStatusTensor_;
     GlobalTensor<uint64_t> tokenAddrFlagStructGlobalU64Tensor_;
+    GlobalTensor<uint64_t> waitCostGMTensor_;
+    GlobalTensor<int32_t> waitCostU32GMTensor_;
 
     LocalTensor<int32_t> expertCountTensor_;
     LocalTensor<int16_t> expertIdsI16Tensor_;
@@ -116,8 +118,11 @@ private:
     LocalTensor<uint32_t> expertToServerIdxTensor_;
     LocalTensor<uint64_t> ubLocal;
     LocalTensor<uint32_t> ubLocalHead;
+    LocalTensor<uint64_t> waitCostU64Tensor_;
+    LocalTensor<int32_t> waitCostU32Tensor_;
 
     TBuf<> statusBuf_;
+    TBuf<> waitCostBuf_;
     TBuf<QuePosition::VECCALC> tBuf;
     TBuf<TPosition::VECOUT> rdmaInBuf_;
     TBuf<TPosition::VECOUT> rdmaInBuf2_;
@@ -134,6 +139,7 @@ private:
     GM_ADDR expertToServerCntGM_;
     GM_ADDR shareAddrs[8];
     GM_ADDR tokenAddrFlagStructGM_;
+    GM_ADDR waitCostGM_;
 
     // tiling侧已确保数据上限，相乘不会越界，因此统一采用uint32_t进行处理
     uint32_t axisBS_{0};
@@ -161,6 +167,8 @@ private:
     uint32_t expertTokenNumsType_{0};
     uint32_t shareMemOffset_{0};
     uint32_t tokenUbSize_{0};
+    uint32_t waitCostSize_{0};
+    bool isWaitCost=false;
 
     // TokenStruck
     uint32_t tokenGapInStruct_{0};
@@ -192,7 +200,7 @@ private:
 
 template <TemplateMC2TypeA2layeredClass>
 __aicore__ inline void MoeDistributeDispatchA2Layered<TemplateMC2TypeA2layeredFunc>::Init(
-    GM_ADDR x, GM_ADDR expertIds, GM_ADDR scales, GM_ADDR expertScales, GM_ADDR expandXOut, GM_ADDR dynamicScalesOut,
+    GM_ADDR x, GM_ADDR expertIds, GM_ADDR scales, GM_ADDR expertScales, GM_ADDR waitCost, GM_ADDR expandXOut, GM_ADDR dynamicScalesOut,
     GM_ADDR expandIdxOut, GM_ADDR expertTokenNumsOut, GM_ADDR epRecvCountsOut, GM_ADDR expandScales,
     GM_ADDR workspaceGM, TPipe *pipe, GM_ADDR tilingGM, GM_ADDR contextGM0)
 {
@@ -227,6 +235,8 @@ __aicore__ inline void MoeDistributeDispatchA2Layered<TemplateMC2TypeA2layeredFu
     aivId_ = GetBlockIdx();
     expertIdsCnt_ = axisBS_ * axisK_;
     serverNum = worldSize_ / SERVER_RANK_SIZE;
+    waitCostSize_ = worldSize_;
+    isWaitCost = (waitCost != nullptr);
 
     uint64_t winSizeMin = moeExpertNum_ * axisBS_ * (axisH_ * sizeof(XType) + EXTRA_TOKEN_INFO_NUM * alignK_ * sizeof(uint32_t)) +
         IPC_DATA_OFFSET + RDMA_DATA_SIZE; // 考虑负载极其不均衡时，HCCL BUFFSIZE需要开的大小
@@ -279,11 +289,18 @@ __aicore__ inline void MoeDistributeDispatchA2Layered<TemplateMC2TypeA2layeredFu
                                         worldSize_ * axisBS_ * localMoeExpertNum_ * axisH_);
     dynamicScalesOutGMTensor_.SetGlobalBuffer((__gm__ float*)(dynamicScalesOut));
     weightsOutGt.SetGlobalBuffer((__gm__ float*)(expandScales));
+    if (isWaitCost) {
+        waitCostGMTensor_.SetGlobalBuffer((__gm__ uint64_t*)waitCost);
+        waitCostU32GMTensor_.SetGlobalBuffer((__gm__ int32_t*)waitCost);
+    } 
     expertTokenNumsOutGM_ = expertTokenNumsOut; // 无GlobalTensor
     epRecvCountsGM_ = epRecvCountsOut; // 无GlobalTensor
     expandXGM_ = x;
     expandIdxGM_ = expertIds;
     weightsGM_ = expertScales;
+    if (isWaitCost) {
+        waitCostGM_ = waitCost;
+    }
 
     //RDMA send/recv global tensor init
     sendTokensU8Tensor_.SetGlobalBuffer((__gm__ uint8_t*)(windowOutGM_));
@@ -313,6 +330,13 @@ __aicore__ inline void MoeDistributeDispatchA2Layered<TemplateMC2TypeA2layeredFu
     ubLocalHead = rdmaInBuf2_.Get<uint32_t>();
 
     tpipe_->InitBuffer(tBuf, TBUF_SIZE);
+
+    if (isWaitCost) {
+        tpipe_->InitBuffer(waitCostBuf_, waitCostSize_ * sizeof(uint64_t));
+        waitCostU64Tensor_ = waitCostBuf_.Get<uint64_t>();
+        waitCostU32Tensor_ = waitCostU64Tensor_.template ReinterpretCast<int32_t>();
+        Duplicate<int32_t>(waitCostU32Tensor_, 0, waitCostSize_ * 2);
+    }
 
     // The maximum value of expertIdsCnt_ is 256 * 16, so there is no integer wrap.
     uint32_t expertIdsSize = RoundUp(expertIdsCnt_ * static_cast<uint32_t>(sizeof(int16_t)), UB_32B_ALIGN);
@@ -966,6 +990,7 @@ __aicore__ inline void MoeDistributeDispatchA2Layered<TemplateMC2TypeA2layeredFu
     flagIpcGt.SetGlobalBuffer((__gm__ int64_t*)(shareAddrs[localRankId] + IPC_FLAG_OFFSET) +
         destRankIdx * B64_PER_BLOCK);
     PipeBarrier<PIPE_ALL>();
+    auto start = GetSystemCycle() / 50;
     do {
         DataCopy(localWait, flagIpcGt, B64_PER_BLOCK);
         SyncFunc<AscendC::HardEvent::MTE2_S>();
@@ -975,6 +1000,19 @@ __aicore__ inline void MoeDistributeDispatchA2Layered<TemplateMC2TypeA2layeredFu
             break;
         }
     } while (isSync);
+    
+    auto end = GetSystemCycle() / 50; //zly
+    auto duration = end - start; //zly
+    auto curServerId = rankId_ / SERVER_RANK_SIZE;
+    auto id = curServerId * SERVER_RANK_SIZE + destRankIdx;
+    
+    if (isWaitCost){
+        Duplicate<int32_t>(waitCostU32Tensor_, 0, waitCostSize_ * 2);
+        waitCostU32Tensor_.SetValue(id*2, duration);
+	    AscendC::SetAtomicAdd<int32_t>();
+	    AscendC::DataCopy(waitCostU32GMTensor_, waitCostU32Tensor_, waitCostSize_*2);
+        AscendC::SetAtomicNone();
+    }
 }
 
 template <TemplateMC2TypeA2layeredClass>
