@@ -466,6 +466,7 @@ macro(add_graph_plugin_sources)
   file(GLOB GRAPH_PLUGIN_SRCS 
       ${SOURCE_DIR}/*_graph_plugin*.cpp
       ${SOURCE_DIR}/../op_host/*_infershape.cpp
+      ${SOURCE_DIR}/*_infershape.cpp
   )
   if(GRAPH_PLUGIN_SRCS)
     add_graph_plugin_modules()
