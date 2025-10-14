@@ -24,8 +24,8 @@
 <colgroup>
 <col style="width: 170px">
 <col style="width: 170px">
-<col style="width: 850px">
-<col style="width: 200px">
+<col style="width: 840px">
+<col style="width: 210px">
 <col style="width: 100px">
 </colgroup>
 <thead>
