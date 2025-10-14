@@ -54,7 +54,7 @@ template <TemplateMC2TypeA2Class>
 class MoeDistributeDispatchA2 {
 public:
     __aicore__ inline MoeDistributeDispatchA2() {};
-    __aicore__ inline void Init(GM_ADDR x, GM_ADDR expertIds, GM_ADDR scales, GM_ADDR xActiveMask, GM_ADDR expandXOut,
+    __aicore__ inline void Init(GM_ADDR x, GM_ADDR expertIds, GM_ADDR scales, GM_ADDR xActiveMask, GM_ADDR waitCost, GM_ADDR expandXOut,
         GM_ADDR dynamicScalesOut, GM_ADDR expandIdxOut, GM_ADDR expertTokenNumsOut, GM_ADDR epRecvCountsOut,
         GM_ADDR workspaceGM, TPipe *pipe, GM_ADDR tilingGM);
     __aicore__ inline void Process();
@@ -87,6 +87,8 @@ private:
     GlobalTensor<int32_t> sendStatusTensor_;
     GlobalTensor<uint32_t> bufferChosenGlobal_;
     GlobalTensor<int8_t> xActiveMaskGMTensor_;
+    GlobalTensor<uint64_t> waitCostGMTensor_;
+    GlobalTensor<int32_t> waitCostU32GMTensor_;
 
     LocalTensor<ExpandXOutType> xTmpTensor_;
     LocalTensor<XType> xInTensor_;
@@ -107,6 +109,9 @@ private:
     LocalTensor<uint32_t> batchWriteU32Tensor_;
     LocalTensor<int32_t> expertTokenNumsW64Tensor_;
     LocalTensor<uint32_t> expertCumsumTensor_;
+    LocalTensor<uint64_t> waitCostU64Tensor_; //zly
+    LocalTensor<int32_t> waitCostU32Tensor_;
+
     TBuf<> dynamicScalesBuf_;
     TBuf<> expertCountBuf_;
     TBuf<> expertIdsBuf_;
@@ -121,6 +126,7 @@ private:
     TBuf<> expertTokenNumsW64Buf_;
     TBuf<> xInBuf_;  // 量化时 存放量化前的输入
     TBuf<> xOutBuf_; // 量化时 存放量化后的输出 || 非量化时 作为token重排的中转空间
+    TBuf<> waitCostBuf_;
 
     GM_ADDR expandIdxOutGM_;
     GM_ADDR expertTokenNumsOutGM_; // 这个输出没有使用
@@ -128,6 +134,7 @@ private:
     GM_ADDR windowInGM_;
     GM_ADDR windowOutGM_;
     GM_ADDR batchWriteInfo_;
+    GM_ADDR waitCostGM_;
 
     // tiling侧已确保数据上限，相乘不会越界，因此统一采用uint32_t进行处理
     uint32_t axisBS_{0};
@@ -152,14 +159,16 @@ private:
     uint32_t bufferChosen_{0};
     uint32_t totalSize_{0};
     uint32_t expertTokenNumsType_{0};
+    uint32_t waitCostSize_{0};
     bool isQuant_ = false;
+    bool isWaitCost=false;
     Hccl<HCCL_SERVER_TYPE_AICPU> hccl_;
     __gm__ HcclOpResParam *winContext_{nullptr};
 };
 
 template <TemplateMC2TypeA2Class>
 __aicore__ inline void MoeDistributeDispatchA2<TemplateMC2TypeA2Func>::Init(
-    GM_ADDR x, GM_ADDR expertIds, GM_ADDR scales, GM_ADDR xActiveMask, GM_ADDR expandXOut,
+    GM_ADDR x, GM_ADDR expertIds, GM_ADDR scales, GM_ADDR xActiveMask, GM_ADDR waitCost, GM_ADDR expandXOut,
     GM_ADDR dynamicScalesOut, GM_ADDR expandIdxOut, GM_ADDR expertTokenNumsOut, GM_ADDR epRecvCountsOut,
     GM_ADDR workspaceGM, TPipe *pipe, GM_ADDR tilingGM)
 {
@@ -190,6 +199,8 @@ __aicore__ inline void MoeDistributeDispatchA2<TemplateMC2TypeA2Func>::Init(
     aivId_ = GetBlockIdx();
     expertIdsCnt_ = axisBS_ * axisK_;
     localMoeExpertNumAlign_ = (localMoeExpertNum_ + BITS32_PER_BLOCK - 1) / BITS32_PER_BLOCK * BITS32_PER_BLOCK;
+    waitCostSize_ = worldSize_;
+    isWaitCost = (waitCost != nullptr);
 
     bufferChosenGlobal_.SetGlobalBuffer((__gm__ uint32_t*)(windowInGM_ + dataSize_));
     bufferChosen_ = bufferChosenGlobal_(0);
@@ -206,11 +217,18 @@ __aicore__ inline void MoeDistributeDispatchA2<TemplateMC2TypeA2Func>::Init(
     windowInQuantTensor_.SetGlobalBuffer((__gm__ ExpandXOutType*)(windowInGM_));
     sendTokensTensor_.SetGlobalBuffer((__gm__ ExpandXOutType*)(windowOutGM_));
     sendStatusTensor_.SetGlobalBuffer((__gm__ int32_t*)(windowOutGM_));
-
     xActiveMaskGMTensor_.SetGlobalBuffer((__gm__ int8_t*)xActiveMask);
+    if (isWaitCost) {
+        waitCostGMTensor_.SetGlobalBuffer((__gm__ uint64_t*)waitCost);
+        waitCostU32GMTensor_.SetGlobalBuffer((__gm__ int32_t*)waitCost);
+    }
+
     expandIdxOutGM_ = expandIdxOut;
     expertTokenNumsOutGM_ = expertTokenNumsOut;
     epRecvCountsGM_ = epRecvCountsOut;
+    if (isWaitCost) {
+        waitCostGM_ = waitCost;
+    }
 
     isQuant_ = StaticQuant | DynamicQuant;
     hSize_ = axisH_ * sizeof(XType);
@@ -251,6 +269,13 @@ __aicore__ inline void MoeDistributeDispatchA2<TemplateMC2TypeA2Func>::Init(
     tpipe_->InitBuffer(scalarBuf_, (STATUS_BLOCK_COUNT + 1) * UB_ALIGN); // 72B
     tpipe_->InitBuffer(flagBuf_, UB_ALIGN); // 32B
     tpipe_->InitBuffer(expertTokenNumsW64Buf_, localMoeExpertNum_ * sizeof(uint64_t));
+
+    if (isWaitCost) {
+        tpipe_->InitBuffer(waitCostBuf_, waitCostSize_ * sizeof(uint64_t)); //zly init buffer waitCostBuf_
+        waitCostU64Tensor_ = waitCostBuf_.Get<uint64_t>(); //zly get local tensor?
+        waitCostU32Tensor_ = waitCostU64Tensor_.template ReinterpretCast<int32_t>();
+        Duplicate<int32_t>(waitCostU32Tensor_, 0, waitCostSize_ * 2);
+    } 
 
     uint64_t stateSizeMaxSize = 2 * STATE_SIZE; // 2: 实际上是(DATA_OFFSET+SKIP_OFFSET+sizeof(uint32)) + STATE_SIZE，近似计算使用2 * STATE_SIZE
     uint64_t winSizeMin = (axisBS_ * worldSize_ * (localMoeExpertNum_ > axisK_ ? axisK_ : localMoeExpertNum_) *
@@ -594,6 +619,7 @@ __aicore__ inline void MoeDistributeDispatchA2<TemplateMC2TypeA2Func>::WaitDispa
     for (uint32_t rankId = startRankId; rankId < endRankId; rankId++) {
         int32_t statusFlag = 0;
         int32_t dataFlag = 0;
+        auto start = GetSystemCycle() / 50;
         while (statusFlag != FLAG_VALUE) {
             DataCopy(statusTensor_[rankId * STATUS_ENTRY_COUNT], windowInstatusTensor_[rankId * dataSizePerRank_ / sizeof(int32_t)], STATUS_ENTRY_COUNT);
             SyncFunc<AscendC::HardEvent::MTE2_S>();
@@ -610,6 +636,16 @@ __aicore__ inline void MoeDistributeDispatchA2<TemplateMC2TypeA2Func>::WaitDispa
             SyncFunc<AscendC::HardEvent::MTE2_S>();
             dataFlag = dataFlagLocal(0);
             PipeBarrier<PIPE_MTE2>();
+        }
+        auto end = GetSystemCycle() / 50; //zly
+	    auto duration = end - start; //zly
+        auto id = rankId;
+        if (isWaitCost){
+            Duplicate<int32_t>(waitCostU32Tensor_, 0, waitCostSize_ * 2);
+            waitCostU32Tensor_.SetValue(id*2, duration);
+            AscendC::SetAtomicAdd<int32_t>();
+            AscendC::DataCopy(waitCostU32GMTensor_, waitCostU32Tensor_, waitCostSize_ * 2);
+            AscendC::SetAtomicNone();
         }
         windowInstatusTensor_(dataFlagOffset) = 0;
     }

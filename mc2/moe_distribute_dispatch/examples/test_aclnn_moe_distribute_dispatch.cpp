@@ -126,6 +126,7 @@ int launchOneThreadDispatchAndCombine(Args &args){
     void *expertIdsDeviceAddr = nullptr;
     void *scalesDeviceAddr = nullptr;
     void *expertScalesDeviceAddr = nullptr;
+    void *waitCostDeviceAddr = nullptr;
     void *expandXDeviceAddr = nullptr;
     void *dynamicScalesDeviceAddr = nullptr;
     void *expandIdxDeviceAddr = nullptr;
@@ -138,6 +139,7 @@ int launchOneThreadDispatchAndCombine(Args &args){
     aclTensor *expertIds = nullptr;
     aclTensor *scales = nullptr;
     aclTensor *expertScales = nullptr;
+    aclTensor *waitCost = nullptr;
     aclTensor *expandX = nullptr;
     aclTensor *dynamicScales = nullptr;
     aclTensor *expandIdx = nullptr;
@@ -151,6 +153,7 @@ int launchOneThreadDispatchAndCombine(Args &args){
     std::vector<int64_t> expertIdsShape{BS, K};
     std::vector<int64_t> scalesShape{(sharedExpertRankNum > 0) ? 1 + moeExpertNum : moeExpertNum, H};
     std::vector<int64_t> expertScalesShape{BS, K};
+    std::vector<int64_t> waitCostShape{DEV_NUM};
     std::vector<int64_t> expandXShape{TP_WORLD_SIZE * A, H};
     std::vector<int64_t> dynamicScalesShape{TP_WORLD_SIZE * A};
     std::vector<int64_t> expandIdxShape{BS * K};
@@ -163,6 +166,7 @@ int launchOneThreadDispatchAndCombine(Args &args){
     int64_t expertIdsShapeSize = GetShapeSize(expertIdsShape);
     int64_t scalesShapeSize = GetShapeSize(scalesShape);
     int64_t expertScalesShapeSize = GetShapeSize(expertScalesShape);
+    int64_t waitCostShapeSize = GetShapeSize(waitCostShape);
     int64_t expandXShapeSize = GetShapeSize(expandXShape);
     int64_t dynamicScalesShapeSize = GetShapeSize(dynamicScalesShape);
     int64_t expandIdxShapeSize = GetShapeSize(expandIdxShape);
@@ -182,6 +186,7 @@ int launchOneThreadDispatchAndCombine(Args &args){
     }
     std::vector<float> scalesHostData(scalesShapeSize, 0.1);
     std::vector<float> expertScalesHostData(expertScalesShapeSize, 0.1);
+    std::vector<int64_t> waitCostHostData(waitCostShapeSize, 0);
     std::vector<int16_t> expandXHostData(expandXShapeSize, 0);
     std::vector<float> dynamicScalesHostData(dynamicScalesShapeSize, 0);
     std::vector<int32_t> expandIdxHostData(expandIdxShapeSize, 0);
@@ -198,6 +203,8 @@ int launchOneThreadDispatchAndCombine(Args &args){
     ret = CreateAclTensor(scalesHostData, scalesShape, &scalesDeviceAddr, aclDataType::ACL_FLOAT, &scales);  
     CHECK_RET(ret == ACL_SUCCESS, return ret);
     ret = CreateAclTensor(expertScalesHostData, expertScalesShape, &expertScalesDeviceAddr, aclDataType::ACL_FLOAT, &expertScales);
+    CHECK_RET(ret == ACL_SUCCESS, return ret);
+    ret = CreateAclTensor(waitCostHostData, waitCostShape, &waitCostDeviceAddr, aclDataType::ACL_INT64, &waitCost);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
     ret = CreateAclTensor(expandXHostData, expandXShape, &expandXDeviceAddr, (quantMode > 0) ? aclDataType::ACL_INT8 : aclDataType::ACL_BF16, &expandX);
     CHECK_RET(ret == ACL_SUCCESS, return ret);
@@ -228,7 +235,7 @@ int launchOneThreadDispatchAndCombine(Args &args){
     ret = aclnnMoeDistributeDispatchGetWorkspaceSize(
         x, expertIds, 
         (quantMode > 0 ? scales : nullptr), nullptr, 
-        expertScales, 
+        expertScales, waitCost,
         hcomEpName, EP_WORLD_SIZE, args.epRankId,
         moeExpertNum, hcomTpName, TP_WORLD_SIZE,
         args.tpRankId, expertShardType, sharedExpertNum,
@@ -305,6 +312,9 @@ int launchOneThreadDispatchAndCombine(Args &args){
     if (expertScales != nullptr) {
         aclDestroyTensor(expertScales);
     }
+    if (waitCost != nullptr) {
+        aclDestroyTensor(waitCost);
+    }
     if (expandX != nullptr) {
         aclDestroyTensor(expandX);
     }
@@ -337,6 +347,9 @@ int launchOneThreadDispatchAndCombine(Args &args){
     }
     if (expertScalesDeviceAddr != nullptr) {
         aclrtFree(expertScalesDeviceAddr);
+    }
+    if (waitCostDeviceAddr != nullptr) {
+        aclrtFree(waitCostDeviceAddr);
     }
     if (expandXDeviceAddr != nullptr) {
         aclrtFree(expandXDeviceAddr);
