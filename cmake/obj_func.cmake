@@ -468,7 +468,7 @@ macro(add_graph_plugin_sources)
       ${SOURCE_DIR}/../op_host/*_infershape.cpp
       ${SOURCE_DIR}/*_infershape.cpp
   )
-  messag(STATUS "[DEBUGGING] GRAPH_PLUGIN_SRCS: ${GRAPH_PLUGIN_SRCS}")
+  message(STATUS "[DEBUGGING] GRAPH_PLUGIN_SRCS: ${GRAPH_PLUGIN_SRCS}")
   if(GRAPH_PLUGIN_SRCS)
     add_graph_plugin_modules()
     target_sources(${GRAPH_PLUGIN_NAME}_obj PRIVATE ${GRAPH_PLUGIN_SRCS})
