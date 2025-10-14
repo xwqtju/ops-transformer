@@ -14,6 +14,7 @@
      target_sources(${OPHOST_NAME}_tiling_obj PRIVATE ${OPTILING_SRCS})
    endif()
   add_graph_plugin_modules()
+  message(STATUS "[DEBUGGING] mc2 common add_graph_plugin_modules")
    if(NOT ENABLE_BUILT_IN)
     file(GLOB OPPROTO_SRCS
      src/mc2_moe_utils.cpp
