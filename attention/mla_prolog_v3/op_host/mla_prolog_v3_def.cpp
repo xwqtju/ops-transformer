@@ -132,20 +132,20 @@ public:
             .DataType({ge::DT_BF16, ge::DT_INT8, ge::DT_BF16, ge::DT_INT8, ge::DT_BF16, ge::DT_BF16})
             .FormatList({ge::FORMAT_ND});
         this->Output("dequant_scale_q_nope")
-            .ParamType(OPTIONAL)
+            .ParamType(REQUIRED)
             .DataTypeList({ge::DT_FLOAT})
             .FormatList({ge::FORMAT_ND});
         this->Output("query_norm")
-            .ParamType(OPTIONAL)
+            .ParamType(REQUIRED)
             .DataTypeList({ge::DT_INT8, ge::DT_BF16})
             .FormatList({ge::FORMAT_ND});
         this->Output("dequant_scale_q_norm")
-            .ParamType(OPTIONAL)
+            .ParamType(REQUIRED)
             .DataTypeList({ge::DT_FLOAT})
             .FormatList({ge::FORMAT_ND});
         this->Attr("rmsnorm_epsilon_cq").AttrType(OPTIONAL).Float(1e-05f);
         this->Attr("rmsnorm_epsilon_ckv").AttrType(OPTIONAL).Float(1e-05f);
-        this->Attr("cache_mode").AttrType(OPTIONAL).String("PA_BSND");
+        this->Attr("cache_mode").AttrType(OPTIONAL).String("BSND");
         this->Attr("query_norm_flag").AttrType(OPTIONAL).Int(0);
         this->Attr("weight_quant_mode").AttrType(OPTIONAL).Int(0);
         this->Attr("query_quant_mode").AttrType(OPTIONAL).Int(0);
