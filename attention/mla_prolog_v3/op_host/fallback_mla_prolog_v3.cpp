@@ -43,8 +43,8 @@ graphStatus GetMlaPrologV3Attr(const OpExecuteContext *ctx, MlaPrologV3FallBackP
     OP_CHECK_IF(ret != GRAPH_SUCCESS, OP_LOGE("aclnnfallback", "GetAttr failed"), return GRAPH_FAILED);
     const double *getQcQrScale = ctx->GetAttrs()->GetAttrPointer<double>(ATTR_QC_QR_SCALE_INDEX);
     const double *getKcScale = ctx->GetAttrs()->GetAttrPointer<double>(ATTR_KC_SCALE_INDEX);
-    OP_CHECK_IF(getQcQrScale == nullptr || getKcScale == nullptr, OP_LOGE("aclnnfallback", "Context get attr failed"),
-        return GRAPH_FAILED);
+    param.qcQrScale = getQcQrScale ? *getQcQrScale : 1.0;
+    param.kcScale = getKcScale ? *getKcScale : 1.0;
     return GRAPH_SUCCESS;
 }
 
