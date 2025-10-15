@@ -21,7 +21,6 @@
 #endif
 
 namespace optiling {
-REGISTER_TILING_DATA_CLASS(MlaPrologV3, MlaPrologTilingData)
 } // optiling
 
 #endif
