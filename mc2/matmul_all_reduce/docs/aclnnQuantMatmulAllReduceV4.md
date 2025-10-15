@@ -160,7 +160,7 @@ aclnnStatus aclnnQuantMatmulAllReduceV4(
           <td>x1ScaleOptional</td>
           <td>输入</td>
           <td>Device侧的aclTensor，MatMul计算后的pertoken去量化系数，即计算公式中的x1ScaleOptional。</td>
-          <td>x1为(b, s, k)时shape为(b*s)，x1为(m, k)时shape为(m)。perblock场景下，x1为(b, s, k)时shape为[b, ceilDiv(s, 128), ceilDiv(k, 128)]，x1为(m, k)时shape为[ceilDiv(m, 128), ceilDiv(k, 128)]。数据类型为FLOAT8_E8M0时，shape为[b, s, ceilDiv(k, 32)]或者[m, ceilDiv(k, 32)]，且必须保证ceilDiv(k, 32)为偶数。</td>
+          <td>x1为(b, s, k)时，shape为(b*s)，x1为(m, k)时shape为(m)。perblock场景下，x1为(b, s, k)时shape为[b, ceilDiv(s, 128), ceilDiv(k, 128)]，x1为(m, k)时shape为[ceilDiv(m, 128), ceilDiv(k, 128)]。数据类型为FLOAT8_E8M0时，shape为[b, s, ceilDiv(k, 32)]或者[m, ceilDiv(k, 32)]，且必须保证ceilDiv(k, 32)为偶数。</td>
           <td>FLOAT32、FLOAT8_E8M0</td>
           <td>ND</td>
           <td>2</td>
