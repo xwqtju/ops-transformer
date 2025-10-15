@@ -38,7 +38,7 @@ extern aclnnStatus aclnnInnerMlaPrologV2GetWorkspaceSize(
     const aclTensor *dequantScaleWDqOptional, const aclTensor *dequantScaleWUqQrOptional,
     const aclTensor *dequantScaleWDkvKrOptional, const aclTensor *quantScaleCkvOptional,
     const aclTensor *quantScaleCkrOptional, const aclTensor *smoothScalesCqOptional,
-    double rmsnormEpsilonCq, double rmsnormEpsilonCkv, char *cacheModeOptional, double qcQrScale, double kcScale,
+    double rmsnormEpsilonCq, double rmsnormEpsilonCkv, char *cacheModeOptional,
     const aclTensor *queryOut, const aclTensor *queryRopeOut, const aclTensor *dequantScaleQNopeOutOptional,
     uint64_t *workspaceSize, aclOpExecutor **executor);
 
@@ -89,14 +89,11 @@ aclnnStatus aclnnMlaPrologV2WeightNzGetWorkspaceSize(
         OP_LOGE(ACLNN_ERR_PARAM_NULLPTR, "Check dequantScaleQNopeOut != nullptr failed!");
     }
 
-    const double qc_qr_scale = 1.0f;
-    const double kc_scale = 1.0f;
-
     aclnnStatus ret = aclnnInnerMlaPrologV2GetWorkspaceSize(
         tokenX, weightDq, weightUqQr, weightUk, weightDkvKr, rmsnormGammaCq, rmsnormGammaCkv, ropeSin, ropeCos,
         cacheIndex, kvCacheRef, krCacheRef, dequantScaleXOptional, dequantScaleWDqOptional, dequantScaleWUqQrOptional,
         dequantScaleWDkvKrOptional, quantScaleCkvOptional, quantScaleCkrOptional, smoothScalesCqOptional,
-        rmsnormEpsilonCq, rmsnormEpsilonCkv, cacheModeOptional, qc_qr_scale, kc_scale, queryOut, queryRopeOut, dequantScaleQNopeOutHolder,
+        rmsnormEpsilonCq, rmsnormEpsilonCkv, cacheModeOptional, queryOut, queryRopeOut, dequantScaleQNopeOutHolder,
         workspaceSize, executor);
 
     if (!isDequantScaleQNope) {

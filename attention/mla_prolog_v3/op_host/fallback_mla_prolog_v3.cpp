@@ -8,7 +8,7 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-#include "fallback_mla_prolog_v2.h"
+#include "fallback_mla_prolog_v3.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,14 +18,14 @@ namespace fallback {
 using namespace ge;
 using namespace gert;
 
-graphStatus GetMlaPrologV2InputTensor(const OpExecuteContext *ctx, MlaPrologV2FallBackParam &param)
+graphStatus GetMlaPrologV3InputTensor(const OpExecuteContext *ctx, MlaPrologV3FallBackParam &param)
 {
     auto ret = GetMlaPrologInputTensor(ctx, param);
     OP_CHECK_IF(ret != GRAPH_SUCCESS, OP_LOGE("aclnnfallback", "GetInputTensor failed"), return GRAPH_FAILED);
     return GRAPH_SUCCESS;
 }
 
-graphStatus GetMlaPrologV2OutputTensor(const OpExecuteContext *ctx, MlaPrologV2FallBackParam &param)
+graphStatus GetMlaPrologV3OutputTensor(const OpExecuteContext *ctx, MlaPrologV3FallBackParam &param)
 {
     auto ret = GetMlaPrologOutputTensor(ctx, param);
     OP_CHECK_IF(ret != GRAPH_SUCCESS, OP_LOGE("aclnnfallback", "GetOutputTensor failed"), return GRAPH_FAILED);
@@ -37,23 +37,27 @@ graphStatus GetMlaPrologV2OutputTensor(const OpExecuteContext *ctx, MlaPrologV2F
     return GRAPH_SUCCESS;
 }
 
-graphStatus GetMlaPrologV2Attr(const OpExecuteContext *ctx, MlaPrologV2FallBackParam &param)
+graphStatus GetMlaPrologV3Attr(const OpExecuteContext *ctx, MlaPrologV3FallBackParam &param)
 {
     auto ret = GetMlaPrologAttr(ctx, param);
     OP_CHECK_IF(ret != GRAPH_SUCCESS, OP_LOGE("aclnnfallback", "GetAttr failed"), return GRAPH_FAILED);
+    const double *getQcQrScale = ctx->GetAttrs()->GetAttrPointer<double>(ATTR_QC_QR_SCALE_INDEX);
+    const double *getKcScale = ctx->GetAttrs()->GetAttrPointer<double>(ATTR_KC_SCALE_INDEX);
+    OP_CHECK_IF(getQcQrScale == nullptr || getKcScale == nullptr, OP_LOGE("aclnnfallback", "Context get attr failed"),
+        return GRAPH_FAILED);
     return GRAPH_SUCCESS;
 }
 
-graphStatus MlaV2HostExecuteFunc(OpExecuteContext *host_api_ctx)
+graphStatus MlaV3HostExecuteFunc(OpExecuteContext *host_api_ctx)
 {
     OP_CHECK_IF(host_api_ctx == nullptr, OP_LOGE("aclnnfallback", "host_api_ctx is null"), return GRAPH_FAILED);
 
-    MlaPrologV2FallBackParam param {};
+    MlaPrologV3FallBackParam param {};
     auto apiRet = GetMlaPrologInputTensor(host_api_ctx, param);
     OP_CHECK_IF(apiRet != GRAPH_SUCCESS, OP_LOGE("aclnnfallback", "Context get input tesnor failed"),
         return GRAPH_FAILED);
 
-    apiRet = GetMlaPrologV2OutputTensor(host_api_ctx, param);
+    apiRet = GetMlaPrologV3OutputTensor(host_api_ctx, param);
     OP_CHECK_IF(apiRet != GRAPH_SUCCESS, OP_LOGE("aclnnfallback", "Context get output tesnor failed"),
         return GRAPH_FAILED);
 
@@ -62,19 +66,22 @@ graphStatus MlaV2HostExecuteFunc(OpExecuteContext *host_api_ctx)
         return GRAPH_FAILED);
 
     apiRet = EXEC_OPAPI_CMD(
-        aclnnMlaPrologV2WeightNz, param.tokenX, param.weightDq, param.weightUqQr, param.weightUk, param.weightDkvKr,
+        aclnnMlaPrologV3WeightNz, param.tokenX, param.weightDq, param.weightUqQr, param.weightUk, param.weightDkvKr,
         param.rmsnormGammaCq, param.rmsnormGammaCkv, param.ropeSin, param.ropeCos, param.cacheIndex,
         param.kvCache, param.krCache, param.dequantScaleX, param.dequantScaleWDq, param.dequantScaleWUqQr,
         param.dequantScaleWDkvKr, param.quantScaleCkv, param.quantScaleCkr, param.smoothScalesCq,
         param.rmsnormEpsilonCq, param.rmsnormEpsilonCkv, param.cacheMode,
-        param.query, param.queryRope, param.kvCacheOut, param.krCacheOut, param.dequantScaleQNope);
+        param.weightQuantMode, param.kvQuantMode, param.queryQuantMode, param.ckvkrRepoMode, param.quantScaleRepoMode, param.tileSize,
+        param.kNopeClipAlpha, param.qcQrScale, param.kcScale,
+        param.query, param.queryRope, param.kvCacheOut, param.krCacheOut,
+        param.dequantScaleQNope, param.queryNormOptional, param.dequantScaleQNormOptional);
     OP_CHECK_IF(apiRet != GRAPH_SUCCESS, OP_LOGE("aclnnfallback", "ret failed:%u", apiRet),
         return GRAPH_FAILED);
 
     return GRAPH_SUCCESS;
 }
 
-IMPL_OP(MlaPrologV2).OpExecuteFunc(MlaV2HostExecuteFunc);
+IMPL_OP(MlaPrologV3).OpExecuteFunc(MlaV3HostExecuteFunc);
 } // namespace fallback
 
 #ifdef __cplusplus

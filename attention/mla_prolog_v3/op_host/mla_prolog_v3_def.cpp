@@ -11,9 +11,9 @@
 #include "register/op_def_registry.h"
 
 namespace ops {
-class MlaPrologV2 : public OpDef {
+class MlaPrologV3 : public OpDef {
 public:
-    MlaPrologV2(const char *name) : OpDef(name)
+    MlaPrologV3(const char *name) : OpDef(name)
     {
         this->Input("token_x")
             .ParamType(REQUIRED)
@@ -110,6 +110,11 @@ public:
             .DataTypeList({ge::DT_FLOAT})
             .FormatList({ge::FORMAT_ND})
             .AutoContiguous();
+        this->Input("actual_seq_len")
+            .ParamType(OPTIONAL)
+            .DataTypeList({ge::DT_INT64})
+            .FormatList({ge::FORMAT_ND})
+            .AutoContiguous();
         this->Output("query")
             .ParamType(REQUIRED)
             .DataType({ge::DT_BF16, ge::DT_BF16, ge::DT_BF16, ge::DT_BF16, ge::DT_BF16, ge::DT_INT8})
@@ -127,12 +132,28 @@ public:
             .DataType({ge::DT_BF16, ge::DT_INT8, ge::DT_BF16, ge::DT_INT8, ge::DT_BF16, ge::DT_BF16})
             .FormatList({ge::FORMAT_ND});
         this->Output("dequant_scale_q_nope")
-            .ParamType(REQUIRED)
+            .ParamType(OPTIONAL)
+            .DataTypeList({ge::DT_FLOAT})
+            .FormatList({ge::FORMAT_ND});
+        this->Output("query_norm")
+            .ParamType(OPTIONAL)
+            .DataTypeList({ge::DT_BF16, ge::DT_INT8, ge::DT_INT8, ge::DT_INT8, ge::DT_INT8, ge::DT_INT8})
+            .FormatList({ge::FORMAT_ND});
+        this->Output("dequant_scale_q_norm")
+            .ParamType(OPTIONAL)
             .DataTypeList({ge::DT_FLOAT})
             .FormatList({ge::FORMAT_ND});
         this->Attr("rmsnorm_epsilon_cq").AttrType(OPTIONAL).Float(1e-05f);
         this->Attr("rmsnorm_epsilon_ckv").AttrType(OPTIONAL).Float(1e-05f);
-        this->Attr("cache_mode").AttrType(OPTIONAL).String("BNSD");
+        this->Attr("cache_mode").AttrType(OPTIONAL).String("PA_BSND");
+        this->Attr("query_norm_flag").AttrType(OPTIONAL).Int(0);
+        this->Attr("weight_quant_mode").AttrType(OPTIONAL).Int(0);
+        this->Attr("query_quant_mode").AttrType(OPTIONAL).Int(0);
+        this->Attr("ckvkr_repo_mode").AttrType(OPTIONAL).Int(0);
+        this->Attr("tile_size").AttrType(OPTIONAL).Int(0);
+        this->Attr("k_nope_clip_alpha").AttrType(OPTIONAL).Float(1.0f);
+        this->Attr("qc_qr_scale").AttrType(OPTIONAL).Float(1.0f);
+        this->Attr("kc_scale").AttrType(OPTIONAL).Float(1.0f);
         OpAICoreConfig aicore_config;
         aicore_config.DynamicCompileStaticFlag(true)
             .DynamicFormatFlag(true)
@@ -145,5 +166,5 @@ public:
         this->AICore().AddConfig("ascend910_93", aicore_config);
     }
 };
-OP_ADD(MlaPrologV2, optiling::MlaPrologCompileInfo);
+OP_ADD(MlaPrologV3, optiling::MlaPrologCompileInfo);
 } // namespace ops
