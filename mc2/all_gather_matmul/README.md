@@ -22,12 +22,12 @@
 ## 参数说明
 
 
-<table style="undefined;table-layout: fixed; width: 1576px"><colgroup>
-  <col style="width: 170px">
-  <col style="width: 170px">
+<table style="undefined;table-layout: fixed; width: 1180px"><colgroup>
+  <col style="width: 160px">
+  <col style="width: 150px">
+  <col style="width: 550px">
   <col style="width: 200px">
-  <col style="width: 200px">
-  <col style="width: 170px">
+  <col style="width: 120px">
   </colgroup>
   <thead>
     <tr>
