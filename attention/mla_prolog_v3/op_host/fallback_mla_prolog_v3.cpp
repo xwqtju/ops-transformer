@@ -61,7 +61,7 @@ graphStatus MlaV3HostExecuteFunc(OpExecuteContext *host_api_ctx)
     OP_CHECK_IF(apiRet != GRAPH_SUCCESS, OP_LOGE("aclnnfallback", "Context get output tesnor failed"),
         return GRAPH_FAILED);
 
-    apiRet = GetMlaPrologAttr(host_api_ctx, param);
+    apiRet = GetMlaPrologV3Attr(host_api_ctx, param);
     OP_CHECK_IF(apiRet != GRAPH_SUCCESS, OP_LOGE("aclnnfallback", "Context get attr failed"),
         return GRAPH_FAILED);
 
