@@ -32,7 +32,7 @@ struct RmsNormParam{
     uint32_t row;
     uint32_t col;
     float scale;
-    bool isScaleEnable;
+    uint16_t isScaleEnable;
 };
 
 /**

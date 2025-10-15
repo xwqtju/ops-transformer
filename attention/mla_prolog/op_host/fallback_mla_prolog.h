@@ -45,8 +45,6 @@ constexpr size_t SMOOTH_SCALES_CQ_INDEX = 18;
 constexpr size_t ATTR_RMSNORM_EPSILON_CQ_INDEX = 0;
 constexpr size_t ATTR_RMSNORM_EPSILON_CKV_INDEX = 1;
 constexpr size_t ATTR_CACHE_MODE_INDEX = 2;
-constexpr size_t ATTR_QC_QR_SCALE_INDEX = 3;
-constexpr size_t ATTR_KC_SCALE_INDEX = 4;
 // OUTPUT
 constexpr size_t QUERY_INDEX = 0;
 constexpr size_t QUERY_ROPE_INDEX = 1;

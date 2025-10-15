@@ -38,7 +38,7 @@ extern aclnnStatus aclnnInnerMlaPrologV2GetWorkspaceSize(
     const aclTensor *dequantScaleWDqOptional, const aclTensor *dequantScaleWUqQrOptional,
     const aclTensor *dequantScaleWDkvKrOptional, const aclTensor *quantScaleCkvOptional,
     const aclTensor *quantScaleCkrOptional, const aclTensor *smoothScalesCqOptional,
-    double rmsnormEpsilonCq, double rmsnormEpsilonCkv, char *cacheModeOptional, double qcQrScale, double kcScale,
+    double rmsnormEpsilonCq, double rmsnormEpsilonCkv, char *cacheModeOptional,
     const aclTensor *queryOut, const aclTensor *queryRopeOut, const aclTensor *dequantScaleQNopeOutOptional,
     uint64_t *workspaceSize, aclOpExecutor **executor);
 
@@ -69,8 +69,6 @@ aclnnStatus aclnnMlaPrologV2GetWorkspaceSize(
     double rmsnormEpsilonCq,
     double rmsnormEpsilonCkv,
     char *cacheModeOptional,
-    double qcQrScale,
-    double kcScale,
     const aclTensor *queryOut,
     const aclTensor *queryRopeOut,
     const aclTensor *dequantScaleQNopeOutOptional,
@@ -80,11 +78,11 @@ aclnnStatus aclnnMlaPrologV2GetWorkspaceSize(
     OP_LOGD("tokenX: %p, weightDq: %p, weightUqQr: %p, weightUk: %p, weightDkvKr: %p, rmsnormGammaCq: %p, rmsnormGammaCkv: %p,"
             "ropeSin: %p, ropeCos: %p, cacheIndex: %p, kvCacheRef: %p, krCacheRef: %p, dequantScaleXOptional: %p, dequantScaleWDqOptional: %p,"
             "dequantScaleWUqQrOptional: %p, dequantScaleWDkvKrOptional: %p, quantScaleCkvOptional: %p, quantScaleCkrOptional: %p, smoothScalesCqOptional: %p,"
-            "rmsnormEpsilonCq: %f, rmsnormEpsilonCkv: %f, cacheModeOptional: %p, qcQrScale: %f, kcScale: %f, "
+            "rmsnormEpsilonCq: %f, rmsnormEpsilonCkv: %f, cacheModeOptional: %p,
             "queryOut: %p, queryRopeOut: %p, dequantScaleQNopeOutOptional: %p, workspaceSize: %p, executor: %p",
              tokenX, weightDq, weightUqQr, weightUk, weightDkvKr, rmsnormGammaCq, rmsnormGammaCkv, ropeSin, ropeCos, cacheIndex, kvCacheRef, krCacheRef,
              dequantScaleXOptional, dequantScaleWDqOptional, dequantScaleWUqQrOptional, dequantScaleWDkvKrOptional, quantScaleCkvOptional, quantScaleCkrOptional, smoothScalesCqOptional,
-             rmsnormEpsilonCq, rmsnormEpsilonCkv, cacheModeOptional, qcQrScale, kcScale, queryOut, queryRopeOut, dequantScaleQNopeOutOptional, workspaceSize, executor);
+             rmsnormEpsilonCq, rmsnormEpsilonCkv, cacheModeOptional, queryOut, queryRopeOut, dequantScaleQNopeOutOptional, workspaceSize, executor);
 
     OP_LOGE(ACLNN_ERR_INNER, "aclnnMlaPrologV2GetWorkspaceSize is not supported!");
     return ACLNN_ERR_INNER;

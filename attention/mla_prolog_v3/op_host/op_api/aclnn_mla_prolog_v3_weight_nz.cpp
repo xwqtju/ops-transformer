@@ -9,7 +9,7 @@
  */
 #include <cstring>
 #include "graph/types.h"
-#include "aclnn_mla_prolog_v3.h"
+#include "aclnn_mla_prolog_v3_weight_nz.h"
 
 #include "opdev/make_op_executor.h"
 #include "opdev/op_dfx.h"
@@ -30,19 +30,21 @@ extern "C" {
 
 namespace {
 
-extern aclnnStatus aclnnInnerMlaPrologV2GetWorkspaceSize(
+extern aclnnStatus aclnnInnerMlaPrologV3GetWorkspaceSize(
     const aclTensor *tokenX, const aclTensor *weightDq, const aclTensor *weightUqQr, const aclTensor *weightUk,
     const aclTensor *weightDkvKr, const aclTensor *rmsnormGammaCq, const aclTensor *rmsnormGammaCkv,
-    const aclTensor *ropeSin, const aclTensor *ropeCos, const aclTensor *cacheIndex,
-    aclTensor *kvCacheRef, aclTensor *krCacheRef, const aclTensor *dequantScaleXOptional,
-    const aclTensor *dequantScaleWDqOptional, const aclTensor *dequantScaleWUqQrOptional,
+    const aclTensor *ropeSin, const aclTensor *ropeCos, const aclTensor *cacheIndex, aclTensor *kvCacheRef, aclTensor *krCacheRef,
+    const aclTensor *dequantScaleXOptional, const aclTensor *dequantScaleWDqOptional, const aclTensor *dequantScaleWUqQrOptional,
     const aclTensor *dequantScaleWDkvKrOptional, const aclTensor *quantScaleCkvOptional,
-    const aclTensor *quantScaleCkrOptional, const aclTensor *smoothScalesCqOptional,
-    double rmsnormEpsilonCq, double rmsnormEpsilonCkv, char *cacheModeOptional, double qcQrScale, double kcScale,
+    const aclTensor *quantScaleCkrOptional, const aclTensor *smoothScalesCqOptional, const aclTensor *actualSeqLenOptional,
+    double rmsnormEpsilonCq, double rmsnormEpsilonCkv, char *cacheModeOptional,
+    int queryNormFlag, int weightQuantMode, int kvQuantMode, int queryQuantMode, int ckvkrRepoMode, int quantScaleRepoMode,
+    int tileSize, double kNopeClipAlpha, double qcQrScale, double kcScale,
     const aclTensor *queryOut, const aclTensor *queryRopeOut, const aclTensor *dequantScaleQNopeOutOptional,
+    const aclTensor *queryNormOptional, const aclTensor *dequantScaleQNormOptional,
     uint64_t *workspaceSize, aclOpExecutor **executor);
 
-extern aclnnStatus aclnnInnerMlaPrologV2(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor,
+extern aclnnStatus aclnnInnerMlaPrologV3(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor,
                                          const aclrtStream stream);
 
 
@@ -66,14 +68,25 @@ aclnnStatus aclnnMlaPrologV3WeightNzGetWorkspaceSize(
     const aclTensor *quantScaleCkvOptional,
     const aclTensor *quantScaleCkrOptional,
     const aclTensor *smoothScalesCqOptional,
+    const aclTensor *actualSeqLenOptional,
     double rmsnormEpsilonCq,
     double rmsnormEpsilonCkv,
     char *cacheModeOptional,
+    int queryNormFlag,
+    int weightQuantMode,
+    int kvQuantMode,
+    int queryQuantMode,
+    int ckvkrRepoMode,
+    int quantScaleRepoMode,
+    int tileSize,
+    double kNopeClipAlpha,
     double qcQrScale,
     double kcScale,
     const aclTensor *queryOut,
     const aclTensor *queryRopeOut,
     const aclTensor *dequantScaleQNopeOutOptional,
+    const aclTensor *queryNormOptional,
+    const aclTensor *dequantScaleQNormOptional,
     uint64_t *workspaceSize,
     aclOpExecutor **executor)
 {
@@ -84,19 +97,31 @@ aclnnStatus aclnnMlaPrologV3WeightNzGetWorkspaceSize(
     } else {
         std::vector<int64_t> shape = {0};
         int64_t addr = 0xff;
-        dequantScaleQNopeOutHolder = aclCreateTensor(shape.data(), shape.size(), aclDataType::ACL_FLOAT,
-            shape.data(), 0, ACL_FORMAT_ND, shape.data(), shape.size(), static_cast<void *>(&addr));
+        dequantScaleQNopeOutHolder = aclCreateTensor(shape.data(), shape.size(), aclDataType::ACL_FLOAT, shape.data(), 0, ACL_FORMAT_ND,
+                                     shape.data(), shape.size(), static_cast<void *>(&addr));
     }
     if (tokenX ->GetDataType() == ge::DT_INT8 && kvCacheRef ->GetDataType() == ge::DT_INT8 && !isDequantScaleQNope) {
         OP_LOGE(ACLNN_ERR_PARAM_NULLPTR, "Check dequantScaleQNopeOut != nullptr failed!");
     }
 
-    aclnnStatus ret = aclnnInnerMlaPrologV2GetWorkspaceSize(
-        tokenX, weightDq, weightUqQr, weightUk, weightDkvKr, rmsnormGammaCq, rmsnormGammaCkv, ropeSin, ropeCos,
-        cacheIndex, kvCacheRef, krCacheRef, dequantScaleXOptional, dequantScaleWDqOptional, dequantScaleWUqQrOptional,
-        dequantScaleWDkvKrOptional, quantScaleCkvOptional, quantScaleCkrOptional, smoothScalesCqOptional,
-        rmsnormEpsilonCq, rmsnormEpsilonCkv, cacheModeOptional, qcQrScale, kcScale,
-        queryOut, queryRopeOut, dequantScaleQNopeOutHolder, workspaceSize, executor);
+    // reserved interfaces
+    queryNormFlag = 0;
+    weightQuantMode = 0;
+    kvQuantMode = 0;
+    queryQuantMode = 0;
+    ckvkrRepoMode = 0;
+    tileSize = 0;
+    kNopeClipAlpha = 1.0f;
+    queryNormOptional = nullptr;
+    dequantScaleQNormOptional = nullptr;
+
+    aclnnStatus ret = aclnnInnerMlaPrologV3GetWorkspaceSize(
+        tokenX, weightDq, weightUqQr, weightUk, weightDkvKr, rmsnormGammaCq, rmsnormGammaCkv, ropeSin, ropeCos, cacheIndex, kvCacheRef, krCacheRef,
+        dequantScaleXOptional, dequantScaleWDqOptional, dequantScaleWUqQrOptional,
+        dequantScaleWDkvKrOptional, quantScaleCkvOptional, quantScaleCkrOptional, smoothScalesCqOptional, actualSeqLenOptional,
+        rmsnormEpsilonCq, rmsnormEpsilonCkv, cacheModeOptional, queryNormFlag, weightQuantMode, kvQuantMode, queryQuantMode, ckvkrRepoMode, quantScaleRepoMode, tileSize,
+        kNopeClipAlpha, qcQrScale, kcScale, queryOut, queryRopeOut, dequantScaleQNopeOutHolder, queryNormOptional, dequantScaleQNormOptional,
+        workspaceSize, executor);
 
     if (!isDequantScaleQNope) {
         aclDestroyTensor(dequantScaleQNopeOutHolder);
@@ -104,10 +129,10 @@ aclnnStatus aclnnMlaPrologV3WeightNzGetWorkspaceSize(
     return ret;
 }
 
-aclnnStatus aclnnMlaPrologV3(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor,
+aclnnStatus aclnnMlaPrologV3WeightNz(void *workspace, uint64_t workspaceSize, aclOpExecutor *executor,
                                      const aclrtStream stream)
 {
-    return aclnnInnerMlaPrologV2(workspace, workspaceSize, executor, stream);
+    return aclnnInnerMlaPrologV3(workspace, workspaceSize, executor, stream);
 }
 
 } // namespace

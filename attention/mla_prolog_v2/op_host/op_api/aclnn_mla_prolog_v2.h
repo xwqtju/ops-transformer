@@ -30,7 +30,7 @@
      const aclTensor *dequantScaleWDqOptional, const aclTensor *dequantScaleWUqQrOptional,
      const aclTensor *dequantScaleWDkvKrOptional, const aclTensor *quantScaleCkvOptional,
      const aclTensor *quantScaleCkrOptional, const aclTensor *smoothScalesCqOptional,
-     double rmsnormEpsilonCq, double rmsnormEpsilonCkv, char *cacheModeOptional, double qcQrScale, double kcScale,
+     double rmsnormEpsilonCq, double rmsnormEpsilonCkv, char *cacheModeOptional,
      const aclTensor *queryOut, const aclTensor *queryRopeOut, const aclTensor *dequantScaleQNopeOutOptional,
      uint64_t *workspaceSize, aclOpExecutor **executor);
  
