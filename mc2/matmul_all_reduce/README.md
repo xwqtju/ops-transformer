@@ -96,11 +96,11 @@
 ## 参数说明
 
 
-<table style="undefined;table-layout: fixed; width: 1460px"><colgroup>
+<table style="undefined;table-layout: fixed; width: 1470px"><colgroup>
   <col style="width: 160px">
   <col style="width: 150px">
   <col style="width: 550px">
-  <col style="width: 450px">
+  <col style="width: 460px">
   <col style="width: 150px">
   </colgroup>
   <thead>
