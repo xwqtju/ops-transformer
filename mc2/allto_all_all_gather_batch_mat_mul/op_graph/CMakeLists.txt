@@ -8,7 +8,4 @@
 # ======================================================================================================================
 if (BUILD_OPEN_PROJECT)
     add_graph_plugin_sources()
-    target_sources(${GRAPH_PLUGIN_NAME}_obj PRIVATE
-        ${OPS_TRANSFORMER_DIR}/mc2/common/src/mc2_moe_utils.cpp
-    )
 endif()
