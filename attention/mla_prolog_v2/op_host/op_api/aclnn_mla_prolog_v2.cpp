@@ -78,7 +78,7 @@ aclnnStatus aclnnMlaPrologV2GetWorkspaceSize(
     OP_LOGD("tokenX: %p, weightDq: %p, weightUqQr: %p, weightUk: %p, weightDkvKr: %p, rmsnormGammaCq: %p, rmsnormGammaCkv: %p,"
             "ropeSin: %p, ropeCos: %p, cacheIndex: %p, kvCacheRef: %p, krCacheRef: %p, dequantScaleXOptional: %p, dequantScaleWDqOptional: %p,"
             "dequantScaleWUqQrOptional: %p, dequantScaleWDkvKrOptional: %p, quantScaleCkvOptional: %p, quantScaleCkrOptional: %p, smoothScalesCqOptional: %p,"
-            "rmsnormEpsilonCq: %f, rmsnormEpsilonCkv: %f, cacheModeOptional: %p,
+            "rmsnormEpsilonCq: %f, rmsnormEpsilonCkv: %f, cacheModeOptional: %p,"
             "queryOut: %p, queryRopeOut: %p, dequantScaleQNopeOutOptional: %p, workspaceSize: %p, executor: %p",
              tokenX, weightDq, weightUqQr, weightUk, weightDkvKr, rmsnormGammaCq, rmsnormGammaCkv, ropeSin, ropeCos, cacheIndex, kvCacheRef, krCacheRef,
              dequantScaleXOptional, dequantScaleWDqOptional, dequantScaleWUqQrOptional, dequantScaleWDkvKrOptional, quantScaleCkvOptional, quantScaleCkrOptional, smoothScalesCqOptional,

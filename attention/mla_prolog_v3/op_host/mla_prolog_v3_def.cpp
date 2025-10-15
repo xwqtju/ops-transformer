@@ -132,15 +132,15 @@ public:
             .DataType({ge::DT_BF16, ge::DT_INT8, ge::DT_BF16, ge::DT_INT8, ge::DT_BF16, ge::DT_BF16})
             .FormatList({ge::FORMAT_ND});
         this->Output("dequant_scale_q_nope")
-            .ParamType(OPTIONAL)
+            .ParamType(REQUIRED)
             .DataTypeList({ge::DT_FLOAT})
             .FormatList({ge::FORMAT_ND});
         this->Output("query_norm")
-            .ParamType(OPTIONAL)
+            .ParamType(REQUIRED)
             .DataTypeList({ge::DT_BF16, ge::DT_INT8, ge::DT_INT8, ge::DT_INT8, ge::DT_INT8, ge::DT_INT8})
             .FormatList({ge::FORMAT_ND});
         this->Output("dequant_scale_q_norm")
-            .ParamType(OPTIONAL)
+            .ParamType(REQUIRED)
             .DataTypeList({ge::DT_FLOAT})
             .FormatList({ge::FORMAT_ND});
         this->Attr("rmsnorm_epsilon_cq").AttrType(OPTIONAL).Float(1e-05f);
@@ -150,6 +150,7 @@ public:
         this->Attr("weight_quant_mode").AttrType(OPTIONAL).Int(0);
         this->Attr("query_quant_mode").AttrType(OPTIONAL).Int(0);
         this->Attr("ckvkr_repo_mode").AttrType(OPTIONAL).Int(0);
+        this->Attr("quant_scale_repo_mode").AttrType(OPTIONAL).Int(0);
         this->Attr("tile_size").AttrType(OPTIONAL).Int(0);
         this->Attr("k_nope_clip_alpha").AttrType(OPTIONAL).Float(1.0f);
         this->Attr("qc_qr_scale").AttrType(OPTIONAL).Float(1.0f);
