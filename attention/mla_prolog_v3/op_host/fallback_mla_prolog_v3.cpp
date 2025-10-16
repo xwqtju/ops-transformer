@@ -18,10 +18,55 @@ namespace fallback {
 using namespace ge;
 using namespace gert;
 
-graphStatus GetMlaPrologV3InputTensor(const OpExecuteContext *ctx, MlaPrologV3FallBackParam &param)
+graphStatus GetMlaPrologV3InputTensor(const OpExecuteContext *ctx, MlaPrologFallBackParam &param)
 {
-    auto ret = GetMlaPrologInputTensor(ctx, param);
-    OP_CHECK_IF(ret != GRAPH_SUCCESS, OP_LOGE("aclnnfallback", "GetInputTensor failed"), return GRAPH_FAILED);
+    param.tokenX = ctx->GetRequiredInputTensor(TOKEN_X_INDEX_V3);
+    OPS_ERR_IF(param.tokenX == nullptr, OPS_LOG_E("aclnnfallback", "tokenX is null"), return GRAPH_FAILED);
+
+    param.weightDq = ctx->GetRequiredInputTensor(WEIGHT_DQ_INDEX_V3);
+    OPS_ERR_IF(param.weightDq == nullptr, OPS_LOG_E("aclnnfallback", "weightDq is null"), return GRAPH_FAILED);
+
+    param.weightUqQr = ctx->GetRequiredInputTensor(WEIGHT_UQ_QR_INDEX_V3);
+    OPS_ERR_IF(param.weightUqQr == nullptr, OPS_LOG_E("aclnnfallback", "weightUqQr is null"), return GRAPH_FAILED);
+
+    param.weightUk = ctx->GetRequiredInputTensor(WEIGHT_UK_INDEX_V3);
+    OPS_ERR_IF(param.weightUk == nullptr, OPS_LOG_E("aclnnfallback", "weightUk is null"), return GRAPH_FAILED);
+
+    param.weightDkvKr = ctx->GetRequiredInputTensor(WEIGHT_DKV_KR_INDEX_V3);
+    OPS_ERR_IF(param.weightDkvKr == nullptr, OPS_LOG_E("aclnnfallback", "weightDkvKr is null"), return GRAPH_FAILED);
+    
+    param.rmsnormGammaCq = ctx->GetRequiredInputTensor(RMSNORM_GAMMA_CQ_INDEX_V3);
+    OPS_ERR_IF(param.rmsnormGammaCq == nullptr, OPS_LOG_E("aclnnfallback", "rmsnormGammaCq is null"),
+        return GRAPH_FAILED);
+
+    param.rmsnormGammaCkv = ctx->GetRequiredInputTensor(RMSNORM_GAMMA_CKV_INDEX_V3);
+    OPS_ERR_IF(param.rmsnormGammaCkv == nullptr, OPS_LOG_E("aclnnfallback", "rmsnormGammaCkv is null"), 
+        return GRAPH_FAILED);
+
+    param.ropeSin = ctx->GetRequiredInputTensor(ROPE_SIN_INDEX_V3);
+    OPS_ERR_IF(param.ropeSin == nullptr, OPS_LOG_E("aclnnfallback", "ropeSin is null"), return GRAPH_FAILED);
+
+    param.ropeCos = ctx->GetRequiredInputTensor(ROPE_COS_INDEX_V3);
+    OPS_ERR_IF(param.ropeCos == nullptr, OPS_LOG_E("aclnnfallback", "ropeCos is null"), return GRAPH_FAILED);
+
+    param.kvCache = ctx->GetRequiredInputTensor(KV_CACHE_INDEX_V3);
+    OPS_ERR_IF(param.kvCache == nullptr, OPS_LOG_E("aclnnfallback", "kvCache is null"), return GRAPH_FAILED);
+
+    param.krCache = ctx->GetRequiredInputTensor(KR_CACHE_INDEX_V3);
+    OPS_ERR_IF(param.krCache == nullptr, OPS_LOG_E("aclnnfallback", "krCache is null"), return GRAPH_FAILED);
+
+    // 暂时限制不能为空，cache mode 变更后放开
+    param.cacheIndex = ctx->GetOptionalInputTensor(CACHE_INDEX_V3);
+    OPS_ERR_IF(param.krCache == nullptr, OPS_LOG_E("aclnnfallback", "krCache is null"), return GRAPH_FAILED);
+
+    param.dequantScaleX = ctx->GetOptionalInputTensor(DEQUANT_SCALE_X_INDEX_V3);
+    param.dequantScaleWDq = ctx->GetOptionalInputTensor(DEQUANT_SCALE_W_DQ_INDEX_V3);
+    param.dequantScaleWUqQr = ctx->GetOptionalInputTensor(DEQUANT_SCALE_W_UQ_QR_INDEX_V3);
+    param.dequantScaleWDkvKr = ctx->GetOptionalInputTensor(DEQUANT_SCALE_W_DKV_KR_INDEX_V3);
+    param.quantScaleCkv = ctx->GetOptionalInputTensor(QUANT_SCALE_CKV_INDEX_V3);
+    param.quantScaleCkr = ctx->GetOptionalInputTensor(QUANT_SCALE_CKR_INDEX_V3);
+    param.smoothScalesCq = ctx->GetOptionalInputTensor(SMOOTH_SCALES_CQ_INDEX_V3);
+
     return GRAPH_SUCCESS;
 }
 
@@ -53,7 +98,7 @@ graphStatus MlaV3HostExecuteFunc(OpExecuteContext *host_api_ctx)
     OP_CHECK_IF(host_api_ctx == nullptr, OP_LOGE("aclnnfallback", "host_api_ctx is null"), return GRAPH_FAILED);
 
     MlaPrologV3FallBackParam param {};
-    auto apiRet = GetMlaPrologInputTensor(host_api_ctx, param);
+    auto apiRet = GetMlaPrologV3InputTensor(host_api_ctx, param);
     OP_CHECK_IF(apiRet != GRAPH_SUCCESS, OP_LOGE("aclnnfallback", "Context get input tesnor failed"),
         return GRAPH_FAILED);
 
@@ -67,14 +112,16 @@ graphStatus MlaV3HostExecuteFunc(OpExecuteContext *host_api_ctx)
 
     apiRet = EXEC_OPAPI_CMD(
         aclnnMlaPrologV3WeightNz, param.tokenX, param.weightDq, param.weightUqQr, param.weightUk, param.weightDkvKr,
-        param.rmsnormGammaCq, param.rmsnormGammaCkv, param.ropeSin, param.ropeCos, param.cacheIndex,
-        param.kvCache, param.krCache, param.dequantScaleX, param.dequantScaleWDq, param.dequantScaleWUqQr,
+        param.rmsnormGammaCq, param.rmsnormGammaCkv, param.ropeSin, param.ropeCos,
+        param.kvCache, param.krCache, param.cacheIndex, // cacheIndex当前为可选参数
+        param.dequantScaleX, param.dequantScaleWDq, param.dequantScaleWUqQr,
         param.dequantScaleWDkvKr, param.quantScaleCkv, param.quantScaleCkr, param.smoothScalesCq,
         param.rmsnormEpsilonCq, param.rmsnormEpsilonCkv, param.cacheMode,
-        param.weightQuantMode, param.kvQuantMode, param.queryQuantMode, param.ckvkrRepoMode, param.quantScaleRepoMode, param.tileSize,
-        param.kNopeClipAlpha, param.qcQrScale, param.kcScale,
+        param.weightQuantMode, param.kvQuantMode, param.queryQuantMode, param.ckvkrRepoMode, param.quantScaleRepoMode,
+        param.tileSize, param.kNopeClipAlpha, param.qcQrScale, param.kcScale,
         param.query, param.queryRope, param.kvCacheOut, param.krCacheOut,
         param.dequantScaleQNope, param.queryNormOptional, param.dequantScaleQNormOptional);
+
     OP_CHECK_IF(apiRet != GRAPH_SUCCESS, OP_LOGE("aclnnfallback", "ret failed:%u", apiRet),
         return GRAPH_FAILED);
 

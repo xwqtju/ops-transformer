@@ -53,6 +53,10 @@ constexpr uint32_t CACHE_INDEX_INPUT_INDEX = 9;
 constexpr uint32_t KV_CACHE_INPUT_INDEX = 10;
 constexpr uint32_t KR_CACHE_INPUT_INDEX = 11;
 
+constexpr uint32_t KV_CACHE_INPUT_INDEX_V3 = 9;
+constexpr uint32_t KR_CACHE_INPUT_INDEX_V3 = 10;
+constexpr uint32_t CACHE_INDEX_INPUT_INDEX_V3 = 11;
+
 // INPUT(OPTION)
 constexpr uint32_t DEQUANT_SCALE_X_INDEX = 12;
 constexpr uint32_t DEQUANT_SCALE_W_DQ_INDEX = 13;

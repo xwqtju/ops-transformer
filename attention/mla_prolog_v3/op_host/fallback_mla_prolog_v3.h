@@ -24,6 +24,26 @@ namespace fallback {
 
 constexpr size_t DEQUANT_SCALE_Q_NOPE_INDEX = 4;
 
+// INPUT
+constexpr size_t TOKEN_X_INDEX_V3 = 0;
+constexpr size_t WEIGHT_DQ_INDEX_V3 = 1;
+constexpr size_t WEIGHT_UQ_QR_INDEX_V3 = 2;
+constexpr size_t WEIGHT_UK_INDEX_V3 = 3;
+constexpr size_t WEIGHT_DKV_KR_INDEX_V3 = 4;
+constexpr size_t RMSNORM_GAMMA_CQ_INDEX_V3 = 5;
+constexpr size_t RMSNORM_GAMMA_CKV_INDEX_V3 = 6;
+constexpr size_t ROPE_SIN_INDEX_V3 = 7;
+constexpr size_t ROPE_COS_INDEX_V3 = 8;
+constexpr size_t KV_CACHE_INDEX_V3 = 9;
+constexpr size_t KR_CACHE_INDEX_V3 = 10;
+constexpr size_t CACHE_INDEX_V3 = 11;
+constexpr size_t DEQUANT_SCALE_X_INDEX_V3 = 12;
+constexpr size_t DEQUANT_SCALE_W_DQ_INDEX_V3 = 13;
+constexpr size_t DEQUANT_SCALE_W_UQ_QR_INDEX_V3 = 14;
+constexpr size_t DEQUANT_SCALE_W_DKV_KR_INDEX_V3 = 15;
+constexpr size_t QUANT_SCALE_CKV_INDEX_V3 = 16;
+constexpr size_t QUANT_SCALE_CKR_INDEX_V3 = 17;
+constexpr size_t SMOOTH_SCALES_CQ_INDEX_V3 = 18;
 
 constexpr size_t ATTR_QUERY_NORM_FLAG_INDEX = 3;
 constexpr size_t ATTR_WEIGHT_QUANT_MODE_INDEX = 4;
@@ -46,7 +66,7 @@ struct MlaPrologV3FallBackParam : MlaPrologFallBackParam {
     int queryQuantMode = 0;
     int ckvkrRepoMode = 0;
     int quantScaleRepoMode = 0;
-    int tileSize = 0;
+    int tileSize = 128;
     double kNopeClipAlpha = 1.0f;
     double qcQrScale = 1.0f;
     double kcScale = 1.0f;
