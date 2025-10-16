@@ -95,7 +95,6 @@ aclnnStatus aclnnMatmulAllReduceV2GetWorkspaceSize(
     // 固定写法，参数检查
     auto retParam = MatmulAllReduceCheckParams(x1, x2, x3, bias, reduceOp, streamMode, output);
     CHECK_RET(retParam == ACLNN_SUCCESS, retParam);
-
     aclnnStatus ret = InnerMatmulAllReduceV2GetWorkspaceSize(
         x1, x2, bias, x3, group, reduceOp, commTurn, output, workspaceSize, executor);
     OP_LOGD("MatmulAllReduceV2, end ret %d", ret);
