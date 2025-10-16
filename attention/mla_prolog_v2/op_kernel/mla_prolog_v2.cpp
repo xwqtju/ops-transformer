@@ -18,7 +18,7 @@
 using namespace MlaProlog;
 
 template<uint8_t CacheMode, uint8_t Scenario, uint8_t QuantMode,
-         bool EnableDequantOpt, bool EnableGroupComputeOpt, uint8_t EmptyTensorMode>
+         bool EnableDequantOpt, bool EnableGroupComputeOpt, uint8_t EmptyTensorMode, bool CvMode>
 __global__ __aicore__ void
 mla_prolog_v2(
     __gm__ uint8_t *tokenX,
@@ -49,7 +49,12 @@ mla_prolog_v2(
     __gm__ uint8_t *tiling) 
 {
     REGISTER_TILING_DEFAULT(optiling::MlaPrologTilingData);
-    KERNEL_TASK_TYPE_DEFAULT(KERNEL_TYPE_MIX_AIC_1_2);
+
+    if constexpr (CvMode) {
+        KERNEL_TASK_TYPE_DEFAULT(KERNEL_TYPE_MIX_AIC_1_1);
+    } else {
+        KERNEL_TASK_TYPE_DEFAULT(KERNEL_TYPE_MIX_AIC_1_2);
+    }
 
     constexpr auto emptyMode = static_cast<EMPTY_TENSOR_MODE>(EmptyTensorMode);
     if constexpr (emptyMode == EMPTY_TENSOR_MODE::EMPTY_QUERY) {
