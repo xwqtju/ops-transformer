@@ -2,15 +2,11 @@
 
 # 产品支持情况
 
-<table style="table-layout: fixed; width: 750px; border-collapse: collapse;">
-  <colgroup>
-    <col style="width: 600px;">
-    <col style="width: 150px;">
-  </colgroup>
+<table style="table-layout: fixed; border-collapse: collapse;">
   <thead>
     <tr>
       <!-- 表头单元格完全居中 -->
-      <th style="border: 1px solid #ccc; text-align: center; font-weight: bold;">产品</th>
+      <th style="border: 1px solid #ccc;  font-weight: bold;">产品</th>
       <th style="border: 1px solid #ccc; text-align: center; font-weight: bold;">是否支持</th>
     </tr>
   </thead>
