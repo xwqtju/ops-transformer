@@ -256,6 +256,7 @@ function(add_opapi_modules)
     target_link_libraries(${OPHOST_NAME}_opapi_obj
       PUBLIC
       $<BUILD_INTERFACE:intf_pub>
+      $<$<BOOL:${dlog_FOUND}>:$<BUILD_INTERFACE:dlog_headers>>
       -Wl,--whole-archive
       ops_aclnn
       -Wl,--no-whole-archive
