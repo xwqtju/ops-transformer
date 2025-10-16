@@ -22,6 +22,7 @@
 #include "register/op_def_registry.h"
 #include "mla_prolog_tiling_check.h"
 #include "mla_prolog_tiling.h"
+#include <cmath>
 using namespace ge;
 using namespace AscendC;
 namespace optiling {
@@ -311,6 +312,20 @@ ge::graphStatus MlaPrologTiling::FillTiling()
     baseParams_->epsilonCq = epsilonCq_;
     baseParams_->reciprocalCkv = reciprocalCkv_;
     baseParams_->epsilonCkv = epsilonCkv_;
+    float qcQrScale = (float)sqrt((double)baseShapeInfo_.heSize / (double)baseShapeInfo_.hcqSize);
+    float kcScale = (float)sqrt((double)baseShapeInfo_.heSize / (double)baseShapeInfo_.hckvSize);
+    baseParams_->qcQrScale = qcQrScale;
+    baseParams_->kcScale = kcScale;
+    if (std::abs(qcQrScale - 1.0f) >= std::numeric_limits<float>::epsilon()) {
+        baseParams_->isQcQrScaleEnable = 1;
+    } else {
+        baseParams_->isQcQrScaleEnable = 0;
+    }
+    if (std::abs(kcScale - 1.0f) >= std::numeric_limits<float>::epsilon()) {
+        baseParams_->isKcScaleEnable = 1;
+    } else {
+        baseParams_->isKcScaleEnable = 0;
+    }
 
     return ge::GRAPH_SUCCESS;
 }
@@ -369,6 +384,11 @@ ge::graphStatus MlaPrologTiling::GenTilingKey() const
         quantType = static_cast<uint8_t>(scenarioInfo_.quantMode_);
     }
 
+    bool cvMode = 0; // 默认cv 1:2模式
+    if (aivNum_ >= aicNum_ && aivNum_ < 2 * aicNum_) {
+        cvMode = 1; // cv 1:1模式
+    }
+
     if (scenarioInfo_.emptyTensorMode_ == EMPTY_TENSOR_MODE::EMPTY_QUERY) {
         context_->tilingKey = GET_TPL_TILING_KEY(
             0,
@@ -376,7 +396,8 @@ ge::graphStatus MlaPrologTiling::GenTilingKey() const
             0,
             false,
             false,
-            static_cast<uint8_t>(scenarioInfo_.emptyTensorMode_)
+            static_cast<uint8_t>(scenarioInfo_.emptyTensorMode_),
+            cvMode
         );
     } else {
         context_->tilingKey = GET_TPL_TILING_KEY(
@@ -385,7 +406,8 @@ ge::graphStatus MlaPrologTiling::GenTilingKey() const
             quantType,
             enableDequantOpt_,
             enableGroupComputeOpt_,
-            static_cast<uint8_t>(scenarioInfo_.emptyTensorMode_)
+            static_cast<uint8_t>(scenarioInfo_.emptyTensorMode_),
+            cvMode
         );
     }
     OP_LOGI(context_->opName, "MlaProlog tilingKey:%lu", context_->tilingKey);
