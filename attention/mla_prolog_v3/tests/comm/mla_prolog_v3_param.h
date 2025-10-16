@@ -77,12 +77,15 @@ public:
     std::vector<Tensor> quantScaleCkvData = {};
     std::vector<Tensor> quantScaleCkrData = {};
     std::vector<Tensor> smoothScalesCqData = {};
+    std::vector<Tensor> actualSeqLenData = {};
 
     std::vector<Tensor> kvCacheOutData = {};
     std::vector<Tensor> krCacheOutData = {};
     std::vector<Tensor> queryData = {};
     std::vector<Tensor> queryRopeData = {};
     std::vector<Tensor> dequantScaleQNopeData = {};
+    std::vector<Tensor> queryNormOutData = {};
+    std::vector<Tensor> dequantScaleQNormOutData = {};
 
     /* 输入输出 */
     std::map<std::string, Tensor> mTensorList;
@@ -107,9 +110,11 @@ public:
         std::vector<Tensor> pDequantScaleXData, std::vector<Tensor> pDequantScaleWDqData,
         std::vector<Tensor> pDequantScaleWUqQrData, std::vector<Tensor> pDequantScaleWDkvKrData,
         std::vector<Tensor> pQuantScaleCkvData, std::vector<Tensor> pQuantScaleCkrData,
-        std::vector<Tensor> pSmoothScalesCqData, std::vector<Tensor> pKvCacheOutData,
+        std::vector<Tensor> pSmoothScalesCqData, std::vector<Tensor> pActualSeqLenData,
+        std::vector<Tensor> pKvCacheOutData,
         std::vector<Tensor> pKrCacheOutData, std::vector<Tensor> pQueryData,
-        std::vector<Tensor> pQueryRopeData, std::vector<Tensor> pDequantScaleQNopeData);
+        std::vector<Tensor> pQueryRopeData, std::vector<Tensor> pDequantScaleQNopeData,
+        std::vector<Tensor> pQueryNormOutData, std::vector<Tensor> pDequantScaleQNormOutData);
 
     // for TND
     MlaPrologV3Param(int64_t pT, int64_t pB, int64_t pS, int64_t pHe, int64_t pHcq, int64_t pHckv, int64_t pN, int64_t pD, int64_t pDr, int64_t pSkv, int64_t pNkv, int64_t pBlockSize, int64_t pBlockNum,
@@ -123,9 +128,11 @@ public:
         std::vector<Tensor> pDequantScaleXData, std::vector<Tensor> pDequantScaleWDqData,
         std::vector<Tensor> pDequantScaleWUqQrData, std::vector<Tensor> pDequantScaleWDkvKrData,
         std::vector<Tensor> pQuantScaleCkvData, std::vector<Tensor> pQuantScaleCkrData,
-        std::vector<Tensor> pSmoothScalesCqData, std::vector<Tensor> pKvCacheOutData,
+        std::vector<Tensor> pSmoothScalesCqData, std::vector<Tensor> pActualSeqLenData,
+        std::vector<Tensor> pKvCacheOutData,
         std::vector<Tensor> pKrCacheOutData, std::vector<Tensor> pQueryData,
-        std::vector<Tensor> pQueryRopeData, std::vector<Tensor> pDequantScaleQNopeData);
+        std::vector<Tensor> pQueryRopeData, std::vector<Tensor> pDequantScaleQNopeData,
+        std::vector<Tensor> pQueryNormOutData, std::vector<Tensor> pDequantScaleQNormOutData);
 
     virtual ~MlaPrologV3Param() = default;
 

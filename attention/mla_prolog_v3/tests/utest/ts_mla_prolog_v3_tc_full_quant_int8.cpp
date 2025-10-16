@@ -56,11 +56,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00001", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -91,11 +94,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00002", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -126,11 +132,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00003", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -161,11 +170,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00004", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -196,11 +208,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00005", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -231,11 +246,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00006", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -266,11 +284,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00007", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -301,11 +322,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00008", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -336,11 +360,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00009", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -371,11 +398,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00010", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -406,11 +436,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00011", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -441,11 +474,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00012", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -476,11 +512,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00013", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -511,11 +550,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00014", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -546,11 +588,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00015", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -581,11 +626,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00016", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -616,11 +664,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT16, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00017", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -651,11 +702,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT16, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	//维数不符合要求
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00018", true,                    /* CaseName, Enable */
@@ -687,11 +741,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00019", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -722,11 +779,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00020", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -757,11 +817,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00021", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -792,11 +855,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00022", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -827,11 +893,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00023", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -862,11 +931,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00024", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -897,11 +969,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00025", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -932,11 +1007,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00026", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -967,11 +1045,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00027", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1002,11 +1083,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00028", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1037,11 +1121,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00029", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1072,11 +1159,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00030", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1107,11 +1197,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00031", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1142,11 +1235,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00032", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1177,11 +1273,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00033", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1212,11 +1311,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00034", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1247,11 +1349,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00035", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1282,11 +1387,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	// 输入shape不符合要求
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00036", true,                    /* CaseName, Enable */
@@ -1318,11 +1426,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00037", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1353,11 +1464,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00038", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1388,11 +1502,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00039", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1423,11 +1540,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00040", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1458,11 +1578,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00041", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1493,11 +1616,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00042", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1528,11 +1654,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00043", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1563,11 +1692,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00044", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1598,11 +1730,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00045", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1633,11 +1768,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00046", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1668,11 +1806,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00047", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1703,11 +1844,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00048", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1738,11 +1882,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00049", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1773,11 +1920,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00050", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1808,11 +1958,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00051", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1843,11 +1996,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00052", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1878,11 +2034,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 513}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1536}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		),
 	MlaPrologV3Case("MlaPrologV3_Tc_Full_Quant_Int8_00053", true,                    /* CaseName, Enable */
 		"",                                                     /* DebugInfo */
@@ -1913,11 +2072,14 @@ const auto Tc_MlaPrologV3_Full_Quant_Int8_Case = ::testing::Values(
 				{Tensor("quantScaleCkv", {1, 512}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* quantScaleCkv */
 				{},                                             /* quantScaleCkr */
 				{Tensor("smoothScalesCq", {1, 1537}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT)},                                             /* smoothScalesCq */
+				{},                                             /* actualSeqLen */
 				{},                                             /* kvCacheOut */
 				{},                                             /* krCacheOut */
 				{},                                             /* queryOut */
 				{},                                             /* queryRopeOut */
-				{})                                             /* dequantScaleQNopeOut */
+				{},                                             /* dequantScaleQNopeOut */
+				{},                                             /* queryNormOut */
+				{})                                             /* dequantScaleQNormOut */
 		)
 );
 INSTANTIATE_TEST_SUITE_P(MlaPrologV3, Ts_MlaPrologV3_Ascend910B2_tc_full_quant_int8, Tc_MlaPrologV3_Full_Quant_Int8_Case);

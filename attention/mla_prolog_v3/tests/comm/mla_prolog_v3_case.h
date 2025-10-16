@@ -10,11 +10,11 @@
 
 /*!
  * \file mla_prolog_v3_case.h
- * \brief MlaPrologv3 测试用例.
+ * \brief MlaPrologV3 测试用例.
  */
 
-#ifndef MLA_PROLOG_v3_CASE_H
-#define MLA_PROLOG_v3_CASE_H
+#ifndef MLA_PROLOG_V3_CASE_H
+#define MLA_PROLOG_V3_CASE_H
 
 #include <vector>
 #include <utility>
@@ -26,10 +26,10 @@
 #include "mla_prolog_v3_param.h"
 
 
-namespace ops::adv::tests::MlaPrologv3 {
+namespace ops::adv::tests::MlaPrologV3 {
 
 /**
- * 以下参数宏声明要与 MlaPrologv3 Kernel 入口函数保持一致.
+ * 以下参数宏声明要与 MlaPrologV3 Kernel 入口函数保持一致.
  */
 #define MLA_PROLOG_v3_KERNEL_PARAM                                                                                               \
     (uint8_t *tokenX, uint8_t *weightDq,    \
@@ -41,21 +41,22 @@ namespace ops::adv::tests::MlaPrologv3 {
         uint8_t *dequantScaleX, uint8_t *dequantScaleWDq,    \
         uint8_t *dequantScaleWUqQr, uint8_t *dequantScaleWDkvKr,    \
         uint8_t *quantScaleCkv, uint8_t *quantScaleCkr,    \
-        uint8_t *smoothScalesCq,    \
+        uint8_t *smoothScalesCq,   uint8_t *actualSeqLen, \
         uint8_t *query, uint8_t *queryRope,    \
         uint8_t *kvCacheOut, uint8_t *krCacheOut, uint8_t *dequantScaleQNopeOut,    \
+        uint8_t *queryNormOut, uint8_t *dequantScaleQNormOut,    \
         uint8_t *workspace, uint8_t *tiling)
 
 /**
- * 算子 MlaPrologv3 参数
+ * 算子 MlaPrologV3 参数
  */
-class MlaPrologv3Case : public ops::adv::tests::utils::Case {
+class MlaPrologV3Case : public ops::adv::tests::utils::Case {
 public:
     using OpInfo = ops::adv::tests::utils::OpInfo;
     using Context = ops::adv::tests::utils::Context;
-    using MlaPrologv3Param = ops::adv::tests::MlaPrologv3::MlaPrologv3Param;
+    using MlaPrologV3Param = ops::adv::tests::MlaPrologV3::MlaPrologV3Param;
 
-    typedef void(*MlaPrologv3KernelFunc) MLA_PROLOG_v3_KERNEL_PARAM;
+    typedef void(*MlaPrologV3KernelFunc) MLA_PROLOG_V3_KERNEL_PARAM;
 
     class DoTilingParam {
     public:
@@ -81,24 +82,24 @@ public:
     Context mCtx;
 
     /* 输入/输出 参数 */
-    MlaPrologv3Param mParam;
+    MlaPrologV3Param mParam;
 
-    gert::OpImplRegisterv3::TilingKernelFunc mMlaPrologv3OriginTilingFunc = nullptr;
+    gert::OpImplRegisterV3::TilingKernelFunc mMlaPrologV3OriginTilingFunc = nullptr;
     PreTilingRunCbf mPreTilingRunCbf = nullptr;
 
 public:
-    MlaPrologv3Case();
-    MlaPrologv3Case(const char *name, bool enable, const char *dbgInfo, OpInfo prompt, MlaPrologv3Param param,
+    MlaPrologV3Case();
+    MlaPrologV3Case(const char *name, bool enable, const char *dbgInfo, OpInfo prompt, MlaPrologV3Param param,
            int32_t tilingTemplatePriority = kTilingTemplatePriority_Invalid);
 
     bool Run() override;
     bool DoOpTiling(DoTilingParam &tilingParam);
 
-    static void PreTilingRunCbf_SetPlatformInfoNull(MlaPrologv3Case::DoTilingParam &tilingParam);
+    static void PreTilingRunCbf_SetPlatformInfoNull(MlaPrologV3Case::DoTilingParam &tilingParam);
 
 protected:
-    std::string mMlaPrologv3OriginTilingFuncName;
-    void *mMlaPrologv3KernelFunc = nullptr;
+    std::string mMlaPrologV3OriginTilingFuncName;
+    void *mMlaPrologV3KernelFunc = nullptr;
 
 protected:
     bool InitParam() override;
@@ -108,6 +109,6 @@ protected:
     bool InitCurrentCasePtr() override;
 };
 
-} // namespace ops::adv::tests::MlaPrologv3
+} // namespace ops::adv::tests::MlaPrologV3
 
 #endif

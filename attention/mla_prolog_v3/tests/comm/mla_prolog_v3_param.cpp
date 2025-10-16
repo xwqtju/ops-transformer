@@ -23,7 +23,7 @@ using namespace ops::adv::tests::MlaPrologV3;
 MlaPrologV3Param::MlaPrologV3Param(int64_t pB, int64_t pS, int64_t pHe, int64_t pHcq, int64_t pHckv, int64_t pN, int64_t pD, int64_t pDr, int64_t pSkv, int64_t pNkv, int64_t pBlockSize, int64_t pBlockNum,
     CacheModeType pCacheModeType, float pRmsnormEpsilonCq, float pRmsnormEpsilonCkv)
     : MlaPrologV3Param(pB, pS, pHe, pHcq, pHckv, pN, pD, pDr, pSkv, pNkv, pBlockSize, pBlockNum, pCacheModeType,
-        pRmsnormEpsilonCq, pRmsnormEpsilonCkv, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
+        pRmsnormEpsilonCq, pRmsnormEpsilonCkv, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
 {
 }
 
@@ -39,9 +39,10 @@ MlaPrologV3Param::MlaPrologV3Param(int64_t pB, int64_t pS, int64_t pHe, int64_t 
     std::vector<Tensor> pDequantScaleXData, std::vector<Tensor> pDequantScaleWDqData,
     std::vector<Tensor> pDequantScaleWUqQrData, std::vector<Tensor> pDequantScaleWDkvKrData,
     std::vector<Tensor> pQuantScaleCkvData, std::vector<Tensor> pQuantScaleCkrData,
-    std::vector<Tensor> pSmoothScalesCqData, std::vector<Tensor> pKvCacheOutData,
-    std::vector<Tensor> pKrCacheOutData, std::vector<Tensor> pQueryData,
-    std::vector<Tensor> pQueryRopeData, std::vector<Tensor> pDequantScaleQNopeData)
+    std::vector<Tensor> pSmoothScalesCqData, std::vector<Tensor> pActualSeqLenData,
+    std::vector<Tensor> pKvCacheOutData,std::vector<Tensor> pKrCacheOutData, std::vector<Tensor> pQueryData,
+    std::vector<Tensor> pQueryRopeData, std::vector<Tensor> pDequantScaleQNopeData,
+    std::vector<Tensor> pQueryNormOutData, std::vector<Tensor> pDequantScaleQNormOutData)
     : B(pB), S(pS), He(pHe), Hcq(pHcq), Hckv(pHckv), N(pN), D(pD), Dr(pDr), Skv(pSkv),
       Nkv(pNkv), BlockSize(pBlockSize), BlockNum(pBlockNum), cacheModeType(pCacheModeType),
       rmsnormEpsilonCq(pRmsnormEpsilonCq), rmsnormEpsilonCkv(pRmsnormEpsilonCkv),
@@ -57,15 +58,25 @@ MlaPrologV3Param::MlaPrologV3Param(int64_t pB, int64_t pS, int64_t pHe, int64_t 
       quantScaleCkvData(std::move(pQuantScaleCkvData)),
       quantScaleCkrData(std::move(pQuantScaleCkrData)),
       smoothScalesCqData(std::move(pSmoothScalesCqData)),
+      actualSeqLen(std::move(pActualSeqLenData)),
       kvCacheOutData(std::move(pKvCacheOutData)),
       krCacheOutData(std::move(pKrCacheOutData)),
       queryData(std::move(pQueryData)),
       queryRopeData(std::move(pQueryRopeData)),
       dequantScaleQNopeData(std::move(pDequantScaleQNopeData))
+      queryNormOut(std::move(pDequantScaleQNopeData))
+      dequantScaleQNormOut(std::move(pDequantScaleQNopeData))
 {
 }
 
 // for TND
+MlaPrologV3Param::MlaPrologV3Param(int64_t pT, int64_t pB, int64_t pS, int64_t pHe, int64_t pHcq, int64_t pHckv, int64_t pN, int64_t pD, int64_t pDr, int64_t pSkv, int64_t pNkv, int64_t pBlockSize, int64_t pBlockNum,
+    CacheModeType pCacheModeType, float pRmsnormEpsilonCq, float pRmsnormEpsilonCkv)
+    : MlaPrologV3Param(pT, pB, pS, pHe, pHcq, pHckv, pN, pD, pDr, pSkv, pNkv, pBlockSize, pBlockNum, pCacheModeType,
+        pRmsnormEpsilonCq, pRmsnormEpsilonCkv, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
+{
+}
+
 MlaPrologV3Param::MlaPrologV3Param(int64_t pT, int64_t pB, int64_t pS, int64_t pHe, int64_t pHcq, int64_t pHckv, int64_t pN,
     int64_t pD, int64_t pDr, int64_t pSkv, int64_t pNkv, int64_t pBlockSize, int64_t pBlockNum,
     CacheModeType pCacheModeType, float pRmsnormEpsilonCq, float pRmsnormEpsilonCkv,
@@ -78,9 +89,10 @@ MlaPrologV3Param::MlaPrologV3Param(int64_t pT, int64_t pB, int64_t pS, int64_t p
     std::vector<Tensor> pDequantScaleXData, std::vector<Tensor> pDequantScaleWDqData,
     std::vector<Tensor> pDequantScaleWUqQrData, std::vector<Tensor> pDequantScaleWDkvKrData,
     std::vector<Tensor> pQuantScaleCkvData, std::vector<Tensor> pQuantScaleCkrData,
-    std::vector<Tensor> pSmoothScalesCqData, std::vector<Tensor> pKvCacheOutData,
-    std::vector<Tensor> pKrCacheOutData, std::vector<Tensor> pQueryData,
-    std::vector<Tensor> pQueryRopeData, std::vector<Tensor> pDequantScaleQNopeData)
+    std::vector<Tensor> pSmoothScalesCqData, std::vector<Tensor> pActualSeqLenData,
+    std::vector<Tensor> pKvCacheOutData,std::vector<Tensor> pKrCacheOutData, std::vector<Tensor> pQueryData,
+    std::vector<Tensor> pQueryRopeData, std::vector<Tensor> pDequantScaleQNopeData,
+    std::vector<Tensor> pQueryNormOutData, std::vector<Tensor> pDequantScaleQNormOutData)
     : T(pT), B(pB), S(pS), He(pHe), Hcq(pHcq), Hckv(pHckv), N(pN), D(pD), Dr(pDr), Skv(pSkv),
       Nkv(pNkv), BlockSize(pBlockSize), BlockNum(pBlockNum), cacheModeType(pCacheModeType),
       rmsnormEpsilonCq(pRmsnormEpsilonCq), rmsnormEpsilonCkv(pRmsnormEpsilonCkv),
@@ -96,11 +108,14 @@ MlaPrologV3Param::MlaPrologV3Param(int64_t pT, int64_t pB, int64_t pS, int64_t p
       quantScaleCkvData(std::move(pQuantScaleCkvData)),
       quantScaleCkrData(std::move(pQuantScaleCkrData)),
       smoothScalesCqData(std::move(pSmoothScalesCqData)),
+      actualSeqLenData(std::move(pActualSeqLenData)),
       kvCacheOutData(std::move(pKvCacheOutData)),
       krCacheOutData(std::move(pKrCacheOutData)),
       queryData(std::move(pQueryData)),
       queryRopeData(std::move(pQueryRopeData)),
       dequantScaleQNopeData(std::move(pDequantScaleQNopeData))
+      queryNormOutData(std::move(pDequantScaleQNopeData))
+      dequantScaleQNormOutData(std::move(pDequantScaleQNopeData))
 {
 }
 
@@ -139,6 +154,8 @@ bool MlaPrologV3Param::Init()
         mTensorList["query"] = Tensor("query", {T, N, Hckv}, "1", ge::DataType::DT_INT8, ge::FORMAT_ND, Tensor::TensorType::REQUIRED_OUTPUT);
         mTensorList["queryRope"] = Tensor("queryRope", {T, N, Dr}, "1", ge::DataType::DT_BF16, ge::FORMAT_ND, Tensor::TensorType::REQUIRED_OUTPUT);
         mTensorList["dequantScaleQNopeOut"] = Tensor("dequantScaleQNopeOut", {T, N, 1}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::REQUIRED_OUTPUT);
+        mTensorList["queryNormOut"] = Tensor("queryNormOut", {T, N, 1}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::REQUIRED_OUTPUT);
+        mTensorList["dequantScaleQNormOut"] = Tensor("dequantScaleQNormOut", {T, N, 1}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::REQUIRED_OUTPUT);
 
         mTensorList["dequantScaleX"] = Tensor("dequantScaleX", {T, 1}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT);
     } else {
@@ -150,6 +167,8 @@ bool MlaPrologV3Param::Init()
         mTensorList["query"] = Tensor("query", {B, S, N, Hckv}, "1", ge::DataType::DT_INT8, ge::FORMAT_ND, Tensor::TensorType::REQUIRED_OUTPUT);
         mTensorList["queryRope"] = Tensor("queryRope", {B, S, N, Dr}, "1", ge::DataType::DT_BF16, ge::FORMAT_ND, Tensor::TensorType::REQUIRED_OUTPUT);
         mTensorList["dequantScaleQNopeOut"] = Tensor("dequantScaleQNopeOut", {B*S, N, 1}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::REQUIRED_OUTPUT);
+        mTensorList["queryNormOut"] = Tensor("queryNormOut", {B*S, N, 1}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::REQUIRED_OUTPUT);
+        mTensorList["dequantScaleQNormOut"] = Tensor("dequantScaleQNormOut", {B*S, N, 1}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::REQUIRED_OUTPUT);
 
         mTensorList["dequantScaleX"] = Tensor("dequantScaleX", {B*S, 1}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT);
     }
@@ -168,6 +187,7 @@ bool MlaPrologV3Param::Init()
     mTensorList["quantScaleCkv"] = Tensor("quantScaleCkv", {}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT);
     mTensorList["quantScaleCkr"] = Tensor("quantScaleCkr", {}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT);
     mTensorList["smoothScalesCq"] = Tensor("smoothScalesCq", {}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT);
+    mTensorList["actualSeqLen"] = Tensor("actualSeqLen", {}, "1", ge::DataType::DT_FLOAT, ge::FORMAT_ND, Tensor::TensorType::OPTIONAL_INPUT);
 
     mTensorList["kvCacheOut"] = Tensor("kvCacheOut", shape1, cacheMode.c_str(), ge::DataType::DT_INT8, ge::FORMAT_ND, Tensor::TensorType::REQUIRED_OUTPUT);
     mTensorList["krCacheOut"] = Tensor("krCacheOut", shape2, cacheMode.c_str(), ge::DataType::DT_BF16, ge::FORMAT_ND, Tensor::TensorType::REQUIRED_OUTPUT);
@@ -180,7 +200,7 @@ bool MlaPrologV3Param::InitParam()
     std::vector<std::vector<Tensor>> paramListData = {tokenXData, weightDqData, weightUqQrData, weightUkData, weightDkvKrData,
         rmsnormGammaCqData, rmsnormGammaCkvData, ropeSinData, ropeCosData, cacheIndexData, kvCacheData, krCacheData,
         dequantScaleXData, dequantScaleWDqData, dequantScaleWUqQrData, dequantScaleWDkvKrData, quantScaleCkvData,
-        quantScaleCkrData, smoothScalesCqData, kvCacheOutData, krCacheOutData, queryData, queryRopeData, dequantScaleQNopeData};
+        quantScaleCkrData, smoothScalesCqData, actualSeqLenData, kvCacheOutData, krCacheOutData, queryData, queryRopeData, dequantScaleQNopeData, queryNormOutData, dequantScaleQNormOutData};
 
     for (size_t i = 0; i < paramListData.size(); i++) {
         if (!paramListData[i].empty()) {

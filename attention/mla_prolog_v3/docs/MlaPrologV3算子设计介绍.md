@@ -143,7 +143,7 @@ void Process() {
 结合前序章节的流程图，整个MlaPrologV3的完整计算公式如下：
 
 $$
-q^N = RmsNorm(x \cdot W^{DQ}) \cdot W^{UQ} \cdot W^{UK} \tag{a}
+q^N = \alpha_q\cdot\mathrm{RmsNorm}(x \cdot W^{DQ}) \cdot W^{UQ} \cdot W^{UK} \tag{a}
 $$
 
 $$
@@ -198,7 +198,7 @@ $$
 ### RMSNormCkv
 对压缩后的$KV$矩阵按行进行RMSNorm(均方根归一化)操作。RMSNorm操作需要传入两个超参$\gamma$和$\epsilon$，对应到接口文档中的$rmsnormGammaCkv$和$rmsnormEpsilonCkv$。
 $$
-c_{norm}^{KV} = RmsNorm(c^{KV}) \tag{8}
+c_{norm}^{KV} = \alpha_{kv}\cdot\mathrm{RmsNorm}(c^{KV}) \tag{8}
 $$
 RmsNorm的计算参考公式（3）-（4）。
 

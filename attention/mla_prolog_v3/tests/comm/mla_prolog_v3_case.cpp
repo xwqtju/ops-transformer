@@ -86,11 +86,14 @@ bool RunMlaPrologV3(void *func, uint64_t tilingKey, int64_t blockDim, std::vecto
                 inputs[16]->GetDevData(), // quantScaleCkv
                 inputs[17]->GetDevData(), // quantScaleCkr
                 inputs[18]->GetDevData(), // smoothScalesCq
+                inputs[19]->GetDevData(), // actualSeqLen
                 outputs[0]->GetDevData(), // query
                 outputs[1]->GetDevData(), // queryRope
                 outputs[2]->GetDevData(), // kvCacheOut
                 outputs[3]->GetDevData(), // krCacheOut
                 outputs[4]->GetDevData(), // dequantScaleQNopeOut
+                outputs[5]->GetDevData(), // queryNormOut
+                outputs[6]->GetDevData(), // dequantScaleQNormOut
                 workspace, tilingData);
     return true;
 }
@@ -157,11 +160,11 @@ bool MlaPrologV3Case::InitOpInfoCtx()
     bool rst = mCtx.SetOpName(mOpInfo.mName.c_str());
     rst = rst && mCtx.SetDeterministic(mOpInfo.mCtr.mDeterministic);
     rst = rst && mCtx.SetInputs({&mParam.mTensorList["tokenX"], &mParam.mTensorList["weightDq"], &mParam.mTensorList["weightUqQr"], &mParam.mTensorList["weightUk"], &mParam.mTensorList["weightDkvKr"],
-                                        &mParam.mTensorList["rmsnormGammaCq"], &mParam.mTensorList["rmsnormGammaCkv"], &mParam.mTensorList["ropeSin"], &mParam.mTensorList["ropeCos"],
-                                        &mParam.mTensorList["cacheIndex"], &mParam.mTensorList["kvCache"], &mParam.mTensorList["krCache"], &mParam.mTensorList["dequantScaleX"], 
-                                        &mParam.mTensorList["dequantScaleWDq"], &mParam.mTensorList["dequantScaleWUqQr"], &mParam.mTensorList["dequantScaleWDkvKr"], 
-                                        &mParam.mTensorList["quantScaleCkv"], &mParam.mTensorList["quantScaleCkr"], &mParam.mTensorList["smoothScalesCq"]});
-    rst = rst && mCtx.SetOutputs({&mParam.mTensorList["query"], &mParam.mTensorList["queryRope"], &mParam.mTensorList["kvCacheOut"], &mParam.mTensorList["krCacheOut"], &mParam.mTensorList["dequantScaleQNopeOut"]});
+        &mParam.mTensorList["rmsnormGammaCq"], &mParam.mTensorList["rmsnormGammaCkv"], &mParam.mTensorList["ropeSin"], &mParam.mTensorList["ropeCos"],
+        &mParam.mTensorList["cacheIndex"], &mParam.mTensorList["kvCache"], &mParam.mTensorList["krCache"], &mParam.mTensorList["dequantScaleX"], 
+        &mParam.mTensorList["dequantScaleWDq"], &mParam.mTensorList["dequantScaleWUqQr"], &mParam.mTensorList["dequantScaleWDkvKr"], 
+        &mParam.mTensorList["quantScaleCkv"], &mParam.mTensorList["quantScaleCkr"], &mParam.mTensorList["smoothScalesCq"], &mParam.mTensorList["actualSeqLen"]});
+    rst = rst && mCtx.SetOutputs({&mParam.mTensorList["query"], &mParam.mTensorList["queryRope"], &mParam.mTensorList["kvCacheOut"], &mParam.mTensorList["krCacheOut"], &mParam.mTensorList["dequantScaleQNopeOut"], &mParam.mTensorList["queryNormOut"], &mParam.mTensorList["dequantScaleQNormOut"]});
 
     rst = rst && mCtx.SetAttrs({{"rmsnorm_epsilon_cq", mParam.rmsnormEpsilonCq},
                                        {"rmsnorm_epsilon_ckv", mParam.rmsnormEpsilonCkv},
