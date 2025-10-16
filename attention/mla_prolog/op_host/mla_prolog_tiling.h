@@ -171,6 +171,7 @@ constexpr uint64_t MLA_PROLOG_QUANT_TYPE_OFFSET = uint64_t(100UL);
 constexpr uint64_t MLA_PROLOG_ENABLE_DEQUANT_OPT_OFFSET = uint64_t(1000UL);
 constexpr uint64_t MLA_PROLOG_ENABLE_GROUP_COMPUTE_OPT_OFFSET = uint64_t(10000UL);
 constexpr uint64_t MLA_PROLOG_EMPTY_TENSOR_MODE_OFFSET = uint64_t(100000UL);
+constexpr uint64_t MLA_PROLOG_CV_RATIO_MODE_OFFSET = uint64_t(100000000UL);
 
 struct MlaPrologContext {
     const char *opName;
