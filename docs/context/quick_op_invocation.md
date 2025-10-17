@@ -232,11 +232,7 @@
   # bash build.sh -u --noexec --[opapi|ophost|opkernel]
     ```
   
-    如需验证ophost功能是否正常，执行如下命令：
-    ```bash
-  bash build.sh -u --ophost
-    ```
-
+   
     执行完成后出现如下内容，表示执行成功。
     ```bash
   Global Environment TearDown
