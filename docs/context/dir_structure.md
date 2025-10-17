@@ -59,27 +59,6 @@
 │   │   └── tests                                       # 算子测试用例目录
 │   │       ├── CMakeLists.txt
 │   │       └── ut                                      # 可选，UT测试用例，根据实际情况开发相应的用例
-│   │           ├── CMakeLists.txt                      # UT用例cmakelist文件
-│   │           ├── graph_plugin                        # grap_plugin测试用例目录
-│   │           │   ├── CMakeLists.txt
-│   │           │   └── fusion_pass                     # 融合规则测试用例目录
-│   │           │       └── CMakeLists.txt
-│   │           ├── op_host                             # op_host测试用例目录
-│   │           │   ├── CMakeLists.txt
-│   │           │   ├── ${op_name}_regbase_tiling.h
-│   │           │   ├── op_api                          # op_api测试用例目录
-│   │           │   │   ├── CMakeLists.txt
-│   │           │   │   └── test_aclnn_${op_name}.cpp   # 算子aclnn测试用例文件
-│   │           │   ├── test_${op_name}_${sub_case}.cpp # ${sub_case}子场景下op_host测试用例文件
-│   │           │   ├── test_${op_name}.cpp             # op_host测试用例文件
-│   │           │   ├── test_${op_name}_infershape.cpp  # 算子InferShape测试用例文件
-│   │           │   └── test_${op_name}_tiling.cpp      # 算子Tiling测试用例文件
-│   │           └── op_kernel                           # op_kernel测试用例目录
-│   │               ├── CMakeLists.txt
-│   │               │── test_${op_name}.cpp             # 算子Kernel测试用例文件
-│   │               └── ${op_name}_data                 # 可选，op_kernel测试用例中依赖的数据比对和生成脚本，若未配置需在对应用例中手动实现
-│   │                   ├── compare_data.py             # 数据脚本
-│   │                   └── gen_data.py                 # 数据生成脚本
 │   └── ...
 ├── docs                                                # 项目相关文档目录
 ├── examples                                            # 端到端算子开发和调用示例
@@ -94,13 +73,6 @@
 │   └── README.md                                       # 项目示例介绍文档
 ├── scripts                                             # 脚本目录，包含自定义算子、Kernel构建相关配置文件
 ├── tests                                               # 项目级测试目录
-│   ├── requirements.txt                                # 测试用例依赖的第三方组件
-│   └── ut                                              # UT用例工程
-│       ├── CMakeLists.txt                              # UT工程的cmakelist脚本
-│       ├── common                                      # UT工程中使用的公共代码
-│       ├── op_api                                      # op_api测试工程
-│       ├── op_host                                     # op_host测试工程
-│       └── op_kernel                                   # op_kernel测试工程
 ├── CMakeLists.txt                                      # 项目工程cmakelist入口
 ├── CONTRIBUTING.md                                     # 项目贡献指南文件
 ├── LICENSE                                             # 项目开源许可证信息
