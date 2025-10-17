@@ -6756,10 +6756,9 @@ PFA_EXTERN_C ge::graphStatus TilingPromptFlashAttention(gert::TilingContext* con
 
     ret = flashTiling.RunBigKernelTilingWithParams(contextParamsForPFATiling, tilingKey, blockDimToBeSet, tilingData);
     g_templateVersion += 1;
-    tilingKey = GET_TPL_TILING_KEY(static_cast<int>(g_tail), static_cast<int>(g_newTiling), static_cast<int>(g_qT),static_cast<int>(g_precisionMode),
-                                            static_cast<int>(g_outT), static_cast<int>(g_layoutT), static_cast<int>(g_mmType), static_cast<int>(g_pageAttention),
-                                            static_cast<int>(g_enablePrefix), static_cast<int>(g_msdMode), static_cast<int>(g_cvdiffBase), static_cast<int>(g_cvdiffMla), static_cast<int>(g_kvT),
-                                            static_cast<int>(g_templateVersion));
+    tilingKey = GET_TPL_TILING_KEY(static_cast<int>(g_qT), static_cast<int>(g_kvT), static_cast<int>(g_outT), static_cast<int>(g_pageAttention), static_cast<int>(g_layoutT),
+                                   0, 0, static_cast<int>(g_enablePrefix), static_cast<int>(g_msdMode), static_cast<int>(g_tail), static_cast<int>(g_newTiling), static_cast<int>(g_precisionMode),
+                                   static_cast<int>(g_mmType), static_cast<int>(g_cvdiffBase), static_cast<int>(g_cvdiffMla), static_cast<int>(g_templateVersion), 2);
     context->SetTilingKey(tilingKey);
     context->SetBlockDim(blockDimToBeSet);
     flashTiling.PromptFlashAttentionSetTilingData(context, tilingData);
