@@ -17,19 +17,15 @@
 |[aclnnFlashAttentionUnpaddingScoreGradV4](../../attention/flash_attention_score_grad/docs/aclnnFlashAttentionUnpaddingScoreGradV4.md)|训练场景下计算注意力的反向输出。
 |[aclnnFlashAttentionVarLenScoreV4](../../attention/flash_attention_score/docs/aclnnFlashAttentionVarLenScoreV4.md)|训练场景下，使用FlashAttention算法实现self-attention（自注意力）的计算。
 |[aclnnFusedInferAttentionScoreV4](../../attention/fused_infer_attention_score/docs/aclnnFusedInferAttentionScoreV4.md)|适配decode & prefill场景的FlashAttention算子，既可以支持prefill计算场景（PromptFlashAttention），也可支持decode计算场景（IncreFlashAttention）。
-|[aclnnFusedInferAttentionScoreV4](../../attention/fused_infer_attention_score/docs/aclnnFusedInferAttentionScoreV4.md)|适配decode & prefill场景的FlashAttention算子|
 |[aclnnGroupedMatMulAllReduce](../../mc2/grouped_mat_mul_all_reduce/docs/aclnnGroupedMatMulAllReduce.md)|在grouped_matmul的基础上实现多卡并行AllReduce功能，实现分组矩阵乘计算，每组矩阵乘的维度大小可以不同。
 |[aclnnGroupedMatMulAlltoAllv](../../mc2/grouped_mat_mul_allto_allv/docs/aclnnGroupedMatMulAlltoAllv.md)|完成路由专家GroupedMatMul、Unpermute、AlltoAllv融合并实现与共享专家MatMul并行融合。
 |[aclnnGroupedMatmulFinalizeRouting](../../gmm/grouped_matmul_finalize_routing/docs/aclnnGroupedMatmulFinalizeRouting.md)|GroupedMatmul和MoeFinalizeRouting的融合算子。
 |[aclnnGroupedMatmulFinalizeRoutingWeightNz](../../gmm/grouped_matmul_finalize_routing/docs/aclnnGroupedMatmulFinalizeRoutingWeightNz.md)|GroupedMatmul和MoeFinalizeRouting的融合算子，GroupedMatmul计算后的输出按照索引做combine动作，支持w为昇腾亲和数据排布格式(NZ)。
 |[aclnnGroupedMatmulSwigluQuant](../../gmm/grouped_matmul_swiglu_quant/docs/aclnnGroupedMatmulSwigluQuant.md)|融合GroupedMatmul 、dquant、swiglu和quant。
-|[aclnnGroupedMatmulSwigluQuant](../gmm/grouped_matmul_swiglu_quant/docs/aclnnGroupedMatmulSwigluQuant.md)|实现融合GroupedMatmul 、dquant、swiglu和quant运算。|
 |[aclnnGroupedMatmulSwigluQuantWeightNZ](../../gmm/grouped_matmul_swiglu_quant/docs/aclnnGroupedMatmulSwigluQuantWeightNZ.md)|融合GroupedMatmul、dquant、swiglu和quant。
-|[aclnnGroupedMatmulSwigluQuantWeightNZ](../gmm/grouped_matmul_swiglu_quant/docs/aclnnGroupedMatmulSwigluQuantWeightNZ.md)|实现融合GroupedMatmul 、dquant、swiglu和quant运算，是aclnnGroupedMatmulSwigluQuant接口的weightNZ特化版本。|
 |[aclnnGroupedMatmulV5](../../gmm/grouped_matmul/docs/aclnnGroupedMatmulV5.md)|实现分组矩阵乘计算。
 |[aclnnGroupedMatmulWeightNz](../../gmm/grouped_matmul/docs/aclnnGroupedMatmulWeightNz.md)|实现分组矩阵乘计算，每组矩阵乘的维度大小可以不同。
 |[aclnnIncreFlashAttentionV4](../../attention/incre_flash_attention/docs/aclnnIncreFlashAttentionV4.md)|在全量推理场景的FlashAttention算子的基础上实现增量推理|
-|[aclnnIncreFlashAttentionV4](../../attention/incre_flash_attention/docs/aclnnIncreFlashAttentionV4.md)|对于自回归（Auto-regressive）的语言模型，随着新词的生成，推理输入长度不断增大。
 |[aclnnInplaceMatmulAllReduceAddRmsNorm](../../mc2/inplace_matmul_all_reduce_add_rms_norm/docs/aclnnInplaceMatmulAllReduceAddRmsNorm.md)|完成mm + all_reduce + add + rms_norm计算。
 |[aclnnInplaceQuantMatmulAllReduceAddRmsNorm](../../mc2/inplace_matmul_all_reduce_add_rms_norm/docs/aclnnInplaceQuantMatmulAllReduceAddRmsNorm.md)|完成mm + all_reduce + add + rms_norm计算。
 |[aclnnInplaceWeightQuantMatmulAllReduceAddRmsNorm](../../mc2/inplace_matmul_all_reduce_add_rms_norm/docs/aclnnInplaceWeightQuantMatmulAllReduceAddRmsNorm.md)|完成mm + all_reduce + add + rms_norm计算。
@@ -47,26 +43,22 @@
 |[aclnnMoeFinalizeRoutingV2](../../moe/moe_finalize_routing_v2/docs/aclnnMoeFinalizeRoutingV2.md)|MoE计算中，最后处理合并MoE FFN的输出结果。
 |[aclnnMoeFinalizeRoutingV2Grad](../../moe/moe_finalize_routing_v2_grad/docs/aclnnMoeFinalizeRoutingV2Grad.md)|aclnnMoeFinalizeRoutingV2的反向传播。
 |[aclnnMoeGatingTopK](../../moe/moe_gating_top_k/docs/aclnnMoeGatingTopK.md)|MoE计算中，对输入x做Sigmoid计算，对计算结果分组进行排序，最后根据分组排序的结果选取前k个专家。
-|[aclnnMoeGatingTopKSoftmax](../../moe/moe_gating_top_k_softmax/)|MoE计算中，对x的输出做Softmax计算，取topk操作。
+|[aclnnMoeGatingTopKSoftmax](../../moe/moe_gating_top_k_softmax/docs/aclnnMoeGatingTopKSoftmax.md)|MoE计算中，对x的输出做Softmax计算，取topk操作。
 |[aclnnMoeGatingTopKSoftmaxV2](../../moe/moe_gating_top_k_softmax_v2/docs/aclnnMoeGatingTopKSoftmaxV2.md)|MoE计算中，如果renorm=0，先对x的输出做Softmax计算，再取topk操作；如果renorm=1，先对x的输出做topk操作，再进行Softmax操作。
 |[aclnnMoeInitRouting](../../moe/moe_init_routing/docs/aclnnMoeInitRouting.md)|MoE的routing计算，根据aclnnMoeGatingTopKSoftmax的计算结果做routing处理。
 |[aclnnMoeInitRoutingQuant](../../moe/moe_init_routing_quant/docs/aclnnMoeInitRoutingQuant.md)|MoE的routing计算，根据aclnnMoeGatingTopKSoftmax的计算结果做routing处理，并对结果进行量化。
-|[aclnnMoeInitRoutingQuantV2](../../moe/moe_init_routing_quant_v2/)|MoE的routing计算，根据aclnnMoeGatingTopKSoftmaxV2的计算结果做routing处理。
+|[aclnnMoeInitRoutingQuantV2](../../moe/moe_init_routing_quant_v2/docs/aclnnMoeInitRoutingQuantV2.md)|MoE的routing计算，根据aclnnMoeGatingTopKSoftmaxV2的计算结果做routing处理。
 |[aclnnMoeInitRoutingV2](../../moe/moe_init_routing_v2/docs/aclnnMoeInitRoutingV2.md)|该算子对应MoE（Mixture of Experts，混合专家模型）中的Routing计算，以MoeGatingTopKSoftmax算子的输出x和expert_idx作为输入，并输出Routing矩阵expanded_x等结果供后续计算使用。
 |[aclnnMoeInitRoutingV2Grad](../../moe/moe_init_routing_v2_grad/docs/aclnnMoeInitRoutingV2Grad.md)|aclnnMoeInitRoutingV2的反向传播，完成tokens的加权求和。
 |[aclnnMoeUpdateExpert](../../mc2/moe_update_expert/docs/aclnnMoeUpdateExpert.md)|本API支持负载均衡和专家剪枝功能。经过映射后的专家表和mask可传入Moe层进行数据分发和处理。
 |[aclnnNsaCompress](../../attention/nsa_compress/docs/aclnnNsaCompress.md)|训练场景下，使用NSA Compress算法减轻long-context的注意力计算，实现在KV序列维度进行压缩。
 |[aclnnNsaCompressAttention](../../attention/nsa_compress_attention/docs/aclnnNsaCompressAttention.md)|NSA中compress attention以及select topk索引计算。
 |[aclnnNsaCompressAttentionInfer](../../attention/nsa_compress_attention_infer/docs/aclnnNsaCompressAttentionInfer.md)|Native Sparse Attention推理过程中，Compress Attention的计算。
-|[aclnnNsaCompressAttentionInfer](../../attention/nsa_compress_attention_infer/docs/aclnnNsaCompressAttentionInfer.md)|实现Native Sparse Attention推理过程中，Compress Attention的计算。|
 |[aclnnNsaCompressWithCache](../../attention/nsa_compress_with_cache/docs/aclnnNsaCompressWithCache.md)|实现Native-Sparse-Attention推理阶段的KV压缩。|
-|[aclnnNsaCompressWithCache](../../attention/nsa_compress_with_cache/docs/aclnnNsaCompressWithCache.md)|用于Native-Sparse-Attention推理阶段的KV压缩。
 |[aclnnNsaSelectedAttention](../../attention/nsa_selected_attention/docs/aclnnNsaSelectedAttention.md)|训练场景下，实现NativeSparseAttention算法中selected-attention（选择注意力）的计算。
 |[aclnnNsaSelectedAttentionGrad](../../attention/nsa_selected_attention_grad/docs/aclnnNsaSelectedAttentionGrad.md)|根据topkIndices对key和value选取大小为selectedBlockSize的数据重排，接着进行训练场景下计算注意力的反向输出。
 |[aclnnNsaSelectedAttentionInfer](../../attention/nsa_select_attention_infer/docs/aclnnNsaSelectedAttentionInfer.md)|Native Sparse Attention推理过程中，Selected Attention的计算。
-|[aclnnNsaSelectedAttentionInfer](../../attention/nsa_select_attention_infer/docs/aclnnNsaSelectedAttentionInfer.md)|实现Native Sparse Attention推理过程中，Selected Attention的计算。|
 |[aclnnPromptFlashAttentionV3](../../attention/prompt_flash_attention/docs/aclnnPromptFlashAttentionV3.md)|全量推理场景的FlashAttention算子。
-|[aclnnPromptFlashAttentionV3](../../attention/prompt_flash_attention/docs/aclnnPromptFlashAttentionV3.md)|实现全量推理场景的FlashAttention算子，支持sparse优化、actualSeqLengthsKv优化、int8量化功能、innerPrecise参数|
 |[aclnnQuantGroupedMatmulInplaceAdd](../../gmm/quant_grouped_matmul_inplace_add/docs/aclnnQuantGroupedMatmulInplaceAdd.md)|实现分组矩阵乘计算和加法计算，基本功能为矩阵乘和加法的组合。
 |[aclnnQuantMatmulAllReduce](../../mc2/matmul_all_reduce/docs/aclnnQuantMatmulAllReduce.md)|对量化后的入参x1、x2进行MatMul计算后，接着进行Dequant计算，接着与x3进行Add操作，最后做AllReduce计算。
 |[aclnnQuantMatmulAllReduceAddRmsNorm](../../mc2/matmul_all_reduce_add_rms_norm/docs/aclnnQuantMatmulAllReduceAddRmsNorm.md)|完成mm + all_reduce + add + rms_norm计算。
