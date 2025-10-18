@@ -31,7 +31,7 @@ namespace ops::adv::tests::MlaPrologV3 {
 /**
  * 以下参数宏声明要与 MlaPrologV3 Kernel 入口函数保持一致.
  */
-#define MLA_PROLOG_v3_KERNEL_PARAM                                                                                               \
+#define MLA_PROLOG_V3_KERNEL_PARAM                                                                                               \
     (uint8_t *tokenX, uint8_t *weightDq,    \
         uint8_t *weightUqQr, uint8_t *weightUk,    \
         uint8_t *weightDkvKr, uint8_t *rmsnormGammaCq,    \
@@ -84,7 +84,7 @@ public:
     /* 输入/输出 参数 */
     MlaPrologV3Param mParam;
 
-    gert::OpImplRegisterV3::TilingKernelFunc mMlaPrologV3OriginTilingFunc = nullptr;
+    gert::OpImplRegisterV2::TilingKernelFunc mMlaPrologV3OriginTilingFunc = nullptr;
     PreTilingRunCbf mPreTilingRunCbf = nullptr;
 
 public:

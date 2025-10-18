@@ -9,11 +9,11 @@
  */
 
 /*!
- * \file mla_prolog_V3_case.cpp
+ * \file mla_prolog_v3_case.cpp
  * \brief MlaPrologV3 测试用例.
  */
 
-#include "mla_prolog_V3_case.h"
+#include "mla_prolog_v3_case.h"
 #include <utility>
 #include <tikicpulib.h>
 #include <graph/utils/type_utils.h>
@@ -28,7 +28,7 @@
  */
 #ifdef SUPPORT_KERNEL
 namespace ops::adv::tests::MlaPrologV3 {
-extern "C" __global__ __aicore__ void mla_prolog_V3 MLA_PROLOG_V3_KERNEL_PARAM;
+extern "C" __global__ __aicore__ void mla_prolog_v3 MLA_PROLOG_V3_KERNEL_PARAM;
 }
 #endif
 
@@ -114,7 +114,7 @@ MlaPrologV3Case::MlaPrologV3Case(const char *name, bool enable, const char *dbgI
 
     mMlaPrologV3OriginTilingFuncName = "TilingMlaProlog";
 #ifdef SUPPORT_KERNEL
-    mMlaPrologV3KernelFunc = (void *)mla_prolog_V3;
+    mMlaPrologV3KernelFunc = (void *)mla_prolog_v3;
 #endif
 }
 
@@ -161,8 +161,8 @@ bool MlaPrologV3Case::InitOpInfoCtx()
     rst = rst && mCtx.SetDeterministic(mOpInfo.mCtr.mDeterministic);
     rst = rst && mCtx.SetInputs({&mParam.mTensorList["tokenX"], &mParam.mTensorList["weightDq"], &mParam.mTensorList["weightUqQr"], &mParam.mTensorList["weightUk"], &mParam.mTensorList["weightDkvKr"],
         &mParam.mTensorList["rmsnormGammaCq"], &mParam.mTensorList["rmsnormGammaCkv"], &mParam.mTensorList["ropeSin"], &mParam.mTensorList["ropeCos"],
-        &mParam.mTensorList["cacheIndex"], &mParam.mTensorList["kvCache"], &mParam.mTensorList["krCache"], &mParam.mTensorList["dequantScaleX"], 
-        &mParam.mTensorList["dequantScaleWDq"], &mParam.mTensorList["dequantScaleWUqQr"], &mParam.mTensorList["dequantScaleWDkvKr"], 
+        &mParam.mTensorList["kvCache"], &mParam.mTensorList["krCache"], &mParam.mTensorList["cacheIndex"], &mParam.mTensorList["dequantScaleX"],
+        &mParam.mTensorList["dequantScaleWDq"], &mParam.mTensorList["dequantScaleWUqQr"], &mParam.mTensorList["dequantScaleWDkvKr"],
         &mParam.mTensorList["quantScaleCkv"], &mParam.mTensorList["quantScaleCkr"], &mParam.mTensorList["smoothScalesCq"], &mParam.mTensorList["actualSeqLen"]});
     rst = rst && mCtx.SetOutputs({&mParam.mTensorList["query"], &mParam.mTensorList["queryRope"], &mParam.mTensorList["kvCacheOut"], &mParam.mTensorList["krCacheOut"], &mParam.mTensorList["dequantScaleQNopeOut"], &mParam.mTensorList["queryNormOut"], &mParam.mTensorList["dequantScaleQNormOut"]});
 
@@ -187,7 +187,7 @@ bool MlaPrologV3Case::InitOriginTilingFunc()
     /* MlaPrologV3 需提供修改 TilingContext 功能 */
     /* MlaPrologV3 需提供按指定优先级调用 Tiling 模板功能 */
     mMlaPrologV3OriginTilingFunc =
-        (gert::OpImplRegisterV3::TilingKernelFunc)platform->LoadOpTilingSoSym(mMlaPrologV3OriginTilingFuncName.c_str());
+        (gert::OpImplRegisterV2::TilingKernelFunc)platform->LoadOpTilingSoSym(mMlaPrologV3OriginTilingFuncName.c_str());
     if (mMlaPrologV3OriginTilingFunc == nullptr) {
         LOG_ERR("Can't get origin tiling func, MlaPrologV3(%p)", mMlaPrologV3OriginTilingFunc);
         return false;

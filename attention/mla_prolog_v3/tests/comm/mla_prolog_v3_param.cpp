@@ -58,14 +58,14 @@ MlaPrologV3Param::MlaPrologV3Param(int64_t pB, int64_t pS, int64_t pHe, int64_t 
       quantScaleCkvData(std::move(pQuantScaleCkvData)),
       quantScaleCkrData(std::move(pQuantScaleCkrData)),
       smoothScalesCqData(std::move(pSmoothScalesCqData)),
-      actualSeqLen(std::move(pActualSeqLenData)),
+      actualSeqLenData(std::move(pActualSeqLenData)),
       kvCacheOutData(std::move(pKvCacheOutData)),
       krCacheOutData(std::move(pKrCacheOutData)),
       queryData(std::move(pQueryData)),
       queryRopeData(std::move(pQueryRopeData)),
-      dequantScaleQNopeData(std::move(pDequantScaleQNopeData))
-      queryNormOut(std::move(pDequantScaleQNopeData))
-      dequantScaleQNormOut(std::move(pDequantScaleQNopeData))
+      dequantScaleQNopeData(std::move(pDequantScaleQNopeData)),
+      queryNormOutData(std::move(pQueryNormOutData)),
+      dequantScaleQNormOutData(std::move(pDequantScaleQNormOutData))
 {
 }
 
@@ -113,9 +113,9 @@ MlaPrologV3Param::MlaPrologV3Param(int64_t pT, int64_t pB, int64_t pS, int64_t p
       krCacheOutData(std::move(pKrCacheOutData)),
       queryData(std::move(pQueryData)),
       queryRopeData(std::move(pQueryRopeData)),
-      dequantScaleQNopeData(std::move(pDequantScaleQNopeData))
-      queryNormOutData(std::move(pDequantScaleQNopeData))
-      dequantScaleQNormOutData(std::move(pDequantScaleQNopeData))
+      dequantScaleQNopeData(std::move(pDequantScaleQNopeData)),
+      queryNormOutData(std::move(pQueryNormOutData)),
+      dequantScaleQNormOutData(std::move(pDequantScaleQNormOutData))
 {
 }
 
@@ -198,7 +198,7 @@ bool MlaPrologV3Param::Init()
 bool MlaPrologV3Param::InitParam()
 {
     std::vector<std::vector<Tensor>> paramListData = {tokenXData, weightDqData, weightUqQrData, weightUkData, weightDkvKrData,
-        rmsnormGammaCqData, rmsnormGammaCkvData, ropeSinData, ropeCosData, cacheIndexData, kvCacheData, krCacheData,
+        rmsnormGammaCqData, rmsnormGammaCkvData, ropeSinData, ropeCosData, kvCacheData, krCacheData, cacheIndexData,
         dequantScaleXData, dequantScaleWDqData, dequantScaleWUqQrData, dequantScaleWDkvKrData, quantScaleCkvData,
         quantScaleCkrData, smoothScalesCqData, actualSeqLenData, kvCacheOutData, krCacheOutData, queryData, queryRopeData, dequantScaleQNopeData, queryNormOutData, dequantScaleQNormOutData};
 
