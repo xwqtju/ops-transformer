@@ -63,3 +63,49 @@ TEST_F(MoeComputeExpertTokensTiling, MoeComputeExpertTokens_tiling_int32_1)
     std::vector<size_t> expectWorkspaces = {16802304};    // workspace
     ExecuteTestCase(tilingContextPara, ge::GRAPH_SUCCESS, expectTilingKey, expectTilingData, expectWorkspaces);
 }
+
+TEST_F(MoeComputeExpertTokensTiling, MoeComputeExpertTokens_tiling_int32_2)
+{
+    optiling::MoeComputeExpertTokensCompileInfo compileInfo = {
+        40, 65536}; // 根据tiling头文件中的compileInfo填入对应值
+    gert::TilingContextPara tilingContextPara("MoeComputeExpertTokens", // op_name
+                                              {
+                                                  // input info
+                                                  {{{20000}, {20000}}, ge::DT_INT32, ge::FORMAT_ND},
+                                              },
+                                              // output info
+                                              {
+                                                  {{{100}, {100}}, ge::DT_INT32, ge::FORMAT_ND},
+                                              },
+                                              // attr
+                                              {{{"num_experts", Ops::Transformer::AnyValue::CreateFrom<int64_t>(98)}}},
+                                              &compileInfo);
+    int64_t expectTilingKey = 1002; // tilngkey
+    string expectTilingData = "64 50 1 49 262144 24 100 2 1 2 2 2 1 2 2 98 2 1 2 2 2 1 2 2 320 100 1 1 320 100 1 98 98 "
+                              "1 100 0 0 16802304 1001 "; // tilingData
+    std::vector<size_t> expectWorkspaces = {16802304};    // workspace
+    ExecuteTestCase(tilingContextPara, ge::GRAPH_SUCCESS, expectTilingKey, expectTilingData, expectWorkspaces);
+}
+
+TEST_F(MoeComputeExpertTokensTiling, MoeComputeExpertTokens_tiling_int32_3)
+{
+    optiling::MoeComputeExpertTokensCompileInfo compileInfo = {
+        40, 65536}; // 根据tiling头文件中的compileInfo填入对应值
+    gert::TilingContextPara tilingContextPara("MoeComputeExpertTokens", // op_name
+                                              {
+                                                  // input info
+                                                  {{{65536}, {65536}}, ge::DT_INT32, ge::FORMAT_ND},
+                                              },
+                                              // output info
+                                              {
+                                                  {{{8}, {8}}, ge::DT_INT32, ge::FORMAT_ND},
+                                              },
+                                              // attr
+                                              {{{"num_experts", Ops::Transformer::AnyValue::CreateFrom<int64_t>(98)}}},
+                                              &compileInfo);
+    int64_t expectTilingKey = 1001; // tilngkey
+    string expectTilingData = "64 50 1 49 262144 24 100 2 1 2 2 2 1 2 2 98 2 1 2 2 2 1 2 2 320 100 1 1 320 100 1 98 98 "
+                              "1 100 0 0 16802304 1001 "; // tilingData
+    std::vector<size_t> expectWorkspaces = {16802304};    // workspace
+    ExecuteTestCase(tilingContextPara, ge::GRAPH_SUCCESS, expectTilingKey, expectTilingData, expectWorkspaces);
+}
