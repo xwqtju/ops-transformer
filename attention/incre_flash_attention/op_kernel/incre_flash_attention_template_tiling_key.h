@@ -21,6 +21,7 @@
 
 #else
 
+#define ASCENDC_TPL_3_BW 3
 ASCENDC_TPL_ARGS_DECL(IncreFlashAttention,
     // half, bf16
     ASCENDC_TPL_UINT_DECL(Q_T, ASCENDC_TPL_2_BW, ASCENDC_TPL_UI_LIST, 0, 2),
