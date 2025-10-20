@@ -17,7 +17,7 @@
   #include <vector>
   #include <cstdint>
   #include "acl/acl.h"
-  #include "aclnnop/aclnn_mla_prolog_v3_weight_nz.h"
+  #include "../op_host/op_api/aclnn_mla_prolog_v3_weight_nz.h"
   #include<unistd.h>
 
   #define CHECK_RET(cond, return_expr) \
@@ -208,7 +208,7 @@
       int queryQuantMode = 0;
       int ckvkrRepoMode = 0;
       int quantScaleRepoMode = 0;
-      int tileSize = 0;
+      int tileSize = 128;
       double kNopeClipAlpha = 1.0f;
       double qcQrScale = 1.0f;
       double kcScale = 1.0f;
@@ -294,7 +294,7 @@
       uint64_t workspaceSize = 0;
       aclOpExecutor* executor = nullptr;
       // 调用aclnnMlaPrologV3WeightNz第一段接口
-      ret = aclnnMlaPrologV3WeightNzGetWorkspaceSize(tokenX, weightDq, weightUqQr, weightUk, weightDkvKr, rmsnormGammaCq, rmsnormGammaCkv, ropeSin, ropeCos, cacheIndex, kvCache, krCache,
+      ret = aclnnMlaPrologV3WeightNzGetWorkspaceSize(tokenX, weightDq, weightUqQr, weightUk, weightDkvKr, rmsnormGammaCq, rmsnormGammaCkv, ropeSin, ropeCos, kvCache, krCache, cacheIndex,
         dequantScaleX, dequantScaleWDq, dequantScaleWUqQr, dequantScaleWDkvKr, quantScaleCkv, nullptr, smoothScaleCq, nullptr, rmsnormEpsilonCq, rmsnormEpsilonCkv, cacheMode,
         queryNormFlag, weightQuantMode, kvQuantMode, queryQuantMode, ckvkrRepoMode, quantScaleRepoMode, tileSize, kNopeClipAlpha, qcQrScale, kcScale,
         query, queryRope, dequantScaleQNope, nullptr, nullptr, &workspaceSize, &executor);

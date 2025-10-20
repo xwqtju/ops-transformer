@@ -159,6 +159,7 @@ c^{KV} = RmsNorm(x \cdot W^{DKV}) \tag{d}
 $$
 
 完整计算流程可以分解为以下的基本计算单元。
+注意，其中$\alpha_q$和$\alpha_{kv}$分别对应query和key的尺度矫正因子，由论文[Meituan](https://arxiv.org/abs/2509.01322)提出。
 
 ### MatmulCq
 对输入$x$乘以Query下采样矩阵$W^{DQ}$进行下采样操作得到压缩后的Query矩阵$c^Q$。

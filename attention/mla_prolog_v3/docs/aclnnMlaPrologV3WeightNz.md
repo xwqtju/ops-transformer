@@ -8,9 +8,12 @@
 
 
 ## 功能说明
+-  **功能更新**：（相对与aclnnMlaPrologV2weightNz新增）
+    -  新增query与key的矫正因子，分别对应 qcQrScale、kcScale。
+    -  预埋部分参数（例如actual_seq_len、q）。
 -  **接口功能**：推理场景，Multi-Head Latent Attention前处理的计算。主要计算过程分为五路；
-    -  首先对输入$x$乘以$W^{DQ}$进行下采样和RmsNorm后分为两路，第一路乘以$W^{UQ}$和$W^{UK}$经过两次上采样后,再乘以Query尺度矫正因子$\alpha_q$ (qcQrScale)得到$q^N$；第二路乘以$W^{QR}$后经过旋转位置编码（ROPE）得到$q^R$。
-    -  第三路是输入$x$乘以$W^{DKV}$进行下采样和RmsNorm后,乘以Key尺度矫正因子$\alpha_{kv}$ (kcScale)传入Cache中得到$k^C$；
+    -  首先对输入$x$乘以$W^{DQ}$进行下采样和RmsNorm后分为两路，第一路乘以$W^{UQ}$和$W^{UK}$经过两次上采样后,再乘以Query尺度矫正因子$\alpha_q$得到$q^N$；第二路乘以$W^{QR}$后经过旋转位置编码（ROPE）得到$q^R$。
+    -  第三路是输入$x$乘以$W^{DKV}$进行下采样和RmsNorm后,乘以Key尺度矫正因子$\alpha_{kv}$传入Cache中得到$k^C$；
     -  第四路是输入$x$乘以$W^{KR}$后经过旋转位置编码后传入另一个Cache中得到$k^R$；
     -  第五路是输出$q^N$经过DynamicQuant后得到的量化参数。
     -  权重参数WeightDq、WeightUqQr和WeightDkvKr需要以NZ格式传入
@@ -44,7 +47,7 @@
     对Query的进行ROPE旋转位置编码
 
     $$
-    q^R = ROPE(c^Q \cdot W^{QR})
+    q^R = \mathrm{ROPE}(c^Q \cdot W^{QR})
     $$
 
     Key计算公式，包括下采样和RmsNorm，将计算结果存入cache
@@ -54,23 +57,23 @@
     $$
 
     $$
-    k^C = Cache(c^{KV})
+    k^C = \mathrm{Cache}(c^{KV})
     $$
 
     对Key进行ROPE旋转位置编码，并将结果存入cache
 
     $$
-    k^R = Cache(ROPE(x \cdot W^{KR}))
+    k^R = \mathrm{Cache}(\mathrm{ROPE}(x \cdot W^{KR}))
     $$
 
     Dequant Scale Query Nope 计算公式：
 
     $$
-    dequantScaleQNope = {RowMax(abs(q^{N})) / 127}
+    \mathrm{dequantScaleQNope} = {\mathrm{RowMax}(\mathrm{abs}(q^{N})) / 127}
     $$
 
     $$
-    q^{N} = {round(q^{N} / dequantScaleQNope)}
+    q^{N} = {\mathrm{round}(q^{N} / \mathrm{dequantScaleQNope})}
     $$
 
 
@@ -101,13 +104,13 @@ aclnnStatus aclnnMlaPrologV3WeightNzGetWorkspaceSize(
   double          rmsnormEpsilonCq, 
   double          rmsnormEpsilonCkv, 
   char            *cacheModeOptional, 
-  int             queryNormFlag,
-  int             weightQuantMode,
-  int             kvQuantMode,
-  int             queryQuantMode,
-  int             ckvkrRepoMode,
-  int             quantScaleRepoMode,
-  int             tileSize,
+  int64_t         queryNormFlag,
+  int64_t         weightQuantMode,
+  int64_t         kvQuantMode,
+  int64_t         queryQuantMode,
+  int64_t         ckvkrRepoMode,
+  int64_t         quantScaleRepoMode,
+  int64_t         tileSize,
   double          kNopeClipAlpha,
   double          qcQrScale,
   double          kcScale,
@@ -156,21 +159,21 @@ aclnnStatus aclnnMlaPrologV3WeightNz(
   | rmsnormEpsilonCq           | 输入      | 计算$c^Q$的RmsNorm公式中的$\epsilon$参数，Host侧参数。        | - 用户未特意指定时，建议传入1e-05 - 仅支持double类型 | double         | -          | - |-   |
   | rmsnormEpsilonCkv          | 输入      | 计算$c^{KV}$的RmsNorm公式中的$\epsilon$参数，Host侧参数。   | - 用户未特意指定时，建议传入1e-05 - 仅支持double类型   | double         | -          | -  |-   |
   | cacheModeOptional          | 输入      | 示kvCache的模式，Host侧参数。| - 用户未特意指定时，建议传入"PA_BSND" - 仅支持char*类型 - 可选值为"PA_BSND"、"PA_NZ" | char*          | -          | - |-   |
-  | queryNormFlag     | 输入      |   预留接口，传入空指针即可  | --| int  | -- | --    |-   |
-  | weightQuantMode     | 输入      |   预留接口，传入空指针即可  | --| int  | -- | --    |-   |
-  | kvQuantMode     | 输入      |   预留接口，传入空指针即可  | --| int  | -- | --    |-   |
-  | queryQuantMode     | 输入      |   预留接口，传入空指针即可  | --| int  | -- | --    |-   |
-  | ckvkrRepoMode     | 输入      |   预留接口，传入空指针即可  | --| int  | -- | --    |-   |
-  | quantScaleRepoMode     | 输入      |   预留接口，传入空指针即可  | --| int  | -- | --    |-   |
-  | tileSize     | 输入      |   预留接口，传入空指针即可  | --| int | -- | --    |-   |
-  | kNopeClipAlpha     | 输入      |   预留接口，传入空指针即可  | --| double | - | - |- |
-  | qcQrScale     | 输入      |   表示Query的尺度矫正系数，用户不特意指定时需要出入1.0  | --| double | -   | -  |- |
-  | kcScale     | 输入      |   表示Key的尺度矫正系数，用户不特意指定时需要出入1.0  | --| double | -    | -  |- |
+  | queryNormFlag     | 输入      |   预留接口，传入0即可  | --| int  | -- | --    |-   |
+  | weightQuantMode     | 输入      |   预留接口，传入0即可  | --| int  | -- | --    |-   |
+  | kvQuantMode     | 输入      |   预留接口，传入0即可  | --| int  | -- | --    |-   |
+  | queryQuantMode     | 输入      |   预留接口，传入0即可  | --| int  | -- | --    |-   |
+  | ckvkrRepoMode     | 输入      |   预留接口，传入0即可  | --| int  | -- | --    |-   |
+  | quantScaleRepoMode     | 输入      |   预留接口，传入0即可  | --| int  | -- | --    |-   |
+  | tileSize     | 输入      |   预留接口，传入128即可  | --| int | -- | --    |-   |
+  | kNopeClipAlpha     | 输入      |   预留接口，传入1.0即可  | --| double | - | - |- |
+  | qcQrScale     | 输入      |   表示Query的尺度矫正系数，用户不特意指定时需要传入1.0  | --| double | -   | -  |- |
+  | kcScale     | 输入      |   表示Key的尺度矫正系数，用户不特意指定时需要传入1.0  | --| double | -    | -  |- |
   | queryOut                   | 输出      | 公式中Query的输出tensor（对应$q^N$），Device侧的aclTensor。     | - 不支持空Tensor  | BFLOAT16、INT8 | ND         | 3维：(T,N,Hckv)、4维：(B,S,N,Hckv) |-   |
   | queryRopeOut               | 输出      | 公式中Query位置编码的输出tensor（对应$q^R$），Device侧的aclTensor。  | - 不支持空Tensor | BFLOAT16       | ND         | 3维：(T,N,Dr)、4维：(B,S,N,Dr)     |-   |
   | dequantScaleQNopeOutOptional  | 输出           | -  | -      | -      |-   |-   |
-  | queryNormOptional     | 输入      |   预留接口，传入空指针即可  | --| -  | -- | --    |-   |
-  | dequantScaleQNormOptional     | 输入      |   预留接口，传入空指针即可  | --| -  | -- | --    |-   |
+  | queryNormOptional     | 输出      |   预留接口，传入空指针即可  | --| -  | -- | --    |-   |
+  | dequantScaleQNormOptional     | 输出      |   预留接口，传入空指针即可  | --| -  | -- | --    |-   |
   | workspaceSize              | 输出      | 返回需在Device侧申请的workspace大小。  | - 仅用于输出结果，无需输入配置 - 数据类型为uint64_t* | -              | -          | -                                  |-   |
   | executor                   | 输出      | 返回op执行器，包含算子计算流程。        | - 仅用于输出结果，无需输入配置 - 数据类型为aclOpExecutor**    | -              | -          | -                                  |-   |
 
@@ -594,6 +597,32 @@ aclnnStatus aclnnMlaPrologV3WeightNz(
       <td>/</td>
       <td>FLOAT</td>
       <td> · (B*S, N, 1) <br> · (T, N, 1)</td>
+    </tr>
+    <tr>
+      <td> queryNormOptional </td>
+      <td>无需赋值（预留接口）</td>
+      <td> / </td>
+      <td>无需赋值（预留接口）</td>
+      <td> / </td>
+      <td>无需赋值（预留接口）</td>
+      <td> / </td>
+      <td>无需赋值（预留接口）</td>
+      <td>/</td>
+      <td>无需赋值（预留接口）</td>
+      <td>/</td>
+    </tr>
+    <tr>
+      <td> dequantScaleQNormOptional </td>
+      <td>无需赋值（预留接口）</td>
+      <td> / </td>
+      <td>无需赋值（预留接口）</td>
+      <td> / </td>
+      <td>无需赋值（预留接口）</td>
+      <td> / </td>
+      <td>无需赋值（预留接口）</td>
+      <td>/</td>
+      <td>无需赋值（预留接口）</td>
+      <td>/</td>
     </tr>
   </table>
   </div>
