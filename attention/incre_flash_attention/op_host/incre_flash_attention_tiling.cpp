@@ -3071,7 +3071,14 @@ ge::graphStatus IFATiling::GenTilingKey() const
     uint8_t inputKvVal = 0U;
     uint8_t outputVal = 0U;
     uint8_t originVal = 0U;
-    uint8_t splitKvVal = kvSplit_ > 0U ? 1U : 0U;
+    uint8_t splitKvVal = 0U;
+
+    if (kvSplit_ > 0U) {
+        // 多核同步需要设置batchmode模式，所有核同时启动，否则多流场景可能会死锁
+        context_->batchMode = 1U;
+        splitKvVal = 1U;
+    }
+
     uint8_t paVal = pageAttentionFlag_ == true ? 1U * 2U : 0U;
     uint8_t antiquantModeVal = antiquantMode_ == PER_TOKEN_MODE ? 1U * 4U : 0U;
     uint64_t modeVal = sysPrefixFlag_ ? 2U : 1U;
@@ -3413,6 +3420,7 @@ ge::graphStatus IfaStartSimpleTiling(T& tilingType, IncreFlashAttentionContext &
     if (tilingType.RunBigKernelTiling(ifaContext, ifaTilingData) == ge::SUCCESS) {
         context->SetTilingKey(ifaContext.tilingKey);
         context->SetBlockDim(ifaContext.blockDim);
+        context->SetScheduleMode(ifaContext.batchMode);
         tilingType.IncreFlashAttentionSetTilingData(*context, ifaTilingData);
         return ge::GRAPH_SUCCESS;
     }

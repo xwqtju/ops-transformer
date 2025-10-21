@@ -482,6 +482,7 @@ ge::graphStatus FiaTilingNonQuantMla::DoOpTiling()
 
     if ((SetBlockDim(blockDim_) != ge::GRAPH_SUCCESS) ||
         (SetTilingKey(tilingKey_) != ge::GRAPH_SUCCESS) ||
+        (IsFlashDecode() && (SetScheduleMode(1) != ge::GRAPH_SUCCESS)) || // 多核同步需要设置batchmode模式，所有核同时启动，否则多流场景可能会死锁
         (SetWorkspaceSize(workspaceSize_) != ge::GRAPH_SUCCESS) ||
         (SetTilingData(tilingData_) != ge::GRAPH_SUCCESS)) {
         return ge::GRAPH_FAILED;
