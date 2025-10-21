@@ -3087,6 +3087,9 @@ ge::graphStatus IFATiling::GenTilingKey() const
         }
     }
 
+    // 多核同步需要设置batchmode模式，所有核同时启动，否则多流场景可能会死锁
+    context_->batchMode = kvSplit_ > 0U ? 1U : 0U;
+
     // page attention 新模板上线后删除这里的特殊处理
     if (pageAttentionFlag_ && sMax_ == 0) {
         paVal = 0;
@@ -3413,6 +3416,7 @@ ge::graphStatus IfaStartSimpleTiling(T& tilingType, IncreFlashAttentionContext &
     if (tilingType.RunBigKernelTiling(ifaContext, ifaTilingData) == ge::SUCCESS) {
         context->SetTilingKey(ifaContext.tilingKey);
         context->SetBlockDim(ifaContext.blockDim);
+        context->SetScheduleMode(ifaContext.batchMode);
         tilingType.IncreFlashAttentionSetTilingData(*context, ifaTilingData);
         return ge::GRAPH_SUCCESS;
     }
