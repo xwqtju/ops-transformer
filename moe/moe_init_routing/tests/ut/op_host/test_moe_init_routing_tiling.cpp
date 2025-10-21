@@ -96,9 +96,8 @@ TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_02)
 
                                               &compileInfo);
     int64_t expectTilingKey = 4; // tilngkey
-    string expectTilingData = "64 2 5 3 1 6 1 6 6 6 1 6 6 6848 0 2048 6 0 1 0 0 0 1 1 1 0 0 0 1 1 0 0 3 6 2 1 1 1 2 2 "
-                              "2 1 1 1 2 2 5 1 ";      // tilingData
-    std::vector<size_t> expectWorkspaces = {16781480}; // workspace
+    string expectTilingData = "64 32 1024 1234 16 2496 1 2496 2496 2048 1 2048 2048 6848 4 2048 64 0 617 0 0 0 617 617 617 0 0 0 617 617 0 0 64 7404 116 0 0 0 116 116 96 0 0 0 96 96 1024 2 ";      // tilingData
+    std::vector<size_t> expectWorkspaces = {17886976}; // workspace
     ExecuteTestCase(tilingContextPara, ge::GRAPH_SUCCESS, expectTilingKey, expectTilingData, expectWorkspaces);
 }
 
@@ -126,9 +125,8 @@ TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_03)
 
                                               &compileInfo);
     int64_t expectTilingKey = 4; // tilngkey
-    string expectTilingData = "64 2 5 3 1 6 1 6 6 6 1 6 6 6848 0 2048 6 0 1 0 0 0 1 1 1 0 0 0 1 1 0 0 3 6 2 1 1 1 2 2 "
-                              "2 1 1 1 2 2 5 1 ";      // tilingData
-    std::vector<size_t> expectWorkspaces = {16781480}; // workspace
+    string expectTilingData = "64 32 1024 256 4 2048 1 2048 2048 2048 1 2048 2048 6848 0 2048 64 0 128 0 0 0 128 128 128 0 0 0 128 128 0 0 64 1536 24 0 0 0 24 24 24 0 0 0 24 24 1024 2 ";      // tilingData
+    std::vector<size_t> expectWorkspaces = {17010688}; // workspace
     ExecuteTestCase(tilingContextPara, ge::GRAPH_SUCCESS, expectTilingKey, expectTilingData, expectWorkspaces);
 }
 
@@ -156,9 +154,8 @@ TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_04)
 
                                               &compileInfo);
     int64_t expectTilingKey = 4; // tilngkey
-    string expectTilingData = "64 2 5 3 1 6 1 6 6 6 1 6 6 6848 0 2048 6 0 1 0 0 0 1 1 1 0 0 0 1 1 0 0 3 6 2 1 1 1 2 2 "
-                              "2 1 1 1 2 2 5 1 ";      // tilingData
-    std::vector<size_t> expectWorkspaces = {16781480}; // workspace
+    string expectTilingData = "64 32 1024 256 4 2048 1 2048 2048 2048 1 2048 2048 6848 0 2048 64 0 128 0 0 0 128 128 128 0 0 0 128 128 0 0 64 1536 24 0 0 0 24 24 24 0 0 0 24 24 1024 2 ";      // tilingData
+    std::vector<size_t> expectWorkspaces = {17010688}; // workspace
     ExecuteTestCase(tilingContextPara, ge::GRAPH_SUCCESS, expectTilingKey, expectTilingData, expectWorkspaces);
 }
 
@@ -186,9 +183,8 @@ TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_05)
 
                                               &compileInfo);
     int64_t expectTilingKey = 4; // tilngkey
-    string expectTilingData = "64 2 5 3 1 6 1 6 6 6 1 6 6 6848 0 2048 6 0 1 0 0 0 1 1 1 0 0 0 1 1 0 0 3 6 2 1 1 1 2 2 "
-                              "2 1 1 1 2 2 5 1 ";      // tilingData
-    std::vector<size_t> expectWorkspaces = {16781480}; // workspace
+    string expectTilingData = "64 32 1024 256 4 2048 1 2048 2048 2048 1 2048 2048 6848 0 2048 64 0 128 0 0 0 128 128 128 0 0 0 128 128 0 0 64 1536 24 0 0 0 24 24 24 0 0 0 24 24 1024 2 ";      // tilingData
+    std::vector<size_t> expectWorkspaces = {17010688}; // workspace
     ExecuteTestCase(tilingContextPara, ge::GRAPH_SUCCESS, expectTilingKey, expectTilingData, expectWorkspaces);
 }
 
@@ -204,7 +200,7 @@ TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_06)
                                               },
                                               // output info
                                               {
-                                                  {{{1536, 1024}, {1536, 1024}}, ge::DT_BF16, ge::FORMAT_ND},
+                                                  {{{8192, 1024}, {8192, 1024}}, ge::DT_BF16, ge::FORMAT_ND},
                                                   {{{8192}, {8192}}, ge::DT_INT32, ge::FORMAT_ND},
                                                   {{{8192}, {8192}}, ge::DT_INT32, ge::FORMAT_ND},
                                               },
@@ -216,9 +212,8 @@ TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_06)
 
                                               &compileInfo);
     int64_t expectTilingKey = 2; // tilngkey
-    string expectTilingData = "64 2 5 3 1 6 1 6 6 6 1 6 6 6848 0 2048 6 0 1 0 0 0 1 1 1 0 0 0 1 1 0 0 3 6 2 1 1 1 2 2 "
-                              "2 1 1 1 2 2 5 1 ";      // tilingData
-    std::vector<size_t> expectWorkspaces = {16781480}; // workspace
+    string expectTilingData = "64 32 1024 256 4 2048 1 2048 2048 2048 1 2048 2048 6848 0 2048 64 0 128 0 0 0 128 128 128 0 0 0 128 128 0 0 64 8192 32 4 4 4 32 32 32 4 4 4 32 32 1024 1 ";      // tilingData
+    std::vector<size_t> expectWorkspaces = {17010688}; // workspace
     ExecuteTestCase(tilingContextPara, ge::GRAPH_SUCCESS, expectTilingKey, expectTilingData, expectWorkspaces);
 }
 
@@ -246,9 +241,8 @@ TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_07)
 
                                               &compileInfo);
     int64_t expectTilingKey = 2; // tilngkey
-    string expectTilingData = "64 2 5 3 1 6 1 6 6 6 1 6 6 6848 0 2048 6 0 1 0 0 0 1 1 1 0 0 0 1 1 0 0 3 6 2 1 1 1 2 2 "
-                              "2 1 1 1 2 2 5 1 ";      // tilingData
-    std::vector<size_t> expectWorkspaces = {16781480}; // workspace
+    string expectTilingData = "64 40 5 3000 64 1888 1 1888 1888 1056 1 1056 1056 6848 16 2048 64 0 1875 0 0 0 1704 171 1875 0 0 0 1704 171 0 0 64 120000 40 47 47 47 40 40 40 39 47 47 40 40 5 1 ";      // tilingData
+    std::vector<size_t> expectWorkspaces = {20141312}; // workspace
     ExecuteTestCase(tilingContextPara, ge::GRAPH_SUCCESS, expectTilingKey, expectTilingData, expectWorkspaces);
 }
 
@@ -276,43 +270,12 @@ TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_08)
 
                                               &compileInfo);
     int64_t expectTilingKey = 4; // tilngkey
-    string expectTilingData = "64 2 5 3 1 6 1 6 6 6 1 6 6 6848 0 2048 6 0 1 0 0 0 1 1 1 0 0 0 1 1 0 0 3 6 2 1 1 1 2 2 "
-                              "2 1 1 1 2 2 5 1 ";      // tilingData
-    std::vector<size_t> expectWorkspaces = {16781480}; // workspace
+    string expectTilingData = "64 40 5000 3000 64 1888 1 1888 1888 1056 1 1056 1056 6848 16 2048 64 0 1875 0 0 0 1704 171 1875 0 0 0 1704 171 0 0 64 30000 469 0 0 0 469 469 453 0 0 0 453 453 5000 2 ";      // tilingData
+    std::vector<size_t> expectWorkspaces = {20141312}; // workspace
     ExecuteTestCase(tilingContextPara, ge::GRAPH_SUCCESS, expectTilingKey, expectTilingData, expectWorkspaces);
 }
 
 TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_09)
-{
-    optiling::MoeInitRoutingCompileInfo compileInfo = {};
-    gert::TilingContextPara tilingContextPara("MoeInitRouting", // op_name
-                                              {
-                                                  // input info
-                                                  {{{39, 5000}, {39, 5000}}, ge::DT_FLOAT, ge::FORMAT_ND},
-                                                  {{{39, 3000}, {39, 3000}}, ge::DT_INT32, ge::FORMAT_ND},
-                                                  {{{39, 3000}, {39, 3000}}, ge::DT_INT32, ge::FORMAT_ND},
-                                              },
-                                              // output info
-                                              {
-                                                  {{{117000, 500}, {117000, 500}}, ge::DT_FLOAT, ge::FORMAT_ND},
-                                                  {{{117000}, {117000}}, ge::DT_INT32, ge::FORMAT_ND},
-                                                  {{{117000}, {117000}}, ge::DT_INT32, ge::FORMAT_ND},
-                                              },
-                                              // attr
-                                              {
-                                                  {{"active_num", Ops::Transformer::AnyValue::CreateFrom<int64_t>(39)}},
-
-                                              },
-
-                                              &compileInfo);
-    int64_t expectTilingKey = 2; // tilngkey
-    string expectTilingData = "64 2 5 3 1 6 1 6 6 6 1 6 6 6848 0 2048 6 0 1 0 0 0 1 1 1 0 0 0 1 1 0 0 3 6 2 1 1 1 2 2 "
-                              "2 1 1 1 2 2 5 1 ";      // tilingData
-    std::vector<size_t> expectWorkspaces = {16781480}; // workspace
-    ExecuteTestCase(tilingContextPara, ge::GRAPH_SUCCESS, expectTilingKey, expectTilingData, expectWorkspaces);
-}
-
-TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_10)
 {
     optiling::MoeInitRoutingCompileInfo compileInfo = {};
     gert::TilingContextPara tilingContextPara("MoeInitRouting", // op_name
@@ -335,10 +298,39 @@ TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_10)
                                               },
 
                                               &compileInfo);
+    int64_t expectTilingKey = 2; // tilngkey
+    string expectTilingData = "64 39 500 3000 64 1856 1 1856 1856 72 1 96 72 6848 16 2048 64 0 1829 0 0 0 1704 125 1773 0 0 0 1704 69 0 0 64 117000 39 47 47 47 39 39 39 39 47 47 39 39 500 1 ";      // tilingData
+    std::vector<size_t> expectWorkspaces = {20057312}; // workspace
+    ExecuteTestCase(tilingContextPara, ge::GRAPH_SUCCESS, expectTilingKey, expectTilingData, expectWorkspaces);
+}
+
+TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_10)
+{
+    optiling::MoeInitRoutingCompileInfo compileInfo = {};
+    gert::TilingContextPara tilingContextPara("MoeInitRouting", // op_name
+                                              {
+                                                  // input info
+                                                  {{{39, 5000}, {39, 5000}}, ge::DT_FLOAT, ge::FORMAT_ND},
+                                                  {{{39, 3000}, {39, 3000}}, ge::DT_INT32, ge::FORMAT_ND},
+                                                  {{{39, 3000}, {39, 3000}}, ge::DT_INT32, ge::FORMAT_ND},
+                                              },
+                                              // output info
+                                              {
+                                                  {{{117000}, {117000}}, ge::DT_FLOAT, ge::FORMAT_ND},
+                                                  {{{117000}, {117000}}, ge::DT_INT32, ge::FORMAT_ND},
+                                                  {{{117000}, {117000}}, ge::DT_INT32, ge::FORMAT_ND},
+                                              },
+                                              // attr
+                                              {
+                                                  {{"active_num", Ops::Transformer::AnyValue::CreateFrom<int64_t>(39)}},
+
+                                              },
+
+                                              &compileInfo);
     int64_t expectTilingKey = 0; // tilngkey
     string expectTilingData = "64 2 5 3 1 6 1 6 6 6 1 6 6 6848 0 2048 6 0 1 0 0 0 1 1 1 0 0 0 1 1 0 0 3 6 2 1 1 1 2 2 "
                               "2 1 1 1 2 2 5 1 ";      // tilingData
-    std::vector<size_t> expectWorkspaces = {16781480}; // workspace
+    std::vector<size_t> expectWorkspaces = {17010688}; // workspace
     ExecuteTestCase(tilingContextPara, ge::GRAPH_FAILED, expectTilingKey, expectTilingData, expectWorkspaces);
 }
 
@@ -368,7 +360,7 @@ TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_11)
     int64_t expectTilingKey = 0; // tilngkey
     string expectTilingData = "64 2 5 3 1 6 1 6 6 6 1 6 6 6848 0 2048 6 0 1 0 0 0 1 1 1 0 0 0 1 1 0 0 3 6 2 1 1 1 2 2 "
                               "2 1 1 1 2 2 5 1 ";      // tilingData
-    std::vector<size_t> expectWorkspaces = {16781480}; // workspace
+    std::vector<size_t> expectWorkspaces = {17010688}; // workspace
     ExecuteTestCase(tilingContextPara, ge::GRAPH_FAILED, expectTilingKey, expectTilingData, expectWorkspaces);
 }
 
@@ -398,7 +390,7 @@ TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_12)
     int64_t expectTilingKey = 0; // tilngkey
     string expectTilingData = "64 2 5 3 1 6 1 6 6 6 1 6 6 6848 0 2048 6 0 1 0 0 0 1 1 1 0 0 0 1 1 0 0 3 6 2 1 1 1 2 2 "
                               "2 1 1 1 2 2 5 1 ";      // tilingData
-    std::vector<size_t> expectWorkspaces = {16781480}; // workspace
+    std::vector<size_t> expectWorkspaces = {17010688}; // workspace
     ExecuteTestCase(tilingContextPara, ge::GRAPH_FAILED, expectTilingKey, expectTilingData, expectWorkspaces);
 }
 
@@ -428,7 +420,7 @@ TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_13)
     int64_t expectTilingKey = 0; // tilngkey
     string expectTilingData = "64 2 5 3 1 6 1 6 6 6 1 6 6 6848 0 2048 6 0 1 0 0 0 1 1 1 0 0 0 1 1 0 0 3 6 2 1 1 1 2 2 "
                               "2 1 1 1 2 2 5 1 ";      // tilingData
-    std::vector<size_t> expectWorkspaces = {16781480}; // workspace
+    std::vector<size_t> expectWorkspaces = {17010688}; // workspace
     ExecuteTestCase(tilingContextPara, ge::GRAPH_FAILED, expectTilingKey, expectTilingData, expectWorkspaces);
 }
 
@@ -444,7 +436,7 @@ TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_14)
                                               },
                                               // output info
                                               {
-                                                  {{{117000, 5000}, {117000, 5000}}, ge::DT_FLOAT, ge::FORMAT_ND},
+                                                  {{{117, 5000}, {117, 5000}}, ge::DT_FLOAT, ge::FORMAT_ND},
                                                   {{{117000}, {117000}}, ge::DT_INT32, ge::FORMAT_ND},
                                                   {{{117000}, {117000}}, ge::DT_INT32, ge::FORMAT_ND},
                                               },
@@ -458,7 +450,7 @@ TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_14)
     int64_t expectTilingKey = 0; // tilngkey
     string expectTilingData = "64 2 5 3 1 6 1 6 6 6 1 6 6 6848 0 2048 6 0 1 0 0 0 1 1 1 0 0 0 1 1 0 0 3 6 2 1 1 1 2 2 "
                               "2 1 1 1 2 2 5 1 ";      // tilingData
-    std::vector<size_t> expectWorkspaces = {16781480}; // workspace
+    std::vector<size_t> expectWorkspaces = {17010688}; // workspace
     ExecuteTestCase(tilingContextPara, ge::GRAPH_FAILED, expectTilingKey, expectTilingData, expectWorkspaces);
 }
 
@@ -488,7 +480,7 @@ TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_15)
     int64_t expectTilingKey = 0; // tilngkey
     string expectTilingData = "64 2 5 3 1 6 1 6 6 6 1 6 6 6848 0 2048 6 0 1 0 0 0 1 1 1 0 0 0 1 1 0 0 3 6 2 1 1 1 2 2 "
                               "2 1 1 1 2 2 5 1 ";      // tilingData
-    std::vector<size_t> expectWorkspaces = {16781480}; // workspace
+    std::vector<size_t> expectWorkspaces = {17010688}; // workspace
     ExecuteTestCase(tilingContextPara, ge::GRAPH_FAILED, expectTilingKey, expectTilingData, expectWorkspaces);
 }
 
@@ -516,9 +508,8 @@ TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_16)
 
                                               &compileInfo);
     int64_t expectTilingKey = 2; // tilngkey
-    string expectTilingData = "64 2 5 3 1 6 1 6 6 6 1 6 6 6848 0 2048 6 0 1 0 0 0 1 1 1 0 0 0 1 1 0 0 3 6 2 1 1 1 2 2 "
-                              "2 1 1 1 2 2 5 1 ";      // tilingData
-    std::vector<size_t> expectWorkspaces = {16781480}; // workspace
+    string expectTilingData = "64 1 577999 1000000 64 15648 3 6848 1952 14176 3 4736 4704 6848 16 2048 64 0 15625 0 0 0 1704 289 15625 0 0 0 1704 289 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 ";      // tilingData
+    std::vector<size_t> expectWorkspaces = {44781312}; // workspace
     ExecuteTestCase(tilingContextPara, ge::GRAPH_SUCCESS, expectTilingKey, expectTilingData, expectWorkspaces);
 }
 
@@ -546,9 +537,8 @@ TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_17)
 
                                               &compileInfo);
     int64_t expectTilingKey = 0; // tilngkey
-    string expectTilingData = "64 2 5 3 1 6 1 6 6 6 1 6 6 6848 0 2048 6 0 1 0 0 0 1 1 1 0 0 0 1 1 0 0 3 6 2 1 1 1 2 2 "
-                              "2 1 1 1 2 2 5 1 ";      // tilingData
-    std::vector<size_t> expectWorkspaces = {16781480}; // workspace
+    string expectTilingData = "64 4 2 2 1 8 1 8 8 8 1 8 8 6848 0 2048 8 0 1 0 0 0 1 1 1 0 0 0 1 1 0 0 4 8 1 2 2 2 1 1 1 2 2 2 1 1 2 0 ";      // tilingData
+    std::vector<size_t> expectWorkspaces = {16781536}; // workspace
     ExecuteTestCase(tilingContextPara, ge::GRAPH_SUCCESS, expectTilingKey, expectTilingData, expectWorkspaces);
 }
 
@@ -576,8 +566,7 @@ TEST_F(MoeInitRoutingTiling, moe_init_routing_tiling_18)
 
                                               &compileInfo);
     int64_t expectTilingKey = 2; // tilngkey
-    string expectTilingData = "64 2 5 3 1 6 1 6 6 6 1 6 6 6848 0 2048 6 0 1 0 0 0 1 1 1 0 0 0 1 1 0 0 3 6 2 1 1 1 2 2 "
-                              "2 1 1 1 2 2 5 1 ";      // tilingData
+    string expectTilingData = "64 1 577999 1000000 64 15648 3 6848 1952 14176 3 4736 4704 6848 16 2048 64 0 15625 0 0 0 1704 289 15625 0 0 0 1704 289 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 ";      // tilingData
     std::vector<size_t> expectWorkspaces = {16781480}; // workspace
     ExecuteTestCase(tilingContextPara, ge::GRAPH_SUCCESS, expectTilingKey, expectTilingData, expectWorkspaces);
 }
