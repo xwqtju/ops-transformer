@@ -36,6 +36,7 @@ ENABLE_BUILD_PKG=FALSE
 ENABLE_BUILT_IN=FALSE
 ENABLE_BUILT_JIT=FALSE
 ENABLE_BUILT_CUSTOM=FALSE
+ENABLE_EXPERIMENTAL=FALSE
 ASCEND_SOC_UNITS="ascend910b"
 SUPPORT_COMPUTE_UNIT_SHORT=("ascend910b" "ascend910_93" "ascend910_95" "ascend310p" "ascend910")
 CMAKE_BUILD_MODE=""
@@ -229,6 +230,18 @@ function help_info() {
                 echo $dotted_line
                 echo "Examples:"
                 echo "    bash build.sh --genop=example/add"
+                return
+                ;;
+            experimental)
+                echo "Build experimental version:"
+                echo $dotted_line
+                echo "    --pkg                  Build run package with kernel bin"
+                echo "    --jit                  Build run package without kernel bin"
+                echo "    --soc=soc_version      Compile for specified Ascend SoC (comma-separated for multiple)"
+                echo "    --vendor_name=name     Specify custom operator package vendor name"
+                echo $dotted_line
+                echo "Examples:"
+                echo "    bash build.sh --pkg --experimental --soc=ascend910b"
                 return
                 ;;
         esac
@@ -679,6 +692,10 @@ while [[ $# -gt 0 ]]; do
             fi
         fi
         ;;
+     --experimental) 
+        ENABLE_EXPERIMENTAL=TRUE
+        shift
+        ;;
      -e|--example)
         shift
         if [ -n "$1" ];then
@@ -854,6 +871,10 @@ fi
 
 if [ -n "${VERSION}" ];then
     CUSTOM_OPTION="${CUSTOM_OPTION} -DVERSION=${VERSION}"
+fi
+
+if [[ "$ENABLE_EXPERIMENTAL" == "TRUE" ]]; then
+    CUSTOM_OPTION="${CUSTOM_OPTION} -DENABLE_EXPERIMENTAL=TRUE"
 fi
 
 if [ -n "${ascend_compute_unit}" ];then
