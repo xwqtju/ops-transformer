@@ -3071,13 +3071,19 @@ ge::graphStatus IFATiling::GenTilingKey() const
     uint8_t inputKvVal = 0U;
     uint8_t outputVal = 0U;
     uint8_t originVal = 0U;
-    uint8_t splitKvVal = kvSplit_ > 0U ? 1U : 0U;
+    uint8_t splitKvVal = 0U;
+
+    if (kvSplit_ > 0U) {
+        // 多核同步需要设置batchmode模式，所有核同时启动，否则多流场景可能会死锁
+        context_->batchMode = 1U;
+        splitKvVal = 1U;
+    }
+
     uint8_t paVal = pageAttentionFlag_ == true ? 1U * 2U : 0U;
     uint8_t antiquantModeVal = antiquantMode_ == PER_TOKEN_MODE ? 1U * 4U : 0U;
     uint64_t modeVal = sysPrefixFlag_ ? 2U : 1U;
-    if(atbRunFlag_){
-        modeVal = static_cast<uint64_t>(ATB_MODE_VAL);
-    }
+    modeVal = atbRunFlag_ ? static_cast<uint64_t>(ATB_MODE_VAL) : modeVal;
+
     KvLayoutInfo kvLayoutInfo{};
     uint8_t balanceMode = static_cast<uint8_t>(balanceModeFlag_);
 
@@ -3106,13 +3112,10 @@ ge::graphStatus IFATiling::GenTilingKey() const
         return ge::GRAPH_FAILED;
     }
 
-    originVal = inputQVal;
-    if (ropeFlag_ && quantFlag_) {
-        originVal = outputVal; // 此处应该获取ROPE的类型，需要修改
-    }
+    // 此处应该获取ROPE的类型，需要修改
+    originVal = (ropeFlag_ && quantFlag_) ? outputVal : inputQVal;
 
-    uint64_t baseOffset =
-        modeVal * IFA_TILINGKEYOFFSET + (static_cast<uint64_t>(perfMode_)) * IFA_PERF_MODE_TILINGKEYOFFSET;
+    uint64_t baseOffset = modeVal * IFA_TILINGKEYOFFSET + (static_cast<uint64_t>(perfMode_)) * IFA_PERF_MODE_TILINGKEYOFFSET;
     if (antiquantMode_ == PER_TOKEN_MODE || antiquantMode_ == PER_CHANNEL_MODE){
         context_->tilingKey = baseOffset + IFA_GET_TILINGKEY(layoutVal, inputQVal, inputKvVal, outputVal, originVal,
             (paVal + splitKvVal + antiquantModeVal), 0, kvLayoutInfo.kvLayoutVal, kvLayoutInfo.amlaMode, balanceMode);
@@ -3413,6 +3416,7 @@ ge::graphStatus IfaStartSimpleTiling(T& tilingType, IncreFlashAttentionContext &
     if (tilingType.RunBigKernelTiling(ifaContext, ifaTilingData) == ge::SUCCESS) {
         context->SetTilingKey(ifaContext.tilingKey);
         context->SetBlockDim(ifaContext.blockDim);
+        context->SetScheduleMode(ifaContext.batchMode);
         tilingType.IncreFlashAttentionSetTilingData(*context, ifaTilingData);
         return ge::GRAPH_SUCCESS;
     }

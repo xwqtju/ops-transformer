@@ -159,6 +159,11 @@ protected:
         return oss.str();
     }
 
+    [[nodiscard]] ge::graphStatus SetScheduleMode(uint32_t batchMode)
+    {
+        return context_->SetScheduleMode(batchMode);
+    }
+
 private:
     gert::TilingContext *context_ = nullptr;
     std::unique_ptr<platform_ascendc::PlatformAscendC> ascendcPlatform_{nullptr};
