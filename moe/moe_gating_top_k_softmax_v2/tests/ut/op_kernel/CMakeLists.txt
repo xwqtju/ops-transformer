@@ -7,17 +7,25 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
 
-message(STATUS "=== Debug: CURRENT_SOURCE_DIRS =${CURRENT_SOURCE_DIRS} ")
 if (UT_TEST_ALL OR OP_KERNEL_UT)
-
+    # 需要将Tiling依赖的文件添加到CMakeLists.txt中
+    # set(elewise_common_tiling_files
+    #         ${CANN_ROOT}/ops/built-in/op_tiling/runtime/elewise_tiling.cc
+    #         )
     # 算子自己的tiling文件路径
-    set(dequant_rope_quant_kvcache_tiling_files
-        ${CMAKE_CURRENT_SOURCE_DIR}/../../../op_host/dequant_rope_quant_kvcache_tiling.cpp
-        )
+    set(moe_gating_top_k_softmax_v2_tiling_files
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../../op_host/moe_gating_top_k_softmax_v2_tiling.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../../op_host/moe_gating_top_k_softmax_v2_tiling_perf.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../../op_host/moe_gating_top_k_softmax_v2_tiling_k_renorm.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../../op_host/moe_gating_top_k_softmax_v2_tiling_k_fullload.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../../op_host/moe_gating_top_k_softmax_v2_tiling_ek_fullload.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../../op_host/moe_gating_top_k_softmax_v2_tiling_base.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../../op_host/moe_gating_top_k_softmax_v2_regbase_tiling_perf.cpp
+    )
     # 使用AddOpTestCase
     # param1：算子名称，以kernel方式命名
     # param2：soc版本，多个以分号分隔，例如："ascend910_9599;AscendB1"
     # param3：自定义编译选项，一般填写测试的一种典型数据类型组合，不需要则传入空字符串，例如："-DDTYPE_X=float"，多个使用空格分隔，例如："-DDTYPE_X=float -DDTYPE_Y=float"
     # param4：该算子依赖的所有tiling源码文件
-    AddOpTestCase(dequant_rope_quant_kvcache "ascend910B1" "-DDTYPE_X=float -DDTYPE_COS=float" "${dequant_rope_quant_kvcache_tiling_files}")
+    AddOpTestCase(moe_gating_top_k_softmax_v2 "ascend910B1" "-DDTYPE_X=float" "${moe_gating_top_k_softmax_v2_tiling_files}")
 endif()
