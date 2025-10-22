@@ -310,9 +310,6 @@ static ge::graphStatus TilingPrepareForMoeTokenUnpermute(gert::TilingParseContex
     return ge::GRAPH_SUCCESS;
 }
 
-struct MoeTokenUnpermuteCompileInfo {
-};
-
 IMPL_OP_OPTILING(MoeTokenUnpermute)
     .Tiling(TilingMoeTokenUnpermute)
     .TilingParse<MoeTokenUnpermuteCompileInfo>(TilingPrepareForMoeTokenUnpermute);

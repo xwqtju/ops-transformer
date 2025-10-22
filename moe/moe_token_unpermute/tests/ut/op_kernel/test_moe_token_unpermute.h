@@ -9,24 +9,30 @@
  */
 
 /*!
- * \file test_moe_token_unpermute_with_routing_map_grad.h
+ * \file test_moe_token_unpermute.h
  * \brief
  */
-#ifndef _MOE_TOKEN_UNPERMUTE_WITH_ROUTING_MAP_GRAD_TILING_H_
-#define _MOE_TOKEN_UNPERMUTE_WITH_ROUTING_MAP_GRAD_TILING_H_
+#ifndef _MOE_TOKEN_UNPERMUTE_TILING_H_
+#define _MOE_TOKEN_UNPERMUTE_TILING_H_
 
 #include "kernel_tiling/kernel_tiling.h"
 
 #include <cstdint>
 #include <cstring>
 
-inline void InitMoeTokenUnpermuteWithRoutingMapGradTilingData(
-    uint8_t* tiling, MoeTokenUnpermuteWithRoutingMapGradTilingData* const_data)
-{
-    memcpy(const_data, tiling, sizeof(MoeTokenUnpermuteWithRoutingMapGradTilingData));
+#define DT_BF16 bfloat16_t
+#define ORIG_DTYPE_START DT_BF16
+#define __CCE_UT_TEST__
+
+#define __aicore__
+
+
+
+inline void InitMoeTokenUnpermuteTilingData(uint8_t* tiling, MoeTokenUnpermuteTilingData* const_data) {
+  memcpy(const_data, tiling, sizeof(MoeTokenUnpermuteTilingData));
 }
 
-#define GET_TILING_DATA(tilingData, tilingPointer)            \
-    MoeTokenUnpermuteWithRoutingMapGradTilingData tilingData; \
-    InitMoeTokenUnpermuteWithRoutingMapGradTilingData(tilingPointer, &tilingData)
+#define GET_TILING_DATA(tilingData, tilingPointer) \
+  MoeTokenUnpermuteTilingData tilingData;          \
+  InitMoeTokenUnpermuteTilingData(tilingPointer, &tilingData)
 #endif
