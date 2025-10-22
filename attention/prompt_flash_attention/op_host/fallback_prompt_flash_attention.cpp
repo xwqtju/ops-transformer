@@ -60,6 +60,7 @@ static graphStatus PromptHostExecuteFunc(OpExecuteContext* host_api_ctx)
   std::vector<int64_t> actSeqArray;
   if (actualSeqLengthsGe != nullptr) {
     const int64_t* actSeqData = actualSeqLengthsGe->GetData<int64_t>();
+    OP_CHECK_IF(actSeqData == nullptr,  OP_LOGE("aclnnfallback", "actSeqData is null"), return GRAPH_FAILED);
     const size_t len = static_cast<size_t>(actualSeqLengthsGe->GetShapeSize());
     for (size_t i = 0; i < len; i++) {
       actSeqArray.push_back(actSeqData[i]);
