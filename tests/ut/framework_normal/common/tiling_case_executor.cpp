@@ -27,14 +27,22 @@
                                  tilingContextPara.inputTensorDesc_[index].dtype_,                                     \
                                  tilingContextPara.inputTensorDesc_[index].format_,                                    \
                                  tilingContextPara.inputTensorDesc_[index].format_);                                   \
-        inputTensors.push_back((gert::Tensor *)&tilingContextPara.inputTensorDesc_[index].shape_);                     \
+        if (tilingContextPara.inputTensorDesc_[index].shape_.GetStorageShape().GetDimNum() == 0){                      \
+            inputTensors.push_back(nullptr);                                                                           \
+        } else {                                                                                                       \
+            inputTensors.push_back((gert::Tensor *)&tilingContextPara.inputTensorDesc_[index].shape_);                 \
+        }                                                                                                              \
     }                                                                                                                  \
     for (size_t index = 0; index < outputNum; index++) {                                                               \
         contextFaker.NodeOutputTd(index,                                                                               \
                                   tilingContextPara.outputTensorDesc_[index].dtype_,                                   \
                                   tilingContextPara.outputTensorDesc_[index].format_,                                  \
                                   tilingContextPara.outputTensorDesc_[index].format_);                                 \
-        outputTensors.push_back((gert::Tensor *)&tilingContextPara.outputTensorDesc_[index].shape_);                   \
+        if (tilingContextPara.outputTensorDesc_[index].shape_.GetStorageShape().GetDimNum() == 0){                     \
+            outputTensors.push_back(nullptr);                                                                          \
+        } else {                                                                                                       \
+            outputTensors.push_back((gert::Tensor *)&tilingContextPara.outputTensorDesc_[index].shape_);               \
+        }                                                                                                              \
     }                                                                                                                  \
     contextFaker.InputTensors(inputTensors).OutputTensors(outputTensors);                                              \
     for (auto& attrInfo : tilingContextPara.attrs_) {                                                                  \
@@ -80,7 +88,7 @@
                                      .Build();                                                                         \
     string compileInfoStringPrefix = R"({"hardware_info": {"BT_SIZE": 0, "load3d_constraints": "1", "Intrinsic_fix_pipe_l0c2out": false, "Intrinsic_data_move_l12ub": true, "Intrinsic_data_move_l0c2ub": true, "Intrinsic_data_move_out2l1_nd2nz": false, "UB_SIZE": )";\
     string compileInfoStringMiddle = R"(, "L2_SIZE": 33554432, "L1_SIZE": 524288, "L0A_SIZE": 65536, "L0B_SIZE": 65536, "L0C_SIZE": 131072, "CORE_NUM": )";\
-    string compileInfoStringSuffix = R"(, "socVersion": "Ascend910_95"} })";\
+    string compileInfoStringSuffix = std::string(", \"socVersion\":\"") + tilingContextPara.socVersion_ + "\"} }";\
     string compileInfoString = compileInfoStringPrefix +                                                               \
                                std::to_string(tilingContextPara.ubSize_) +                                             \
                                compileInfoStringMiddle +                                                               \
@@ -89,7 +97,7 @@
     map<string, string> socInfos;                                                                                      \
     map<string, string> aicoreSpec;                                                                                    \
     map<string, string> intrinsics;                                                                                    \
-    map<string, string> socversions = {{"Short_SoC_version", "Ascend910_95"}};                                         \
+    map<string, string> socversions = {{"Short_SoC_version", tilingContextPara.socVersion_}};                          \
     GetPlatFormInfos(compileInfoString.c_str(), socInfos, aicoreSpec, intrinsics);                                     \
     auto tilingContext = contextHolder.GetContext();                                                                   \
     tilingContext->GetPlatformInfo()->SetPlatformRes("SoCInfo", socInfos);                                             \
@@ -182,7 +190,8 @@ void ExecuteTestCase(const gert::TilingContextPara& tilingContextPara,
                      ge::graphStatus                expectResult,
                      uint64_t                       expectTilingKey, 
                      const string&                  expectTilingData,
-                     const std::vector<size_t>&     expectWorkspaces)
+                     const std::vector<size_t>&     expectWorkspaces,
+                     uint64_t                       tilingDataReservedLen)
 {
     DO_TILING(tilingContextPara);
 
@@ -193,11 +202,13 @@ void ExecuteTestCase(const gert::TilingContextPara& tilingContextPara,
     }
 
     // check workspace
-    size_t workspaceCount = tilingContext->GetWorkspaceNum();
-    if (workspaceCount > 0) {
-        auto workspaceSizes = tilingContext->GetWorkspaceSizes(workspaceCount);
-        for (size_t i = 0; i < workspaceCount; i++) {
-            ASSERT_EQ(workspaceSizes[i], expectWorkspaces[i]);
+    if (!expectWorkspaces.empty()) {
+        size_t workspaceCount = tilingContext->GetWorkspaceNum();
+        if (workspaceCount > 0) {
+            auto workspaceSizes = tilingContext->GetWorkspaceSizes(workspaceCount);
+            for (size_t i = 0; i < workspaceCount; i++) {
+                ASSERT_EQ(workspaceSizes[i], expectWorkspaces[i]);
+            }
         }
     }
 
@@ -206,9 +217,13 @@ void ExecuteTestCase(const gert::TilingContextPara& tilingContextPara,
     ASSERT_EQ(tilingKeyResult, expectTilingKey);
 
     // check tiling data
-    auto rawTilingData = tilingContext->GetRawTilingData();
-    auto tilingDataResult = to_string<int64_t>(rawTilingData->GetData(), rawTilingData->GetDataSize());
-    EXPECT_EQ(tilingDataResult, expectTilingData);
+    if (expectTilingData != "") {
+        auto rawTilingData = tilingContext->GetRawTilingData();
+        auto tilingDataReservedSize = tilingDataReservedLen * sizeof(uint64_t);
+        auto tilingDataResult = to_string<int64_t>(rawTilingData->GetData() + tilingDataReservedSize,
+                                                   rawTilingData->GetDataSize() - tilingDataReservedSize);
+        EXPECT_EQ(tilingDataResult, expectTilingData);
+    }
 }
 
 bool ExecuteTiling(const gert::TilingContextPara& tilingContextPara, TilingInfo& tilingInfo)

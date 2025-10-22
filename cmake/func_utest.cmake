@@ -271,6 +271,7 @@ function(OpsTest_AddOpProtoShared)
                 $<BUILD_INTERFACE:intf_pub_utest>
                 $<BUILD_INTERFACE:ops_transformer_utils_proto_headers>
                 $<$<BOOL:${BUILD_OPEN_PROJECT}>:$<BUILD_INTERFACE:alog_headers>>
+                $<$<BOOL:${BUILD_OPEN_PROJECT}>:$<BUILD_INTERFACE:dlog_headers>>
                 -Wl,--no-whole-archive
                 ascendalog
     )
@@ -359,6 +360,7 @@ function(OpsTest_AddOpTilingShared)
                 $<BUILD_INTERFACE:_OpsTestUt_OpTiling_Wno>
                 $<BUILD_INTERFACE:ops_transformer_utils_tiling_headers>
                 $<$<BOOL:${BUILD_OPEN_PROJECT}>:$<BUILD_INTERFACE:alog_headers>>
+                $<$<BOOL:${BUILD_OPEN_PROJECT}>:$<BUILD_INTERFACE:dlog_headers>>
                 graph
                 graph_base
                 exe_graph
@@ -593,6 +595,7 @@ function(OpsTest_Level1_AddUTestCommonStatic)
                     $<BUILD_INTERFACE:intf_pub_utest>
                     $<BUILD_INTERFACE:_OpsTestUt_UTestCaseStatic_Wno>
                     $<$<BOOL:${BUILD_OPEN_PROJECT}>:$<BUILD_INTERFACE:alog_headers>>
+                    $<$<BOOL:${BUILD_OPEN_PROJECT}>:$<BUILD_INTERFACE:dlog_headers>>
                     tikicpulib::${OPS_ADV_UTEST_OPS_TEST_ASCEND_PRODUCT_TYPE}
                     ${UTest_NamePrefix}_${TMP_TILING_DATA_DEF_BRIEF}_OpTilingDataDef
                     ${UTest_NamePrefix}_Utils
@@ -660,6 +663,7 @@ function(OpsTest_Level1_AddUTestCaseStatic)
                     $<BUILD_INTERFACE:intf_pub_utest>
                     $<BUILD_INTERFACE:_OpsTestUt_UTestCaseStatic_Wno>
                     $<$<BOOL:${BUILD_OPEN_PROJECT}>:$<BUILD_INTERFACE:alog_headers>>
+                    $<$<BOOL:${BUILD_OPEN_PROJECT}>:$<BUILD_INTERFACE:dlog_headers>>
                     tikicpulib::${OPS_ADV_UTEST_OPS_TEST_ASCEND_PRODUCT_TYPE}
                     ${UTest_NamePrefix}_${TMP_TILING_DATA_DEF_BRIEF}_OpTilingDataDef
                     ${UTest_NamePrefix}_Utils
@@ -729,6 +733,7 @@ function(OpsTest_Level1_AddUTestAclnnCaseStatic)
                     $<BUILD_INTERFACE:intf_pub_utest>
                     $<BUILD_INTERFACE:_OpsTestUt_UTestCaseStatic_Wno>
                     $<$<BOOL:${BUILD_OPEN_PROJECT}>:$<BUILD_INTERFACE:alog_headers>>
+                    $<$<BOOL:${BUILD_OPEN_PROJECT}>:$<BUILD_INTERFACE:dlog_headers>>
                     tikicpulib::${OPS_ADV_UTEST_OPS_TEST_ASCEND_PRODUCT_TYPE}
                     ${UTest_NamePrefix}_${TMP_TILING_DATA_DEF_BRIEF}_OpTilingDataDef
                     ${UTest_NamePrefix}_Utils
@@ -1082,21 +1087,12 @@ function(OpsTest_AddLaunch)
             "--cann_package_name=opp"
             "get_package_version"
     )
-    execute_process(
-            COMMAND ${HI_PYTHON} ${OPS_ADV_DIR}/cmake/scripts/check_version_compatible.py ${_param}
-            RESULT_VARIABLE result
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            OUTPUT_VARIABLE _UTEST_OPP_CANN_VERSION
-    )
-    if (result)
-        message(FATAL_ERROR "Get package version failed.")
-    else ()
-        string(TOLOWER "${_UTEST_OPP_CANN_VERSION}" _UTEST_OPP_CANN_VERSION)
-        string(REPLACE "t" "" _UTEST_OPP_CANN_VERSION "${_UTEST_OPP_CANN_VERSION}")
-        if ("${_UTEST_OPP_CANN_VERSION}" VERSION_GREATER "7.3.10.0")
-            set(_ACLNN_UTEST_SUPPORTED ON)
-        endif ()
-    endif ()
+
+    string(TOLOWER "${_UTEST_OPP_CANN_VERSION}" _UTEST_OPP_CANN_VERSION)
+    string(REPLACE "t" "" _UTEST_OPP_CANN_VERSION "${_UTEST_OPP_CANN_VERSION}")
+    if ("${_UTEST_OPP_CANN_VERSION}" VERSION_GREATER "7.3.10.0")
+        set(_ACLNN_UTEST_SUPPORTED ON)
+    endif()
     if (_OpsTestUt_UTestAclnnCaseLibraries AND _ACLNN_UTEST_SUPPORTED)
         # 支持按算子分离可执行文件, 便于彼此冲突的 Kernel 侧编译宏设置
         foreach (_OpsTestUt_UTestAclnnCaseLibrary ${_OpsTestUt_UTestAclnnCaseLibraries})
@@ -1115,6 +1111,7 @@ function(OpsTest_AddLaunch)
                         gtest
                         $<BUILD_INTERFACE:_OpsTestUt_GTest_Wno>
                         $<$<BOOL:${BUILD_OPEN_PROJECT}>:$<BUILD_INTERFACE:alog_headers>>
+                        $<$<BOOL:${BUILD_OPEN_PROJECT}>:$<BUILD_INTERFACE:dlog_headers>>
                         ${_OpsTestUt_UTestAclnnCaseLibrary}
                         ${UTest_NamePrefix}_Stubs
                         ${UTest_NamePrefix}_Utils
