@@ -1687,6 +1687,10 @@ uint32_t IFATiling::GetAntiquantSeqLength() const
     if (antiquantParamsInPagedAttentionFlag_ != 0U) {
         return seqSize_;
     }
+    if(kvAntiParamSplitFlag_ && context_->valueAntiquantScale.tensor->GetStorageShape().GetDimNum() != DIM_NUM_THREE){
+        OP_LOGW(context_->opName, "the pertoken antiquantkey/antiquantvalue's dimensions is [%u], which neeb to be 3",
+            context_->valueAntiquantScale.tensor->GetStorageShape().GetDimNum());
+    }
     const size_t antiquantSIdx = (gqaKvNZFlag_) || 
         (kvAntiParamSplitFlag_ && context_->valueAntiquantScale.tensor->GetStorageShape().GetDimNum() == DIM_NUM_TWO) ? 1U : 2U;
     return kvAntiParamSplitFlag_ ? context_->valueAntiquantScale.tensor->GetStorageShape().GetDim(antiquantSIdx) :
