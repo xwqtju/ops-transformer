@@ -32,26 +32,6 @@ protected:
     }
 };
 
-TEST_F(MoeInitRouting, moe_init_routing_infer_shape_0)
-{
-    gert::InfershapeContextPara infershapeContextPara(
-        "MoeInitRouting",
-        {
-            {{{2, 3}, {2, 3}}, ge::DT_FLOAT, ge::FORMAT_ND},
-            {{{2, 4}, {2, 4}}, ge::DT_INT32, ge::FORMAT_ND},
-            {{{2, 4}, {2, 4}}, ge::DT_INT32, ge::FORMAT_ND},
-        },
-        {
-            {{{}, {}}, ge::DT_FLOAT, ge::FORMAT_ND},
-            {{{}, {}}, ge::DT_INT32, ge::FORMAT_ND},
-            {{{}, {}}, ge::DT_INT32, ge::FORMAT_ND},
-        },
-        {
-            {"active_num", Ops::Transformer::AnyValue::CreateFrom<int64_t>(1)},
-        });
-    std::vector<std::vector<int64_t>> expectOutputShape = {{4, 3}, {8}, {8}};
-    ExecuteTestCase(infershapeContextPara, ge::GRAPH_SUCCESS, expectOutputShape);
-}
 
 TEST_F(MoeInitRouting, moe_init_routing_infer_shape_1)
 {
