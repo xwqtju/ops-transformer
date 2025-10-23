@@ -172,7 +172,7 @@ int main() {
   int64_t nextTokens = INT32_MAX;
   int64_t headNum = 1;
   int64_t innerPrecise = 0;
-  int64_t sparseMod = 0; 
+  int64_t sparseMode = 0;
   int64_t pseType = 1;
   char layOut[5] = {'S', 'B', 'H', 0};
   
