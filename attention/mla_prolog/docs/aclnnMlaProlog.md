@@ -4,7 +4,6 @@
 
 |产品      | 是否支持 |
 |:----------------------------|:-----------:|
-|<term>昇腾910_95 AI处理器</term>|      ×     |
 |<term>Atlas A3 训练系列产品/Atlas A3 推理系列产品</term>|      √     |
 |<term>Atlas A2 训练系列产品/Atlas 800I A2 推理产品/A200I A2 Box 异构组件</term>|      √     |
 |<term>Atlas 200I/500 A2 推理产品</term>|      ×     |
@@ -121,10 +120,10 @@ aclnnStatus aclnnMlaProlog(
     | cacheIndex                 | 输入      | 用于存储kvCache和krCache的索引，Device侧的aclTensor。                  |  支持B=0,S=0,T=0的空Tensor <br> 取值范围需在[0,BlockNum*BlockSize)内                                                                   | INT64          | ND         | 1维：(T)、2维：(B,S)      | -                       |
     | kvCacheRef                 | 输入      | 用于cache索引的aclTensor，计算结果原地更新（对应公式中的$k^C$）。       |  支持B=0,Skv=0的空Tensor；Nkv与N关联，N是超参，故Nkv不支持dim=0                                                                         | BFLOAT16、INT8 | ND         | 4维：(BlockNum,BlockSize,Nkv,Hckv) | -                       |
     | krCacheRef                 | 输入      | 用于key位置编码的cache，计算结果原地更新（对应公式中的$k^R$），Device侧的aclTensor。 | 支持B=0,Skv=0的空Tensor；Nkv与N关联，N是超参，故Nkv不支持dim=0                                                                          | BFLOAT16、INT8 | ND         | 4维：(BlockNum,BlockSize,Nkv,Dr) | -                       |
-    | dequantScaleXOptional      | 输入      | 预留参数，当前版本暂未使用。                                          |  必须传入空指针                                                                                                                         | FLOAT          | ND         | -                         | -                       |
-    | dequantScaleWDqOptional    | 输入      | 预留参数，当前版本暂未使用。                                          |  必须传入空指针                                                                                                                         | FLOAT          | ND         | -                         | -                       |
-    | dequantScaleWUqQrOptional  | 输入      | 用于MatmulQcQr矩阵乘后反量化操作的per-channel参数，Device侧的aclTensor。 |  支持非空Tensor（仅INT8 dtype场景需传）                                                                                                 | FLOAT          | ND         | 2维：(1,N*(D+Dr))         | -                       |
-    | dequantScaleWDkvKrOptional | 输入      | 预留参数，当前版本暂未使用。                                          |  必须传入空指针                                                                                                                         | FLOAT          | ND         | -                         | -                       |
+    | dequantScaleXOptional      | 输入      | tokenX的反量化参数。   |  必须传入空指针      | FLOAT          | ND         | -                         | -                       |
+    | dequantScaleWDqOptional    | 输入      | weightDq的反量化参数。 |  必须传入空指针   | FLOAT          | ND         | -                         | -                       |
+    | dequantScaleWUqQrOptional  | 输入      | 用于MatmulQcQr矩阵乘后反量化操作的per-channel参数，Device侧的aclTensor。 |  支持非空Tensor（仅INT8 dtype场景需传）   | FLOAT    ND         | 2维：(1,N*(D+Dr))         | -                       |
+    | dequantScaleWDkvKrOptional | 输入      | weightDkvKr的反量化参数。|  必须传入空指针 | FLOAT          | ND         | -                         | -                       |
     | quantScaleCkvOptional      | 输入      | 用于对KVCache输出数据做量化操作的参数，Device侧的aclTensor。            |  支持非空Tensor（仅INT8 dtype量化输出场景需传）                                                                                         | FLOAT          | ND         | 2维：(1,Hckv)             | -                       |
     | quantScaleCkrOptional      | 输入      | 用于对KRCache输出数据做量化操作的参数，Device侧的aclTensor。            |  支持非空Tensor（仅INT8 dtype量化输出场景需传）                                                                                         | FLOAT          | ND         | 2维：(1,Dr)               | -                       |
     | smoothScalesCqOptional     | 输入      | 用于对RmsNormCq输出做动态量化操作的参数，Device侧的aclTensor。         |  支持非空Tensor（仅INT8 dtype场景可选传）                                                                                               | FLOAT          | ND         | 2维：(1,Hcq)              | -                       |
@@ -527,7 +526,7 @@ aclnnStatus aclnnMlaProlog(
   
   int main() {
       // 1. 固定写法，device/stream初始化, 参考AscendCL对外接口列表
-      // 根据自己的实际device填写deviceId
+      // 根据实际device填写deviceId
       int32_t deviceId = 0;
       aclrtStream stream;
       auto ret = Init(deviceId, &stream);
