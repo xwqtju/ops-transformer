@@ -311,7 +311,12 @@ ge::graphStatus MlaPrologTiling::FillTiling()
     baseParams_->epsilonCq = epsilonCq_;
     baseParams_->reciprocalCkv = reciprocalCkv_;
     baseParams_->epsilonCkv = epsilonCkv_;
-
+    float qcQrScale = (float)sqrt((double)baseShapeInfo_.heSize / (double)baseShapeInfo_.hcqSize);
+    float kcScale = (float)sqrt((double)baseShapeInfo_.heSize / (double)baseShapeInfo_.hckvSize);
+    baseParams_->qcQrScale = qcQrScale;
+    baseParams_->kcScale = kcScale;
+    baseParams_->isQcQrScaleEnable = 1;
+    baseParams_->isKcScaleEnable = 1;
     return ge::GRAPH_SUCCESS;
 }
 
