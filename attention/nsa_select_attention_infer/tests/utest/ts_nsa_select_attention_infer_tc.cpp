@@ -9,7 +9,7 @@
  */
 /*!
  * \file ts_nsa_selected_attention_infer_tc.cpp
- * \brief NsaSelectAttentionInfer用例.
+ * \brief NsaSelectedAttentionInfer用例.
  */
 
 #include "ts_nsa_selected_attention_infer.h"
