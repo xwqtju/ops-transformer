@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <vector>
+#include <cstdint>
 #include "acl/acl.h"
 #include "aclnnop/aclnn_flash_attention_score.h"
 
@@ -97,14 +98,26 @@ int main() {
   CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("Init acl failed. ERROR: %d\n", ret); return ret);
 
   // 2. 构造输入与输出，需要根据API的接口自定义构造
-  std::vector<int64_t> qShape = {256, 1, 128};
-  std::vector<int64_t> kShape = {256, 1, 128};
-  std::vector<int64_t> vShape = {256, 1, 128};
-  std::vector<int64_t> attenmaskShape = {256, 256};
+  int64_t B = 1;
+  int64_t N1 = 1;
+  int64_t N2 = 1;
+  int64_t T1 = 256;
+  int64_t T2 = 256;
+  int64_t D = 128;
+ 
+  int64_t q_size = T1 * N1 * D;
+  int64_t kv_size = T2 * N2 * D;
+  int64_t atten_mask_size = T1 * T2;
+  int64_t softmax_size = T1 * N1 * 8;
 
-  std::vector<int64_t> attentionOutShape = {256, 1, 128};
-  std::vector<int64_t> softmaxMaxShape = {256, 1, 8};
-  std::vector<int64_t> softmaxSumShape = {256, 1, 8};
+  std::vector<int64_t> qShape = {T1, N1, D};
+  std::vector<int64_t> kShape = {T2, N2, D};
+  std::vector<int64_t> vShape = {T2, N2, D};
+  std::vector<int64_t> attenmaskShape = {T1, T2};
+
+  std::vector<int64_t> attentionOutShape = {T1, N1, D};
+  std::vector<int64_t> softmaxMaxShape = {T1, N1, 8};
+  std::vector<int64_t> softmaxSumShape = {T1, N1, 8};
 
   void* qDeviceAddr = nullptr;
   void* kDeviceAddr = nullptr;
@@ -126,13 +139,13 @@ int main() {
   aclTensor* softmaxSum = nullptr;
   aclTensor* softmaxOut = nullptr;
 
-  std::vector<float> qHostData(32768, 1);
-  std::vector<float> kHostData(32768, 1);
-  std::vector<float> vHostData(32768, 1);
-  std::vector<uint8_t> attenmaskHostData(65536, 0);
-  std::vector<float> attentionOutHostData(32768, 0);
-  std::vector<float> softmaxMaxHostData(2048, 3.0);
-  std::vector<float> softmaxSumHostData(2048, 3.0);
+  std::vector<half> qHostData(q_size, 1.0);
+  std::vector<half> kHostData(kv_size, 1.0);
+  std::vector<half> vHostData(kv_size, 1.0);
+  std::vector<uint8_t> attenmaskHostData(atten_mask_size, 0);
+  std::vector<half> attentionOutHostData(q_size, 0);
+  std::vector<float> softmaxMaxHostData(softmax_size, 3.0);
+  std::vector<float> softmaxSumHostData(softmax_size, 3.0);
 
   ret = CreateAclTensor(qHostData, qShape, &qDeviceAddr, aclDataType::ACL_FLOAT16, &q);
   CHECK_RET(ret == ACL_SUCCESS, return ret);
@@ -151,14 +164,14 @@ int main() {
 
   std::vector<int64_t> prefixOp = {0};
   aclIntArray *prefix = aclCreateIntArray(prefixOp.data(), 1);
-  std::vector<int64_t>  acSeqQLenOp = {256};
-  std::vector<int64_t>  acSeqKvLenOp = {256};
+  std::vector<int64_t>  acSeqQLenOp = {T1};
+  std::vector<int64_t>  acSeqKvLenOp = {T2};
   aclIntArray* acSeqQLen = aclCreateIntArray(acSeqQLenOp.data(), acSeqQLenOp.size());
   aclIntArray* acSeqKvLen = aclCreateIntArray(acSeqKvLenOp.data(), acSeqKvLenOp.size());
-  double scaleValue = 0.088388;
-  double keepProb = 1;
-  int64_t preTokens = 65536;
-  int64_t nextTokens = 65536;
+  double scaleValue = 1.0/sqrt(128);
+  double keepProb = 1.0;
+  int64_t preTokens = INT32_MAX;
+  int64_t nextTokens = INT32_MAX;
   int64_t headNum = 1;
   int64_t innerPrecise = 0;
   int64_t sparseMod = 0;
@@ -206,6 +219,10 @@ int main() {
   aclDestroyTensor(attentionOut);
   aclDestroyTensor(softmaxMax);
   aclDestroyTensor(softmaxSum);
+  aclDestroyIntArray(prefix);
+  aclDestroyIntArray(acSeqQLen);
+  aclDestroyIntArray(acSeqKvLen);
+
 
   // 7. 释放device资源
   aclrtFree(qDeviceAddr);
