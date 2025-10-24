@@ -51,7 +51,10 @@ ASCENDC_TPL_ARGS_DECL(mla_prolog, // 算子唯一标识，与opType保持一致
                       // bit:11 量化算力分组：0-关闭, 1-开启
                       ASCENDC_TPL_BOOL_DECL(ENABLE_GROUP_COMPUTE_OPTIONAL, 0, 1),
                       // bit:12-13 空tensor场景：0-无空tensor  1-kv_cache/kr_cache为空  2-query为空且不更新cache
-                      ASCENDC_TPL_UINT_DECL(EMPTY_TENSOR_MODE, ASCENDC_TPL_2_BW, ASCENDC_TPL_UI_LIST, 0, 1, 2), );
+                      ASCENDC_TPL_UINT_DECL(EMPTY_TENSOR_MODE, ASCENDC_TPL_2_BW, ASCENDC_TPL_UI_LIST, 0, 1, 2),
+                      // bit:14 cvMode，0-cv1:2, 1-cv1:1
+                      ASCENDC_TPL_BOOL_DECL(CV_MODE, 0, 1),
+                    );
 
 ASCENDC_TPL_SEL(
 // -------------------------- 非量化场景 --------------------------
@@ -60,9 +63,10 @@ ASCENDC_TPL_SEL(
     ASCENDC_TPL_ARGS_SEL(ASCENDC_TPL_UINT_SEL(CACHE_MODE, ASCENDC_TPL_UI_LIST, 1, 2),
                          ASCENDC_TPL_UINT_SEL(SCENARIO, ASCENDC_TPL_UI_LIST, 1),
                          ASCENDC_TPL_UINT_SEL(QUANT_MODE, ASCENDC_TPL_UI_LIST, 0),
-                         ASCENDC_TPL_BOOL_SEL(ENABLE_DEQUANT_OPTIONAL, 0),
+                         ASCENDC_TPL_BOOL_SEL(ENABLE_DEQUANT_OPTIONAL, 0),        
                          ASCENDC_TPL_BOOL_SEL(ENABLE_GROUP_COMPUTE_OPTIONAL, 0),
                          ASCENDC_TPL_UINT_SEL(EMPTY_TENSOR_MODE, ASCENDC_TPL_UI_LIST, 0, 1),
+                         ASCENDC_TPL_BOOL_SEL(CV_MODE, 0, 1),
                          ASCENDC_TPL_TILING_STRUCT_SEL(optiling::MlaPrologTilingData)),
 #endif
 
@@ -75,6 +79,7 @@ ASCENDC_TPL_SEL(
                          ASCENDC_TPL_BOOL_SEL(ENABLE_DEQUANT_OPTIONAL, 0, 1),
                          ASCENDC_TPL_BOOL_SEL(ENABLE_GROUP_COMPUTE_OPTIONAL, 0, 1),
                          ASCENDC_TPL_UINT_SEL(EMPTY_TENSOR_MODE, ASCENDC_TPL_UI_LIST, 0, 1),
+                         ASCENDC_TPL_BOOL_SEL(CV_MODE, 0),
                          ASCENDC_TPL_TILING_STRUCT_SEL(optiling::MlaPrologTilingData)),
 #endif
 
@@ -87,6 +92,7 @@ ASCENDC_TPL_SEL(
                          ASCENDC_TPL_BOOL_SEL(ENABLE_DEQUANT_OPTIONAL, 0, 1),
                          ASCENDC_TPL_BOOL_SEL(ENABLE_GROUP_COMPUTE_OPTIONAL, 0, 1),
                          ASCENDC_TPL_UINT_SEL(EMPTY_TENSOR_MODE, ASCENDC_TPL_UI_LIST, 0, 1),
+                         ASCENDC_TPL_BOOL_SEL(CV_MODE, 0),
                          ASCENDC_TPL_TILING_STRUCT_SEL(optiling::MlaPrologTilingData)),
 #endif
 
@@ -99,6 +105,7 @@ ASCENDC_TPL_SEL(
                          ASCENDC_TPL_BOOL_SEL(ENABLE_DEQUANT_OPTIONAL, 0, 1),
                          ASCENDC_TPL_BOOL_SEL(ENABLE_GROUP_COMPUTE_OPTIONAL, 0, 1),
                          ASCENDC_TPL_UINT_SEL(EMPTY_TENSOR_MODE, ASCENDC_TPL_UI_LIST, 0, 1),
+                         ASCENDC_TPL_BOOL_SEL(CV_MODE, 0),
                          ASCENDC_TPL_TILING_STRUCT_SEL(optiling::MlaPrologTilingData)),
 #endif
 
@@ -113,6 +120,7 @@ ASCENDC_TPL_SEL(
                          ASCENDC_TPL_BOOL_SEL(ENABLE_DEQUANT_OPTIONAL, 0, 1),
                          ASCENDC_TPL_BOOL_SEL(ENABLE_GROUP_COMPUTE_OPTIONAL, 0, 1),
                          ASCENDC_TPL_UINT_SEL(EMPTY_TENSOR_MODE, ASCENDC_TPL_UI_LIST, 0, 1),
+                         ASCENDC_TPL_BOOL_SEL(CV_MODE, 0),
                          ASCENDC_TPL_TILING_STRUCT_SEL(optiling::MlaPrologTilingData)),
 #endif
 
@@ -123,6 +131,7 @@ ASCENDC_TPL_SEL(
                          ASCENDC_TPL_BOOL_SEL(ENABLE_DEQUANT_OPTIONAL, 0),
                          ASCENDC_TPL_BOOL_SEL(ENABLE_GROUP_COMPUTE_OPTIONAL, 0),
                          ASCENDC_TPL_UINT_SEL(EMPTY_TENSOR_MODE, ASCENDC_TPL_UI_LIST, 2),
+                         ASCENDC_TPL_BOOL_SEL(CV_MODE, 0),
                          ASCENDC_TPL_TILING_STRUCT_SEL(optiling::MlaPrologTilingData)), );
 
 #endif // MLA_PROLOG_TEMPLATE_TILING_KEY_H
