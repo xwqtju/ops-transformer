@@ -8,11 +8,11 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 /*!
- * \file ts_nsa_select_attention_infer_tc.cpp
+ * \file ts_nsa_selected_attention_infer_tc.cpp
  * \brief NsaSelectAttentionInfer用例.
  */
 
-#include "ts_nsa_select_attention_infer.h"
+#include "ts_nsa_selected_attention_infer.h"
 
 namespace test_constants {
     constexpr uint32_t CASE1_B = 1;
@@ -74,7 +74,7 @@ void InitAndRunNormalCase(int64_t batchSize, int64_t qSeqSize, int64_t headSize,
 
 namespace tests {
     using namespace test_constants;
-    TEST_F(Ts_NsaSelectAttentionInfer, nsa_select_attention_infer_base_basnd_q3_multi_batch_fp16)
+    TEST_F(Ts_NsaSelectAttentionInfer, nsa_selected_attention_infer_base_basnd_q3_multi_batch_fp16)
     {   
         std::vector<int64_t> kvSeqlenData(CASE2_B, CASE1_S2);
         std::vector<int64_t> qSeqlenData(CASE2_B, CASE1_MTP_S1);
@@ -82,7 +82,7 @@ namespace tests {
                                 ge::GRAPH_SUCCESS, 1, CASE2_MTP_NUMTOKENS);
     }
 
-    TEST_F(Ts_NsaSelectAttentionInfer, nsa_select_attention_infer_base_basnd_multi_batch_fp16)
+    TEST_F(Ts_NsaSelectAttentionInfer, nsa_selected_attention_infer_base_basnd_multi_batch_fp16)
     {   
         std::vector<int64_t> kvSeqlenData(CASE2_B, CASE1_S2);
         std::vector<int64_t> qSeqlenData(CASE2_B, CASE1_S1);
@@ -90,7 +90,7 @@ namespace tests {
                                 ge::GRAPH_SUCCESS, 0, CASE2_NUMTOKENS);
     }
 
-    TEST_F(Ts_NsaSelectAttentionInfer, nsa_select_attention_infer_base_bsh_single_batch_fp16)
+    TEST_F(Ts_NsaSelectAttentionInfer, nsa_selected_attention_infer_base_bsh_single_batch_fp16)
     {   
         std::vector<int64_t> kvSeqlenData(CASE1_B, CASE1_S2);
         std::vector<int64_t> qSeqlenData(CASE1_B, CASE1_S1);
@@ -98,7 +98,7 @@ namespace tests {
                                 ge::GRAPH_SUCCESS, 0, CASE1_NUMTOKENS);
     }
 
-    TEST_F(Ts_NsaSelectAttentionInfer, nsa_select_attention_infer_base_tnd_single_batch_fp16)
+    TEST_F(Ts_NsaSelectAttentionInfer, nsa_selected_attention_infer_base_tnd_single_batch_fp16)
     {
         std::vector<int64_t> kvSeqlenData(CASE1_B, CASE1_S2);
         std::vector<int64_t> qSeqlenData(CASE2_B, CASE1_S1);

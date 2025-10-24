@@ -9,7 +9,7 @@
 
 if (BUILD_OPEN_PROJECT)
     target_sources(op_host_aclnnExc PRIVATE
-        nsa_select_attention_infer_def.cpp
+        nsa_selected_attention_infer_def.cpp
     )
 endif()
 
@@ -21,6 +21,6 @@ if (BUILD_OPS_RTY_KERNEL) # 回黄kernel
                     -Werror
     )
 else()
-    add_modules_sources(OPTYPE nsa_select_attention_infer ACLNNTYPE aclnn_exclude)
+    add_modules_sources(OPTYPE nsa_selected_attention_infer ACLNNTYPE aclnn_exclude)
 endif()
 

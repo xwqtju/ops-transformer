@@ -12,41 +12,41 @@
 # 调用编译方法, 生成对应编译目标
 ########################################################################################################################
 
-set(_NSA_SELECT_ATTENTION_INFER_TilingSourcesExt
-        ${OPS_TRANSFORMER_DIR}/attention/nsa_select_attention_infer/op_host/nsa_select_attention_infer_tiling.cpp
-        ${OPS_TRANSFORMER_DIR}/attention/nsa_select_attention_infer/op_host/nsa_select_attention_infer_tiling_check.cpp
-        ${OPS_TRANSFORMER_DIR}/attention/nsa_select_attention_infer/op_host/nsa_select_attention_infer_tiling_register.cpp
+set(_NSA_SELECTED_ATTENTION_INFER_TilingSourcesExt
+        ${OPS_TRANSFORMER_DIR}/attention/nsa_selected_attention_infer/op_host/nsa_selected_attention_infer_tiling.cpp
+        ${OPS_TRANSFORMER_DIR}/attention/nsa_selected_attention_infer/op_host/nsa_selected_attention_infer_tiling_check.cpp
+        ${OPS_TRANSFORMER_DIR}/attention/nsa_selected_attention_infer/op_host/nsa_selected_attention_infer_tiling_register.cpp
 )
 
-set(_NSA_SELECT_ATTENTION_INFER_KernelTilingDataDefH
+set(_NSA_SELECTED_ATTENTION_INFER_KernelTilingDataDefH
         ${OPS_TRANSFORMER_DIR}/common/include/tiling_base/data_copy_transpose_tiling_def.h
-        ${CMAKE_SOURCE_DIR}/attention/nsa_select_attention_infer/op_host/nsa_select_attention_infer_tiling.h
+        ${CMAKE_SOURCE_DIR}/attention/nsa_selected_attention_infer/op_host/nsa_selected_attention_infer_tiling.h
 )
 
 set(_NsaSelectedAttention_TilingPrivateIncludesExt
-        ${CMAKE_SOURCE_DIR}/attention/nsa_select_attention_infer/op_host/
-        ${CMAKE_SOURCE_DIR}/attention/nsa_select_attention_infer/op_host/op_api/
+        ${CMAKE_SOURCE_DIR}/attention/nsa_selected_attention_infer/op_host/
+        ${CMAKE_SOURCE_DIR}/attention/nsa_selected_attention_infer/op_host/op_api/
 )
 
-set(_NSA_SELECT_ATTENTION_INFER_UTestCommonPrivateIncludeExt
+set(_NSA_SELECTED_ATTENTION_INFER_UTestCommonPrivateIncludeExt
         ${OPBASE_INC_DIRS}
         ${OPS_TRANSFORMER_DIR}/common/include
 )
 
-set(_NSA_SELECT_ATTENTION_INFER_TargetPrivateLinkLibrariesExt)
-set(_NSA_SELECT_ATTENTION_INFER_CompileDefintions
+set(_NSA_SELECTED_ATTENTION_INFER_TargetPrivateLinkLibrariesExt)
+set(_NSA_SELECTED_ATTENTION_INFER_CompileDefintions
         ORIG_DTYPE_QUERY=DT_FLOAT16
 )
-aux_source_directory(${CMAKE_SOURCE_DIR}/attention/nsa_select_attention_infer/op_kernel _NSA_SELECT_ATTENTION_INFER_KernelSourcesExt)
+aux_source_directory(${CMAKE_SOURCE_DIR}/attention/nsa_selected_attention_infer/op_kernel _NSA_SELECTED_ATTENTION_INFER_KernelSourcesExt)
 OpsTest_Level2_AddOp(
         SUB_SYSTEM                              transformer
         BRIEF                                   NsaSelectAttentionInfer
-        SNAKE                                   nsa_select_attention_infer
-        TILING_SOURCES_EXT                      ${_NSA_SELECT_ATTENTION_INFER_TilingSourcesExt}
+        SNAKE                                   nsa_selected_attention_infer
+        TILING_SOURCES_EXT                      ${_NSA_SELECTED_ATTENTION_INFER_TilingSourcesExt}
         TILING_PRIVATE_INCLUDES_EXT             ${_NsaSelectedAttention_TilingPrivateIncludesExt}
-        KERNEL_SOURCES_EXT                      ${_NSA_SELECT_ATTENTION_INFER_KernelSourcesExt}
-        KERNEL_TILING_DATA_DEF_H                ${_NSA_SELECT_ATTENTION_INFER_KernelTilingDataDefH}
-        UTEST_COMMON_PRIVATE_LINK_LIBRARIES_EXT ${_NSA_SELECT_ATTENTION_INFER_TargetPrivateLinkLibrariesExt}
-        KERNEL_PRIVATE_COMPILE_DEFINITIONS_EXT  ${_NSA_SELECT_ATTENTION_INFER_CompileDefintions}
-        UTEST_COMMON_PRIVATE_INCLUDES_EXT       ${_NSA_SELECT_ATTENTION_INFER_UTestCommonPrivateIncludeExt}
+        KERNEL_SOURCES_EXT                      ${_NSA_SELECTED_ATTENTION_INFER_KernelSourcesExt}
+        KERNEL_TILING_DATA_DEF_H                ${_NSA_SELECTED_ATTENTION_INFER_KernelTilingDataDefH}
+        UTEST_COMMON_PRIVATE_LINK_LIBRARIES_EXT ${_NSA_SELECTED_ATTENTION_INFER_TargetPrivateLinkLibrariesExt}
+        KERNEL_PRIVATE_COMPILE_DEFINITIONS_EXT  ${_NSA_SELECTED_ATTENTION_INFER_CompileDefintions}
+        UTEST_COMMON_PRIVATE_INCLUDES_EXT       ${_NSA_SELECTED_ATTENTION_INFER_UTestCommonPrivateIncludeExt}
 )

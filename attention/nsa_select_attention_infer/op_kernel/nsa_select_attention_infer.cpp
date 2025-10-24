@@ -9,12 +9,12 @@
  */
 
  /*!
- * \file nsa_select_attention_infer.cpp
+ * \file nsa_selected_attention_infer.cpp
  * \brief
  */
 
 #include "kernel_operator.h"
-#include "nsa_select_attention_infer.h"
+#include "nsa_selected_attention_infer.h"
 #include "nsa_public_define.h"
 
 #define INVOKE_NSA_NO_KFC_OP_IMPL(templateClass, ...)                                                       \

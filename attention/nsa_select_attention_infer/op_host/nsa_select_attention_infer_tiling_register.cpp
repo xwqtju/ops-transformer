@@ -9,11 +9,11 @@
  */
 
 /*!
- * \file nsa_select_attention_infer_tiling_register.cc
+ * \file nsa_selected_attention_infer_tiling_register.cpp
  * \brief
  */
 
-#include "nsa_select_attention_infer_tiling.h"
+#include "nsa_selected_attention_infer_tiling.h"
 #include "register/op_def_registry.h"
 
 using namespace ge;

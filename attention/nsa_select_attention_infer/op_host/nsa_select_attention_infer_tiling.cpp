@@ -9,7 +9,7 @@
  */
 
 /*!
- * \file nsa_select_attention_infer_tiling.cc
+ * \file nsa_selected_attention_infer_tiling.cpp
  * \brief
  */
 
@@ -20,8 +20,8 @@
 #include "err/ops_err.h"
 #include "register/op_def_registry.h"
 #include "register/op_impl_registry.h"
-#include "nsa_select_attention_infer_tiling_base.h"
-#include "nsa_select_attention_infer_tiling.h"
+#include "nsa_selected_attention_infer_tiling_base.h"
+#include "nsa_selected_attention_infer_tiling.h"
 
 using namespace ge;
 using namespace AscendC;

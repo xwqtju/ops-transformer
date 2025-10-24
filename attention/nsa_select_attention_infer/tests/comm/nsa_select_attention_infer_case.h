@@ -9,7 +9,7 @@
  */
 
 /*!
- * \file nsa_select_attention_infer_case.h
+ * \file nsa_selected_attention_infer_case.h
  * \brief NsaSelectAttentionInfer 测试用例.
  */
 

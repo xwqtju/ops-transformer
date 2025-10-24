@@ -9,10 +9,10 @@
  */
 
 /*!
- * \file nsa_select_attention_infer_case.cpp
+ * \file nsa_selected_attention_infer_case.cpp
  * \brief NsaSelectAttentionInfer 测试用例.
  */
-#include "nsa_select_attention_infer_case.h"
+#include "nsa_selected_attention_infer_case.h"
 #include <utility>
 #include <tikicpulib.h>
 #include <graph/utils/type_utils.h>
@@ -26,7 +26,7 @@
 * 参数所控制的 Kernel 入口一致.
 */
 
-#define NSA_SELECT_ATTENTION_INFER_KERNEL_PARAM                                                                                 \
+#define NSA_SELECTED_ATTENTION_INFER_KERNEL_PARAM                                                                                 \
     (GM_ADDR query, GM_ADDR key, GM_ADDR value, GM_ADDR topkIndices, GM_ADDR attenMask,             \
     GM_ADDR blockTable, GM_ADDR actualQSeqLengths, GM_ADDR actualKVSeqLengths, GM_ADDR attentionOut, GM_ADDR workspace, GM_ADDR tiling)
 

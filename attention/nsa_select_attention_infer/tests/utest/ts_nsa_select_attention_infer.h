@@ -8,13 +8,13 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 /*!
- * \file ts_nsa_select_attention_infer.h
+ * \file ts_nsa_selected_attention_infer.h
  * \brief  UTest 相关基类定义.
  */
 #pragma once
 
 #include "tests/utest/ts.h"
-#include "nsa_select_attention_infer_case.h"
+#include "nsa_selected_attention_infer_case.h"
 
 using NsaSelectAttentionInferCase = ops::adv::tests::NsaSelectAttentionInfer::NsaSelectAttentionInferCase;
 
