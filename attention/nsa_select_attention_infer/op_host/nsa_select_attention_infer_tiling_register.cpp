@@ -24,7 +24,7 @@ ge::graphStatus TilingPrepareForNsaSelectAttentionInfer(gert::TilingParseContext
     (void)context;
     return ge::GRAPH_SUCCESS;
 }
-IMPL_OP_OPTILING(NsaSelectAttentionInfer)
+IMPL_OP_OPTILING(NsaSelectedAttentionInfer)
     .Tiling(TilingNsaSelectAttentionInfer)
     .TilingParse<NsaSelectAttentionCompileInfo>(TilingPrepareForNsaSelectAttentionInfer)
     .TilingInputsDataDependency({6}, {gert::TilingPlacement::TILING_ON_HOST})

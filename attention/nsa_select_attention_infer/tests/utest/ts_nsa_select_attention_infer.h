@@ -16,7 +16,7 @@
 #include "tests/utest/ts.h"
 #include "nsa_selected_attention_infer_case.h"
 
-using NsaSelectAttentionInferCase = ops::adv::tests::NsaSelectAttentionInfer::NsaSelectAttentionInferCase;
+using NsaSelectAttentionInferCase = ops::adv::tests::NsaSelectedAttentionInfer::NsaSelectAttentionInferCase;
 
 class Ts_NsaSelectAttentionInfer
     : public Ts<NsaSelectAttentionInferCase>

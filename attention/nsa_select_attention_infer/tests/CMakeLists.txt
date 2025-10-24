@@ -40,7 +40,7 @@ set(_NSA_SELECTED_ATTENTION_INFER_CompileDefintions
 aux_source_directory(${CMAKE_SOURCE_DIR}/attention/nsa_selected_attention_infer/op_kernel _NSA_SELECTED_ATTENTION_INFER_KernelSourcesExt)
 OpsTest_Level2_AddOp(
         SUB_SYSTEM                              transformer
-        BRIEF                                   NsaSelectAttentionInfer
+        BRIEF                                   NsaSelectedAttentionInfer
         SNAKE                                   nsa_selected_attention_infer
         TILING_SOURCES_EXT                      ${_NSA_SELECTED_ATTENTION_INFER_TilingSourcesExt}
         TILING_PRIVATE_INCLUDES_EXT             ${_NsaSelectedAttention_TilingPrivateIncludesExt}

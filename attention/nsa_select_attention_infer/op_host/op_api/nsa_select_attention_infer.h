@@ -20,7 +20,7 @@
 
 namespace l0op {
 
-const aclTensor* NsaSelectAttentionInfer(const aclTensor *query, 
+const aclTensor* NsaSelectedAttentionInfer(const aclTensor *query, 
                                         const aclTensor *key, 
                                         const aclTensor *value, 
                                         const aclTensor *topkIndices, 

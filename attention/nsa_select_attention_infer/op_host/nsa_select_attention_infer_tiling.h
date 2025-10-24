@@ -102,7 +102,7 @@ REGISTER_TILING_DATA_CLASS(NsaSelectAttentionInferTilingDataOp, NsaSelectAttenti
 BEGIN_TILING_DATA_DEF(NsaSelectAttentionInferTilingDataV2)
 TILING_DATA_FIELD_DEF_STRUCT(NsaSelectAttentionInferTilingData, tilingBase);
 END_TILING_DATA_DEF
-REGISTER_TILING_DATA_CLASS(NsaSelectAttentionInfer, NsaSelectAttentionInferTilingDataV2)
+REGISTER_TILING_DATA_CLASS(NsaSelectedAttentionInfer, NsaSelectAttentionInferTilingDataV2)
 
 struct NsaSelectAttentionCompileInfo {
     int64_t core_num;

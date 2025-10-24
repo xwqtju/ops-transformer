@@ -10,7 +10,7 @@
 
 /*!
  * \file nsa_selected_attention_infer_case.h
- * \brief NsaSelectAttentionInfer 测试用例.
+ * \brief NsaSelectedAttentionInfer 测试用例.
  */
 
 #pragma once
@@ -25,7 +25,7 @@
 #include "tests/utils/tensor.h"
 #include "tests/utils/tensor_list.h"
 
-namespace ops::adv::tests::NsaSelectAttentionInfer {
+namespace ops::adv::tests::NsaSelectedAttentionInfer {
     class NsaSelectAttentionInferCase : public ops::adv::tests::utils::Case {
         using OpInfo = ops::adv::tests::utils::OpInfo;
         using Context = ops::adv::tests::utils::Context;
@@ -110,4 +110,4 @@ namespace ops::adv::tests::NsaSelectAttentionInfer {
             return tensor.CopyHostToDevData(hostData);
         }
     };
-} // namespace ops::adv::tests::NsaSelectAttentionInfer
+} // namespace ops::adv::tests::NsaSelectedAttentionInfer

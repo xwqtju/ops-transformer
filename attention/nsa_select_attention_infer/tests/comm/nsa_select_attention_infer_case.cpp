@@ -10,7 +10,7 @@
 
 /*!
  * \file nsa_selected_attention_infer_case.cpp
- * \brief NsaSelectAttentionInfer 测试用例.
+ * \brief NsaSelectedAttentionInfer 测试用例.
  */
 #include "nsa_selected_attention_infer_case.h"
 #include <utility>
@@ -34,7 +34,7 @@ using NsaSelectAttentionInferKernelFunc = void(*) NSA_SELECT_ATTENTION_INFER_KER
 
 extern "C" __global__ __aicore__ void nsa_select_attention_infer NSA_SELECT_ATTENTION_INFER_KERNEL_PARAM;
 
-using namespace ops::adv::tests::NsaSelectAttentionInfer;
+using namespace ops::adv::tests::NsaSelectedAttentionInfer;
 using TensorIntf = ops::adv::tests::utils::TensorIntf;
 using Case = ops::adv::tests::utils::Case;
 using Platform = ops::adv::tests::utils::Platform;
@@ -210,7 +210,7 @@ void NsaSelectAttentionInferCase::TNDInitParam()
 
 bool NsaSelectAttentionInferCase::InitOpInfo()
 {
-    bool rst = mCtx.SetOpName("NsaSelectAttentionInfer");
+    bool rst = mCtx.SetOpName("NsaSelectedAttentionInfer");
     rst = rst && mCtx.SetDeterministic(false);
     rst = rst && mCtx.SetInputs({&query, &key, &value, &topkIndices, &attenMask, &blocktable, &actualQSeqLengths, &actualKvSeqLengths});
     rst = rst && mCtx.SetOutputs({&attentionOut});
@@ -234,11 +234,11 @@ bool NsaSelectAttentionInferCase::InitOpInfo()
         (gert::OpImplRegisterV2::TilingKernelFunc)platform->LoadOpTilingSoSym("TilingNsaSelectAttentionInfer");
 
     if (nsaSelectAttentionInferTilingFunc == nullptr) {
-        LOG_ERR("Can't get origin tiling func, nsaSelectAttentionInfer(%p)", nsaSelectAttentionInferTilingFunc);
+        LOG_ERR("Can't get origin tiling func, NsaSelectedAttentionInfer(%p)", nsaSelectAttentionInferTilingFunc);
         return false;
     }
     
-    IMPL_OP(NsaSelectAttentionInfer).Tiling(TilingNsaSelectAttentionInferStub);
+    IMPL_OP(NsaSelectedAttentionInfer).Tiling(TilingNsaSelectAttentionInferStub);
     return rst;
 }
 
@@ -267,7 +267,7 @@ NsaSelectAttentionInferCase::NsaSelectAttentionInferCase(const char *name, bool 
                                         Param param)
     : Case(name, enable, dbgInfo), mOpInfo(std::move(incre)), mParam(std::move(param))
 {
-    this->mOpInfo.mName = "NsaSelectAttentionInfer";
+    this->mOpInfo.mName = "NsaSelectedAttentionInfer";
 }
 
 NsaSelectAttentionInferCase::NsaSelectAttentionInferCase()
