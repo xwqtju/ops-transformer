@@ -256,6 +256,9 @@ struct RopeQrSplitNParams{
   uint32_t outputOffsetRope;
   int64_t ropeStride;
   uint32_t ropeDstStride;
+  uint32_t deQuantScaleCqOffset;
+  uint32_t sinCosOffset;
+  uint32_t ropeCnt;
 };
 
 struct DequantQcQrSplitNParams{
