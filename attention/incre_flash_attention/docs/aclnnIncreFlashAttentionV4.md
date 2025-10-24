@@ -10,7 +10,7 @@
 
 ##  功能说明
 
-- 算子功能：算子功能：兼容（[aclnnIncreFlashAttentionV3](aclnnIncreFlashAttentionV3.md)）接口功能，在其基础上新增**kv左Padding特性。**
+- 算子功能：兼容（[aclnnIncreFlashAttentionV3](aclnnIncreFlashAttentionV3.md)）接口功能，在其基础上新增**kv左Padding特性。**
 
   对于自回归（Auto-regressive）的语言模型，随着新词的生成，推理输入长度不断增大。在原来全量推理的基础上**实现增量推理**，query的S轴固定为1，key和value是经过KV Cache后，将之前推理过的state信息，叠加在一起，每个Batch对应S轴的实际长度可能不一样，输入的数据是经过padding后的固定长度数据。
 
