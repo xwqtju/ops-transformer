@@ -33,7 +33,7 @@
     const TCubeTiling *__restrict bmm2tiling = nullptr;
 
 extern "C" __global__ __aicore__ void
-nsa_select_attention_infer(__gm__ uint8_t *query, __gm__ uint8_t *key, __gm__ uint8_t *value,
+nsa_selected_attention_infer(__gm__ uint8_t *query, __gm__ uint8_t *key, __gm__ uint8_t *value,
                            __gm__ uint8_t *topkIndices, __gm__ uint8_t *attenMask, __gm__ uint8_t *blocktable,
                            __gm__ uint8_t *actualQSeqLengths, __gm__ uint8_t *actualKVSeqLengths,
                            __gm__ uint8_t *attentionOut, __gm__ uint8_t *workspace, __gm__ uint8_t *tiling)

@@ -32,7 +32,7 @@
 
 using NsaSelectAttentionInferKernelFunc = void(*) NSA_SELECT_ATTENTION_INFER_KERNEL_PARAM;
 
-extern "C" __global__ __aicore__ void nsa_select_attention_infer NSA_SELECT_ATTENTION_INFER_KERNEL_PARAM;
+extern "C" __global__ __aicore__ void nsa_selected_attention_infer NSA_SELECT_ATTENTION_INFER_KERNEL_PARAM;
 
 using namespace ops::adv::tests::NsaSelectedAttentionInfer;
 using TensorIntf = ops::adv::tests::utils::TensorIntf;
@@ -223,7 +223,7 @@ bool NsaSelectAttentionInferCase::InitOpInfo()
                                 {"scale_value", mParam.scaleValue},
                                 {"sparse_mode", mParam.sparseMode}});
     rst = rst && mCtx.SetKernelRunCbf(RunNsaSelectAttentionInfer);
-    rst = rst && mCtx.SetKernelMainFunc((void *)nsa_select_attention_infer);
+    rst = rst && mCtx.SetKernelMainFunc((void *)nsa_selected_attention_infer);
     rst = rst && mOpInfo.SetContext(&mCtx);
     auto *platform = Platform::GetGlobalPlatform();
     if (platform == nullptr) {
