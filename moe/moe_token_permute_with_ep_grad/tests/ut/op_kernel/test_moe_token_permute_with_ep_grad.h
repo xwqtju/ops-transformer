@@ -7,18 +7,26 @@
  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE in the root of the software repository for the full text of the License.
  */
-/*!
- * \file ts_gmm_swiglu_quant.h
- * \brief IncreFlashAttention UTest 相关基类定义.
- */
 
-#include "tests/utest/ts.h"
-#include "grouped_matmul_swiglu_quant_case.h"
+#ifndef _MOE_TOKEN_UNPERMUTE_WITH_EP_TILING_H_
+#define _MOE_TOKEN_UNPERMUTE_WITH_EP_TILING_H_
 
-using GmmSwigluQuantCase = ops::adv::tests::grouped_matmul_swiglu_quant::GmmSwigluQuantCase;
+#include "kernel_tiling/kernel_tiling.h"
 
-class Ts_GmmSwigluQuant : public Ts<GmmSwigluQuantCase> {};
-class Ts_GmmSwigluQuant_Ascend910B2 : public Ts_Ascend910B2<GmmSwigluQuantCase> {};
+#include <cstdint>
+#include <cstring>
 
-class Ts_GmmSwigluQuant_WithParam : public Ts_WithParam<GmmSwigluQuantCase> {};
-class Ts_GmmSwigluQuant_WithParam_Ascend910B2 : public Ts_WithParam_Ascend910B2<GmmSwigluQuantCase> {};
+#define DT_BF16 bfloat16_t
+#define ORIG_DTYPE_START DT_BF16
+#define __CCE_UT_TEST__
+
+#define __aicore__
+
+inline void InitMoeTokenPermuteWithEpGradTilingData(uint8_t* tiling, MoeTokenPermuteWithEpGradTilingData* const_data) {
+  memcpy(const_data, tiling, sizeof(MoeTokenPermuteWithEpGradTilingData));
+}
+
+#define GET_TILING_DATA(tilingData, tilingPointer) \
+  MoeTokenPermuteWithEpGradTilingData tilingData;          \
+  InitMoeTokenPermuteWithEpGradTilingData(tilingPointer, &tilingData)
+#endif
