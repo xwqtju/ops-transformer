@@ -51,12 +51,16 @@ void PrintOutResult(std::vector<int64_t> &shape, void** deviceAddr) {
   }
 }
 
-int Init(int32_t deviceId, aclrtStream* stream) {
+int Init(int32_t deviceId, aclrtContext* context, aclrtStream* stream) {
   // 固定写法，AscendCL初始化
   auto ret = aclInit(nullptr);
   CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclInit failed. ERROR: %d\n", ret); return ret);
   ret = aclrtSetDevice(deviceId);
   CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSetDevice failed. ERROR: %d\n", ret); return ret);
+  ret = aclrtCreateContext(context, deviceId);
+  CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtCreateContext failed. ERROR: %d\n", ret); return ret);
+  ret = aclrtSetCurrentContext(*context);
+  CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtSetCurrentContext failed. ERROR: %d\n", ret); return ret);
   ret = aclrtCreateStream(stream);
   CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclrtCreateStream failed. ERROR: %d\n", ret); return ret);
   return 0;
@@ -86,40 +90,38 @@ int CreateAclTensor(const std::vector<T>& hostData, const std::vector<int64_t>& 
 }
 
 int main() {
-  // 1. （固定写法）device/stream初始化，参考AscendCL对外接口列表
+  // 1. （固定写法）device/context/stream初始化，参考AscendCL对外接口列表
   // 根据自己的实际device填写deviceId
   int32_t deviceId = 0;
+  aclrtContext context;
   aclrtStream stream;
-  auto ret = Init(deviceId, &stream);
+  auto ret = Init(deviceId, &context, &stream);
   CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("Init acl failed. ERROR: %d\n", ret); return ret);
 
   // 2. 构造输入与输出，需要根据API的接口自定义构造
-  int64_t B = 1;
   int64_t N1 = 1;
   int64_t N2 = 1;
-  int64_t S1 = 256;
-  int64_t S2 = 256;
+  int64_t T1 = 256;  
+  int64_t T2 = 256;
   int64_t D = 128;
-  int64_t H1 = N1 * D;
-  int64_t H2 = N2 * D;
+ 
+  int64_t q_size = T1 * N1 * D;
+  int64_t kv_size = T2 * N2 * D;
+  int64_t atten_mask_size = T1 * T2;
+  int64_t softmax_size = T1 * N1 * 8;
 
-  int64_t q_size = S1 * B * H1;
-  int64_t kv_size = S2 * B * H2;
-  int64_t atten_mask_size = S1 * S2;
-  int64_t softmax_size = B * N1 * S1 * 8;
+  std::vector<int64_t> qShape = {T1, N1, D};
+  std::vector<int64_t> kShape = {T2, N2, D};
+  std::vector<int64_t> vShape = {T2, N2, D};
+  std::vector<int64_t> dxShape = {T1, N1, D};
+  std::vector<int64_t> attenmaskShape = {T1, T2};
+  std::vector<int64_t> softmaxMaxShape = {T1, N1, 8};
+  std::vector<int64_t> softmaxSumShape = {T1, N1, 8};
+  std::vector<int64_t> attentionInShape = {T1, N1, D};
 
-  std::vector<int64_t> qShape = {S1, B, H1};
-  std::vector<int64_t> kShape = {S2, B, H2};
-  std::vector<int64_t> vShape = {S2, B, H2};
-  std::vector<int64_t> dxShape = {S1, B, H1};
-  std::vector<int64_t> attenmaskShape = {S1, S2};
-  std::vector<int64_t> softmaxMaxShape = {B, N1, S1, 8};
-  std::vector<int64_t> softmaxSumShape = {B, N1, S1, 8};
-  std::vector<int64_t> attentionInShape = {S1, B, H1};
-
-  std::vector<int64_t> dqShape = {S1, B, H1};
-  std::vector<int64_t> dkShape = {S2, B, H2};
-  std::vector<int64_t> dvShape = {S2, B, H2};
+  std::vector<int64_t> dqShape = {T1, N1, D};
+  std::vector<int64_t> dkShape = {T2, N2, D};
+  std::vector<int64_t> dvShape = {T2, N2, D};
 
   void* qDeviceAddr = nullptr;
   void* kDeviceAddr = nullptr;
@@ -186,11 +188,11 @@ int main() {
   CHECK_RET(ret == ACL_SUCCESS, return ret);
 
   std::vector<int64_t> prefixOp = {0};
-  aclIntArray *prefix = aclCreateIntArray(prefixOp.data(), 1);
-  std::vector<int64_t> qStartIdxOp = {0};
-  std::vector<int64_t> kvStartIdxOp = {0};
-  aclIntArray *qStartIdx = aclCreateIntArray(qStartIdxOp.data(), 1);
-  aclIntArray *kvStartIdx = aclCreateIntArray(kvStartIdxOp.data(), 1);
+  aclIntArray* prefix = aclCreateIntArray(prefixOp.data(), 1);
+  std::vector<int64_t>  acSeqQLenOp = {256};
+  std::vector<int64_t>  acSeqKvLenOp = {256};
+  aclIntArray* acSeqQLen = aclCreateIntArray(acSeqQLenOp.data(), acSeqQLenOp.size());
+  aclIntArray* acSeqKvLen = aclCreateIntArray(acSeqKvLenOp.data(), acSeqKvLenOp.size());
   double scaleValue = 1.0/sqrt(128);
   double keepProb = 1.0;
   int64_t preTokens = INT32_MAX;
@@ -198,19 +200,20 @@ int main() {
   int64_t headNum = 1;
   int64_t innerPrecise = 0;
   int64_t sparseMod = 0;
-  int64_t pseType = 1;
-  char layOut[5] = {'S', 'B', 'H', 0};
+  char softmaxInLayoutArr[] = "same_as_input";
+
+  char layOut[5] = {'T', 'N', 'D', 0};
 
   // 3. 调用CANN算子库API，需要修改为具体的Api名称
   uint64_t workspaceSize = 0;
   aclOpExecutor* executor;
 
-  // 调用aclnnFlashAttentionScoreGradV2第一段接口
-  ret = aclnnFlashAttentionScoreGradV2GetWorkspaceSize(q, k, v, dx, pse, dropMask, padding,
-            attenmask, softmaxMax, softmaxSum, softmaxIn, attentionIn, prefix, qStartIdx, kvStartIdx,
-            scaleValue, keepProb, preTokens, nextTokens, headNum, layOut, innerPrecise, sparseMod, pseType,
-            dq, dk, dv, dpse, &workspaceSize, &executor);
-  CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnFlashAttentionScoreGradV2GetWorkspaceSize failed. ERROR: %d\n", ret); return ret);
+  // 调用aclnnFlashAttentionUnpaddingScoreGradV4第一段接口
+  ret = aclnnFlashAttentionUnpaddingScoreGradV4GetWorkspaceSize(q, k, v, dx, pse, dropMask, padding,
+            attenmask, softmaxMax, softmaxSum, softmaxIn, attentionIn, prefix, acSeqQLen, acSeqKvLen,
+            scaleValue, keepProb, preTokens, nextTokens, headNum, layOut, innerPrecise, sparseMod,
+            dq, dk, dv, dpse, softmaxInLayoutArr, &workspaceSize, &executor);
+  CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnFlashAttentionUnpaddingScoreGradV4GetWorkspaceSize failed. ERROR: %d\n", ret); return ret);
 
   // 根据第一段接口计算出的workspaceSize申请device内存
   void* workspaceAddr = nullptr;
@@ -219,9 +222,9 @@ int main() {
     CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("allocate workspace failed. ERROR: %d\n", ret); return ret);
   }
 
-  // 调用aclnnFlashAttentionScoreGradV2第二段接口
-  ret = aclnnFlashAttentionScoreGradV2(workspaceAddr, workspaceSize, executor, stream);
-  CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnFlashAttentionScoreGradV2 failed. ERROR: %d\n", ret); return ret);
+  // 调用aclnnFlashAttentionUnpaddingScoreGradV4第二段接口
+  ret = aclnnFlashAttentionUnpaddingScoreGradV4(workspaceAddr, workspaceSize, executor, stream);
+  CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("aclnnFlashAttentionUnpaddingScoreGradV4 failed. ERROR: %d\n", ret); return ret);
 
   // 4. （固定写法）同步等待任务执行结束
   ret = aclrtSynchronizeStream(stream);
@@ -245,8 +248,8 @@ int main() {
   aclDestroyTensor(dk);
   aclDestroyTensor(dv);
   aclDestroyIntArray(prefix);
-  aclDestroyIntArray(qStartIdx);
-  aclDestroyIntArray(kvStartIdx);
+  aclDestroyIntArray(acSeqQLen);
+  aclDestroyIntArray(acSeqKvLen);
 
   // 7. 释放device资源
   aclrtFree(qDeviceAddr);
@@ -264,6 +267,7 @@ int main() {
     aclrtFree(workspaceAddr);
   }
   aclrtDestroyStream(stream);
+  aclrtDestroyContext(context);
   aclrtResetDevice(deviceId);
   aclFinalize();
 
