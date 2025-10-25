@@ -16,6 +16,7 @@
 #include <iostream>
 #include <vector>
 #include <cstdint>
+#include <cmath>
 #include "acl/acl.h"
 #include "aclnnop/aclnn_flash_attention_score_grad.h"
 
