@@ -99,7 +99,6 @@ int main() {
   CHECK_RET(ret == ACL_SUCCESS, LOG_PRINT("Init acl failed. ERROR: %d\n", ret); return ret);
 
   // 2. 构造输入与输出，需要根据API的接口自定义构造
-  int64_t B = 1;
   int64_t N1 = 1;
   int64_t N2 = 1;
   int64_t T1 = 256;
