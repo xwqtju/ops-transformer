@@ -136,23 +136,23 @@ int main() {
   aclTensor* softmaxSum = nullptr;
   aclTensor* softmaxOut = nullptr;
 
-  std::vector<half> qHostData(q_size, 1.0);
-  std::vector<half> kHostData(kv_size, 1.0);
-  std::vector<half> vHostData(kv_size, 1.0);
+  std::vector<float> qHostData(q_size, 1.0);
+  std::vector<float> kHostData(kv_size, 1.0);
+  std::vector<float> vHostData(kv_size, 1.0);
   std::vector<uint8_t> attenmaskHostData(atten_mask_size, 0);
-  std::vector<half> attentionOutHostData(q_size, 0);
+  std::vector<float> attentionOutHostData(q_size, 0);
   std::vector<float> softmaxMaxHostData(softmax_size, 3.0); 
   std::vector<float> softmaxSumHostData(softmax_size, 3.0);
 
-  ret = CreateAclTensor(qHostData, qShape, &qDeviceAddr, aclDataType::ACL_FLOAT16, &q);
+  ret = CreateAclTensor(qHostData, qShape, &qDeviceAddr, aclDataType::ACL_FLOAT, &q);
   CHECK_RET(ret == ACL_SUCCESS, return ret);
-  ret = CreateAclTensor(kHostData, kShape, &kDeviceAddr, aclDataType::ACL_FLOAT16, &k);
+  ret = CreateAclTensor(kHostData, kShape, &kDeviceAddr, aclDataType::ACL_FLOAT, &k);
   CHECK_RET(ret == ACL_SUCCESS, return ret);
-  ret = CreateAclTensor(vHostData, vShape, &vDeviceAddr, aclDataType::ACL_FLOAT16, &v);
+  ret = CreateAclTensor(vHostData, vShape, &vDeviceAddr, aclDataType::ACL_FLOAT, &v);
   CHECK_RET(ret == ACL_SUCCESS, return ret);
   ret = CreateAclTensor(attenmaskHostData, attenmaskShape, &attenmaskDeviceAddr, aclDataType::ACL_UINT8, &attenmask);
   CHECK_RET(ret == ACL_SUCCESS, return ret);
-  ret = CreateAclTensor(attentionOutHostData, attentionOutShape , &attentionOutDeviceAddr, aclDataType::ACL_FLOAT16, &attentionOut);
+  ret = CreateAclTensor(attentionOutHostData, attentionOutShape , &attentionOutDeviceAddr, aclDataType::ACL_FLOAT, &attentionOut);
   CHECK_RET(ret == ACL_SUCCESS, return ret);
   ret = CreateAclTensor(softmaxMaxHostData, softmaxMaxShape, &softmaxMaxDeviceAddr, aclDataType::ACL_FLOAT, &softmaxMax);
   CHECK_RET(ret == ACL_SUCCESS, return ret);
