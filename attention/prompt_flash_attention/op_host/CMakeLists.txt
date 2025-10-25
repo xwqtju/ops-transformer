@@ -11,9 +11,6 @@ if (BUILD_OPEN_PROJECT)
     target_sources(op_host_aclnnInner PRIVATE
         prompt_flash_attention_def.cpp
     )
-endif()
-
-if (BUILD_OPS_RTY_KERNEL) # 回黄kernel
     add_ops_compile_options(
         OP_NAME PromptFlashAttention
         OPTIONS --cce-auto-sync=off
@@ -22,11 +19,10 @@ if (BUILD_OPS_RTY_KERNEL) # 回黄kernel
                 -mllvm -cce-aicore-hoist-movemask=false
     )
     set(prompt_flash_attention_depends attention/common PARENT_SCOPE)
-else()
-    add_modules_sources(OPTYPE prompt_flash_attention ACLNNTYPE aclnn_inner)
 endif()
 
 if(NOT BUILD_OPS_RTY_KERNEL) #
+    add_modules_sources(OPTYPE prompt_flash_attention ACLNNTYPE aclnn_inner)
     target_sources(${OPHOST_NAME}_tiling_obj PRIVATE
         prompt_flash_attention_tiling.cpp
         fallback_prompt_flash_attention.cpp
