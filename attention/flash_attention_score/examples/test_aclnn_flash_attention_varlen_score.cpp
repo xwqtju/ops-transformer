@@ -164,8 +164,8 @@ int main() {
 
   std::vector<int64_t> prefixOp = {0};
   aclIntArray *prefix = aclCreateIntArray(prefixOp.data(), 1);
-  std::vector<int64_t>  acSeqQLenOp = {T1};
-  std::vector<int64_t>  acSeqKvLenOp = {T2};
+  std::vector<int64_t>  acSeqQLenOp = {256};
+  std::vector<int64_t>  acSeqKvLenOp = {256};
   aclIntArray* acSeqQLen = aclCreateIntArray(acSeqQLenOp.data(), acSeqQLenOp.size());
   aclIntArray* acSeqKvLen = aclCreateIntArray(acSeqKvLenOp.data(), acSeqKvLenOp.size());
   double scaleValue = 1.0/sqrt(128);
