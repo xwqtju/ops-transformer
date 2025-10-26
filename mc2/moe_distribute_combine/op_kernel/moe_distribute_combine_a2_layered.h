@@ -70,6 +70,7 @@ public:
     constexpr static uint32_t TBUF_TEMP_OFFSET = 0U;
     constexpr static uint32_t IPC_REDUCE_USED_CORE_NUM = 32U; // 拉起远端IPC和机内reduce需要的核数
     constexpr static uint32_t WEIGHT_VALUE_NUM = 16U; // token(h * sizeof(bf/fp16)) + scale(32B) = (h + 16) * 2B
+    constexpr static uint32_t TIME_CYCLE = 50;
     template <AscendC::HardEvent event>
     __aicore__ inline void SyncFunc()
     {
@@ -125,8 +126,8 @@ private:
     GlobalTensor<uint32_t> bufferIdGlobal_;     // 用于存对端状态window的变量
     GlobalTensor<int32_t> statusSpaceGlobal_;   // win区状态位置拷入相关参数
     GlobalTensor<int32_t> readStateGlobal_;
-    GlobalTensor<uint64_t> waitCostGMTensor_;
-    GlobalTensor<int32_t> waitCostU32GMTensor_;
+    GlobalTensor<uint64_t> waitCostU64GMTensor_;
+    GlobalTensor<uint32_t> waitCostU32GMTensor_;
 
     uint64_t shareAddreRank[8];
 
@@ -204,7 +205,7 @@ private:
     uint64_t share_offset{0};
     uint32_t IPC_DATA_SIZE{0};
     uint32_t waitCostSize_{0};
-    bool isWaitCost=false;
+    bool isWaitCost_=false;
     TBuf<QuePosition::VECCALC> tBuf;
     TBuf<TPosition::VECOUT> rdmaInBuf_;
     TBuf<TPosition::VECOUT> rdmaInBuf2_;
@@ -227,7 +228,7 @@ private:
     LocalTensor<uint64_t> ubLocal;
     LocalTensor<uint32_t> ubLocalHead;
     LocalTensor<uint64_t> waitCostU64Tensor_;
-    LocalTensor<int32_t> waitCostU32Tensor_;
+    LocalTensor<uint32_t> waitCostU32Tensor_;
     // 低精度相关
     uint32_t repeatNum{0};
     uint32_t scaleNum;
@@ -335,9 +336,6 @@ __aicore__ inline void MoeDistributeCombineA2Layered<TemplateMC2TypeA2layeredFun
     expandIdxGM_ = expandIdx;
     sendCountGM_ = sendCount;
     scalesGM_ = scales;
-    if (isWaitCost) {
-        waitCostGM_ = waitCost;
-    }
     XOutGM_ = XOut;
     rankId_ = tilingData->moeDistributeCombineInfo.epRankId;
     axisBS_ = tilingData->moeDistributeCombineInfo.bs;
@@ -347,7 +345,10 @@ __aicore__ inline void MoeDistributeCombineA2Layered<TemplateMC2TypeA2layeredFun
     moeExpertNum_ = tilingData->moeDistributeCombineInfo.moeExpertNum;
     worldSize_ = tilingData->moeDistributeCombineInfo.epWorldSize;
     waitCostSize_ = worldSize_;
-    isWaitCost = (waitCost != nullptr);
+    isWaitCost_ = (waitCost != nullptr);
+    if (isWaitCost_) {
+        waitCostGM_ = waitCost;
+    }
 
     globalBs = tilingData->moeDistributeCombineInfo.globalBs;
     if (globalBs >= 256U) {
@@ -404,9 +405,9 @@ __aicore__ inline void MoeDistributeCombineA2Layered<TemplateMC2TypeA2layeredFun
     sendCountGlobal_.SetGlobalBuffer((__gm__ int32_t *)sendCount);
     bkCountGlobal_.SetGlobalBuffer((__gm__ int32_t *)(sendCount + worldSize_ * localMoeExpertNum_ * 4));
     expandScalesGlobal_.SetGlobalBuffer((__gm__ float *)scales);
-    if (isWaitCost) {
-        waitCostGMTensor_.SetGlobalBuffer((__gm__ uint64_t*)waitCost);
-        waitCostU32GMTensor_.SetGlobalBuffer((__gm__ int32_t*)waitCost);
+    if (isWaitCost_) {
+        waitCostU64GMTensor_.SetGlobalBuffer((__gm__ uint64_t*)waitCost);
+        waitCostU32GMTensor_.SetGlobalBuffer((__gm__ uint32_t*)waitCost);
     }
     expandOutGlobal_.SetGlobalBuffer((__gm__ ExpandXType *)XOut);
     readStateGlobal_.SetGlobalBuffer((__gm__ int32_t *)(windowOutGM_ + dataSpaceSize_));
@@ -488,11 +489,11 @@ __aicore__ inline void MoeDistributeCombineA2Layered<TemplateMC2TypeA2layeredFun
     tpipe_->InitBuffer(rdmaInBuf2_, UB_ALIGN_SIZE);
     ubLocalHead = rdmaInBuf2_.Get<uint32_t>();
 
-    if (isWaitCost) {
+    if (isWaitCost_) {
         tpipe_->InitBuffer(waitCostBuf_, waitCostSize_ * sizeof(uint64_t));
         waitCostU64Tensor_ = waitCostBuf_.Get<uint64_t>();
-        waitCostU32Tensor_ = waitCostU64Tensor_.template ReinterpretCast<int32_t>();
-        Duplicate<int32_t>(waitCostU32Tensor_, 0, waitCostSize_ * 2);
+        waitCostU32Tensor_ = waitCostU64Tensor_.template ReinterpretCast<uint32_t>();
+        Duplicate<uint32_t>(waitCostU32Tensor_, 0, waitCostSize_ * sizeof(uint64_t) / sizeof(uint32_t));
     }
 
     // 总tBuf
@@ -599,7 +600,8 @@ __aicore__ inline void MoeDistributeCombineA2Layered<TemplateMC2TypeA2layeredFun
     // 只要8个core分别wait 来自8卡的flag，然后sync一下 再进行流水
 
     if (coreIdx_ < stepCoreNum_){
-        LocalTensor<int64_t> inUb = statusBuf_.Get<int64_t>();
+	    uint32_t start = GetSystemCycle() / TIME_CYCLE;
+	    LocalTensor<int64_t> inUb = statusBuf_.Get<int64_t>();
         uint32_t waitFlagAddr = coreIdx_ % stepCoreNum_;
         while (true) {
             DataCopy(inUb, shareFlagGlobal_[waitFlagAddr * 4], 4);
@@ -612,6 +614,15 @@ __aicore__ inline void MoeDistributeCombineA2Layered<TemplateMC2TypeA2layeredFun
         PipeBarrier<PIPE_ALL>();
         DataCopy(shareFlagGlobal_[waitFlagAddr * 4], inUb, 4);  // *4是因为单次拷贝256byte = 4*int64
         PipeBarrier<PIPE_ALL>();
+	    uint32_t end = GetSystemCycle() / TIME_CYCLE;
+        uint32_t duration = end - start;
+	    auto id = (rankId_ / SERVER_RANK_SIZE) * SERVER_RANK_SIZE + coreIdx_;
+    	if (isWaitCost_) {
+	        waitCostU32Tensor_.SetValue(id * sizeof(uint64_t) / sizeof(uint32_t), duration);
+	        AscendC::SetAtomicAdd<int32_t>();
+            AscendC::DataCopy(waitCostU32GMTensor_, waitCostU32Tensor_, waitCostSize_ * sizeof(uint64_t) / sizeof(uint32_t));
+            AscendC::SetAtomicNone();
+        }
     }
     SyncAll<true>();
 }
@@ -919,7 +930,7 @@ __aicore__ inline void MoeDistributeCombineA2Layered<TemplateMC2TypeA2layeredFun
         LocalTensor<int32_t> statusTensor = statusBuf_.Get<int32_t>();
         uint32_t readNum = 1U;
         DataCopyParams intriParams{static_cast<uint16_t>(readNum), 1, 15, 0};  // srcStride为15个block
-        auto start = GetSystemCycle() / 50;
+        uint32_t start = GetSystemCycle() / TIME_CYCLE;
         while (true) {
             DataCopy(statusTensor, statusSpaceGlobal_[(coreIdx_)*STATE_OFFSET / sizeof(int32_t)], intriParams);
             PipeBarrier<PIPE_ALL>();
@@ -928,12 +939,12 @@ __aicore__ inline void MoeDistributeCombineA2Layered<TemplateMC2TypeA2layeredFun
                 break;
             }
         }
-        auto end = GetSystemCycle() /50;
-        auto duration = end - start;
-	    if (isWaitCost) {
-	        waitCostU32Tensor_.SetValue(targetRank*2, duration);
+        uint32_t end = GetSystemCycle() / TIME_CYCLE;
+        uint32_t duration = end - start;
+	    if (isWaitCost_) {
+	        waitCostU32Tensor_.SetValue(targetRank * sizeof(uint64_t) / sizeof(uint32_t), duration);
 	        AscendC::SetAtomicAdd<int32_t>();
-            AscendC::DataCopy(waitCostU32GMTensor_, waitCostU32Tensor_, waitCostSize_*2);
+            AscendC::DataCopy(waitCostU32GMTensor_, waitCostU32Tensor_, waitCostSize_ * sizeof(uint64_t) / sizeof(uint32_t));
             AscendC::SetAtomicNone();
         }
     }

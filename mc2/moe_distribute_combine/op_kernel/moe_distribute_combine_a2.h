@@ -85,6 +85,8 @@ using namespace AscendC;
 template <TemplateMC2TypeA2Class>
 class MoeDistributeCombineA2 {
 public:
+    constexpr static uint32_t TIME_CYCLE = 50;
+
     __aicore__ inline MoeDistributeCombineA2(){};
     __aicore__ inline void Init(GM_ADDR expandX, GM_ADDR expertIds, GM_ADDR expandIdx, GM_ADDR sendCount,
         GM_ADDR scales, GM_ADDR xActiveMask, GM_ADDR waitCost, GM_ADDR XOut, GM_ADDR workspaceGM, TPipe *pipe,
@@ -115,8 +117,8 @@ private:
     GlobalTensor<uint32_t> workspaceGlobal32_;  // 存储batchWriteInfo结构体信息
     GlobalTensor<uint32_t> flagGlobal_;
     GlobalTensor<int8_t> xActiveMaskGMTensor_;
-    GlobalTensor<uint64_t> waitCostGMTensor_;
-    GlobalTensor<int32_t> waitCostU32GMTensor_;
+    GlobalTensor<uint64_t> waitCostU64GMTensor_;
+    GlobalTensor<uint32_t> waitCostU32GMTensor_;
 
     LocalTensor<uint64_t> batchWriteItemLocalB64;
     LocalTensor<uint32_t> batchWriteItemLocalB32;
@@ -130,7 +132,7 @@ private:
     LocalTensor<ExpandXType> tmpUb_;
     LocalTensor<uint32_t> statusTensor_;
     LocalTensor<uint64_t> waitCostU64Tensor_;
-    LocalTensor<int32_t> waitCostU32Tensor_;
+    LocalTensor<uint32_t> waitCostU32Tensor_;
 
     GM_ADDR windowInGM_;
     GM_ADDR windowOutGM_;
@@ -167,7 +169,7 @@ private:
     uint32_t tokenNumPerCore_{0};
     uint32_t tokenIndex_{0};
     uint32_t waitCostSize_{0};
-    bool isWaitCost=false;
+    bool isWaitCost_=false;
 
     TQueBind<QuePosition::VECIN, QuePosition::VECOUT, BUFFER_NUM> moeQueue_;
     TBuf<> expertIdsBuf_;
@@ -211,7 +213,7 @@ __aicore__ inline void MoeDistributeCombineA2<TemplateMC2TypeA2Func>::Init(GM_AD
     moeExpertNum_ = tilingData->moeDistributeCombineInfo.moeExpertNum;
     worldSize_ = tilingData->moeDistributeCombineInfo.epWorldSize;
     waitCostSize_ = worldSize_;
-    isWaitCost = (waitCost != nullptr);
+    isWaitCost_ = (waitCost != nullptr);
     auto contextGM = AscendC::GetHcclContext<HCCL_GROUP_ID_0>();
     winContext_ = (__gm__ HcclOpResParam *)contextGM;
     hccl_.InitV2(contextGM, tilingData);
@@ -237,10 +239,10 @@ __aicore__ inline void MoeDistributeCombineA2<TemplateMC2TypeA2Func>::Init(GM_AD
     expertRecvCountGlobal_.SetGlobalBuffer((__gm__ uint32_t *)workspaceGM);
     expertWindowOffsetGlobal_.SetGlobalBuffer((__gm__ uint32_t *)(workspaceGM + moeExpertNum_ * sizeof(uint32_t)));
     xActiveMaskGMTensor_.SetGlobalBuffer((__gm__ int8_t*)xActiveMask);
-    if (isWaitCost) {
+    if (isWaitCost_) {
         waitCostGM_ = waitCost;
-        waitCostGMTensor_.SetGlobalBuffer((__gm__ uint64_t*)waitCost);
-        waitCostU32GMTensor_.SetGlobalBuffer((__gm__ int32_t*)waitCost);
+        waitCostU64GMTensor_.SetGlobalBuffer((__gm__ uint64_t*)waitCost);
+        waitCostU32GMTensor_.SetGlobalBuffer((__gm__ uint32_t*)waitCost);
     }
     localMoeExpertNum_ = moeExpertNum_ / worldSize_;
     rankSizeOnWin_ = dataSpaceSize_ / worldSize_ / BLOCK_SIZE * BLOCK_SIZE;
@@ -274,11 +276,11 @@ __aicore__ inline void MoeDistributeCombineA2<TemplateMC2TypeA2Func>::BuffInit()
     tpipe_->InitBuffer(sendCountBuf_, RoundUp(moeExpertNum_, B32_PER_BLOCK) * sizeof(int32_t));
     tpipe_->InitBuffer(indexCountsBuf_, Std::max(expertIdsBufSize, REPEAT_BYTES));  // 32 * 8 * 4 = 1024
     tpipe_->InitBuffer(batchWriteItemBuf_, BATCH_WRITE_ITEM_SIZE * worldSize_);
-    if (isWaitCost) {
+    if (isWaitCost_) {
         tpipe_->InitBuffer(waitCostBuf_, waitCostSize_ * sizeof(uint64_t));
         waitCostU64Tensor_ = waitCostBuf_.Get<uint64_t>();
-        waitCostU32Tensor_ = waitCostU64Tensor_.template ReinterpretCast<int32_t>();
-        Duplicate<int32_t>(waitCostU32Tensor_, 0, waitCostSize_ * 2);
+        waitCostU32Tensor_ = waitCostU64Tensor_.template ReinterpretCast<uint32_t>();
+        Duplicate<uint32_t>(waitCostU32Tensor_, 0, waitCostSize_ * sizeof(uint64_t) / sizeof(uint32_t));
     }
     batchWriteItemLocalB64 = batchWriteItemBuf_.Get<uint64_t>();
     batchWriteItemLocalB32 = batchWriteItemLocalB64.template ReinterpretCast<uint32_t>();
@@ -485,7 +487,7 @@ __aicore__ inline void MoeDistributeCombineA2<TemplateMC2TypeA2Func>::WaitDispat
         return;
     }
     SyncFunc<AscendC::HardEvent::MTE2_S>();
-    auto start = GetSystemCycle() / 50;
+    uint32_t start = GetSystemCycle() / TIME_CYCLE;
     for (uint32_t waitFlagNum = 0; waitFlagNum < sendRankNum_;) {
         waitFlagNum = 0;
         for (uint32_t rankId = startRankId_; rankId < endRankId_; ++rankId) {
@@ -497,13 +499,14 @@ __aicore__ inline void MoeDistributeCombineA2<TemplateMC2TypeA2Func>::WaitDispat
                 flagGlobal_);
             uint32_t flag = flagGlobal_(0);
             if (flag == FLAG_VALUE) {
-                if (isWaitCost && waitCostU32GMTensor_.GetValue(rankId*2) == 0){
-		        auto end = GetSystemCycle() / 50; 
-		        auto duration = end - start;
-		        Duplicate<int32_t>(waitCostU32Tensor_, 0, waitCostSize_ * 2);
-                    waitCostU32Tensor_.SetValue(rankId*2, duration);
+                if (isWaitCost_ && waitCostU32GMTensor_.GetValue(rankId * sizeof(uint64_t) / sizeof(uint32_t)) == 0){
+                    uint32_t end = GetSystemCycle() / TIME_CYCLE; 
+                    uint32_t duration = end - start;
+                    Duplicate<uint32_t>(waitCostU32Tensor_, 0, waitCostSize_ * sizeof(uint64_t) / sizeof(uint32_t));
+                    //SyncAll<true>();
+                    waitCostU32Tensor_.SetValue(rankId * sizeof(uint64_t) / sizeof(uint32_t), duration);
                     AscendC::SetAtomicAdd<int32_t>();
-                    AscendC::DataCopy(waitCostU32GMTensor_, waitCostU32Tensor_, waitCostSize_ * 2);
+                    AscendC::DataCopy(waitCostU32GMTensor_, waitCostU32Tensor_, waitCostSize_ * sizeof(uint64_t) / sizeof(uint32_t));
                     AscendC::SetAtomicNone();
 		        }
                 waitFlagNum++;

@@ -39,13 +39,13 @@ extern "C" __global__ __aicore__ void moe_distribute_dispatch(
     if (TILING_KEY_IS(1000)) {
         GET_TILING_DATA_WITH_STRUCT(MoeDistributeDispatchTilingData, tilingData, tilingGM);
         MoeDistributeDispatch<DTYPE_X, DTYPE_EXPAND_X, false, false, false, false> op;
-        op.Init(x, expertIds, scales, waitCost, expandXOut, dynamicScalesOut, expandIdxOut, expertTokenNumsOut, epSendCountsOut,
+        op.Init(x, expertIds, scales, expandXOut, dynamicScalesOut, expandIdxOut, expertTokenNumsOut, epSendCountsOut,
                 tpSendCountsOut, workspaceGM, &pipe, &tilingData);
         op.Process();
     } else if (TILING_KEY_IS(1100)) {
         GET_TILING_DATA_WITH_STRUCT(MoeDistributeDispatchTilingData, tilingData, tilingGM);
         MoeDistributeDispatch<DTYPE_X, DTYPE_EXPAND_X, false, false, false, true> op;
-        op.Init(x, expertIds, scales, waitCost, expandXOut, dynamicScalesOut, expandIdxOut, expertTokenNumsOut, epSendCountsOut,
+        op.Init(x, expertIds, scales, expandXOut, dynamicScalesOut, expandIdxOut, expertTokenNumsOut, epSendCountsOut,
                 tpSendCountsOut, workspaceGM, &pipe, &tilingData);
         op.Process();
     } else if (TILING_KEY_IS(2000001000)) {
@@ -74,37 +74,37 @@ extern "C" __global__ __aicore__ void moe_distribute_dispatch(
     if (TILING_KEY_IS(1011)) {
         GET_TILING_DATA_WITH_STRUCT(MoeDistributeDispatchTilingData, tilingData, tilingGM);
         MoeDistributeDispatch<DTYPE_X, DTYPE_EXPAND_X, true, false, false, false> op;
-        op.Init(x, expertIds, scales, waitCost, expandXOut, dynamicScalesOut, expandIdxOut, expertTokenNumsOut, epSendCountsOut,
+        op.Init(x, expertIds, scales, expandXOut, dynamicScalesOut, expandIdxOut, expertTokenNumsOut, epSendCountsOut,
                 tpSendCountsOut, workspaceGM, &pipe, &tilingData);
         op.Process();
     } else if (TILING_KEY_IS(1002)) {
         GET_TILING_DATA_WITH_STRUCT(MoeDistributeDispatchTilingData, tilingData, tilingGM);
         MoeDistributeDispatch<DTYPE_X, DTYPE_EXPAND_X, false, true, false, false> op;
-        op.Init(x, expertIds, scales, waitCost, expandXOut, dynamicScalesOut, expandIdxOut, expertTokenNumsOut, epSendCountsOut,
+        op.Init(x, expertIds, scales, expandXOut, dynamicScalesOut, expandIdxOut, expertTokenNumsOut, epSendCountsOut,
                 tpSendCountsOut, workspaceGM, &pipe, &tilingData);
         op.Process();
     } else if (TILING_KEY_IS(1012)) {
         GET_TILING_DATA_WITH_STRUCT(MoeDistributeDispatchTilingData, tilingData, tilingGM);
         MoeDistributeDispatch<DTYPE_X, DTYPE_EXPAND_X, false, true, true, false> op;
-        op.Init(x, expertIds, scales, waitCost, expandXOut, dynamicScalesOut, expandIdxOut, expertTokenNumsOut, epSendCountsOut,
+        op.Init(x, expertIds, scales, expandXOut, dynamicScalesOut, expandIdxOut, expertTokenNumsOut, epSendCountsOut,
                 tpSendCountsOut, workspaceGM, &pipe, &tilingData);
         op.Process();
     } else if (TILING_KEY_IS(1111)) {
         GET_TILING_DATA_WITH_STRUCT(MoeDistributeDispatchTilingData, tilingData, tilingGM);
         MoeDistributeDispatch<DTYPE_X, DTYPE_EXPAND_X, true, false, false, true> op;
-        op.Init(x, expertIds, scales, waitCost, expandXOut, dynamicScalesOut, expandIdxOut, expertTokenNumsOut, epSendCountsOut,
+        op.Init(x, expertIds, scales, expandXOut, dynamicScalesOut, expandIdxOut, expertTokenNumsOut, epSendCountsOut,
                 tpSendCountsOut, workspaceGM, &pipe, &tilingData);
         op.Process();
     } else if (TILING_KEY_IS(1102)) {
         GET_TILING_DATA_WITH_STRUCT(MoeDistributeDispatchTilingData, tilingData, tilingGM);
         MoeDistributeDispatch<DTYPE_X, DTYPE_EXPAND_X, false, true, false, true> op;
-        op.Init(x, expertIds, scales, waitCost, expandXOut, dynamicScalesOut, expandIdxOut, expertTokenNumsOut, epSendCountsOut,
+        op.Init(x, expertIds, scales, expandXOut, dynamicScalesOut, expandIdxOut, expertTokenNumsOut, epSendCountsOut,
                 tpSendCountsOut, workspaceGM, &pipe, &tilingData);
         op.Process();
     } else if (TILING_KEY_IS(1112)) {
         GET_TILING_DATA_WITH_STRUCT(MoeDistributeDispatchTilingData, tilingData, tilingGM);
         MoeDistributeDispatch<DTYPE_X, DTYPE_EXPAND_X, false, true, true, true> op;
-        op.Init(x, expertIds, scales, waitCost, expandXOut, dynamicScalesOut, expandIdxOut, expertTokenNumsOut, epSendCountsOut,
+        op.Init(x, expertIds, scales, expandXOut, dynamicScalesOut, expandIdxOut, expertTokenNumsOut, epSendCountsOut,
                 tpSendCountsOut, workspaceGM, &pipe, &tilingData);
         op.Process();
     } else if (TILING_KEY_IS(2000001002)) {
