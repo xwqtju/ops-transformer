@@ -40,7 +40,7 @@ nsa_selected_attention_infer(__gm__ uint8_t *query, __gm__ uint8_t *key, __gm__ 
 {
     TPipe tPipe;
     __gm__ uint8_t *user = GetUserWorkspace(workspace);
-    printf("liwengui修改的!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    printf("liwengui修改的!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!是开源仓来验证的！！！！");
     #if (ORIG_DTYPE_QUERY == DT_FLOAT16)
         if (TILING_KEY_IS(0)) {
             INVOKE_NSA_NO_KFC_OP_IMPL(NsaSelectAttentionInfer, half, half, half, half, false, false,
