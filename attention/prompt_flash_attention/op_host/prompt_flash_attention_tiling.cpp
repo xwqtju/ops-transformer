@@ -544,7 +544,7 @@ size_t PromptFlashAttentionTiling::GetPFABaseApiWorkSpaceSize(uint32_t& blockDim
         sysWorkspaceSize = defaultSysWorkspaceSize910B;
         uint64_t dataLenFloat = sizeof(float);
         uint64_t workSize = static_cast<uint64_t>(blockDimToBeSet) * static_cast<uint64_t>(PING_PONG_BUFFER_SIZE) * dataLenFloat;
-        baseApiTilingData.promptAttentionBaseApiBaseParams.set_workSize(workSize);
+        baseApitilingData.promptAttentionBaseApiBaseParams.set_workSize(workSize);
         workspaceSize = tilingMod == TilingMod::CVDIFF_BASE_API ? defaultSysWorkspaceSize910B + workSize * 3U : defaultSysWorkspaceSize910B + workSize * 9U;
         return workspaceSize;
     }
@@ -660,7 +660,6 @@ ge::graphStatus PromptFlashAttentionTiling::TilingGetTilingKeyAttentionAscendC(u
     if (isKVHasPrefix) {
         g_enablePrefix += 1;    // 100000000: the situation of prefix
         g_msdMode += 0;
-    }
 
     if (enableMsd) {
         g_enablePrefix += 0;    // 400200000000: for msd
@@ -3982,7 +3981,7 @@ ge::graphStatus PromptFlashAttentionTiling::RunBigKernelTilingWithParams(Context
         if(CheckBaseApiRequiredInput(contextKeyParams) != ge::GRAPH_SUCCESS) {
             return ge::GRAPH_FAILED;
         }
-        SetbaseApiTilingData(contextKeyParams, actualSeqLengths, actualSeqLengthsKV);
+        SetBaseApiTilingData(contextKeyParams, actualSeqLengths, actualSeqLengthsKV);
         if(CheckBaseApiOptionalInput(contextKeyParams) != ge::GRAPH_SUCCESS) {
             return ge::GRAPH_FAILED;
         }
@@ -5872,7 +5871,7 @@ ge::graphStatus PromptFlashAttentionTiling::SetBaseApiAlibiMaskInfo(ContextParam
                                                                     const gert::StorageShape* pseShiftShape)
 {
     uint32_t maskDim = pseShiftShape->GetStorageShape().GetDimNum();
-    PromptAttentionBaseApiBaseParams* baseParams = &baseApiTilingData.promptAttentionBaseApiBaseParams;
+    PromptAttentionBaseApiBaseParams* baseParams = &baseApitilingData.promptAttentionBaseApiBaseParams;
     uint32_t maxSeqLen = baseParams->get_maxSeqLen();
     if (maskDim == NUM_3) {
         baseParams->set_headStride(maxSeqLen);
@@ -5895,7 +5894,7 @@ ge::graphStatus PromptFlashAttentionTiling::SetBaseApiAlibiMaskInfo(ContextParam
 void PromptFlashAttentionTiling::SetBaseApiOtherMaskInfo(ContextParamsForPFATiling &contextKeyParams, const gert::StorageShape* pseShiftShape)
 {
     uint32_t maskDim = pseShiftShape->GetStorageShape().GetDimNum();
-    PromptAttentionBaseApiBaseParams* baseParams = &baseApiTilingData.promptAttentionBaseApiBaseParams;
+    PromptAttentionBaseApiBaseParams* baseParams = &baseApitilingData.promptAttentionBaseApiBaseParams;
     uint32_t maxSeqLen = baseParams->get_maxSeqLen();
     if (maskDim == NUM_3) {
         baseParams->set_maskStride(pseShiftShape->GetStorageShape().GetDim(1));
@@ -5918,7 +5917,7 @@ ge::graphStatus PromptFlashAttentionTiling::SetBaseApiPseInfo(ContextParamsForPF
 {
     const int32_t* sparseMode = contextKeyParams.sparseMode;
     uint32_t maskType = *sparseMode;
-    PromptAttentionBaseApiBaseParams* baseParams = &baseApiTilingData.promptAttentionBaseApiBaseParams;
+    PromptAttentionBaseApiBaseParams* baseParams = &baseApitilingData.promptAttentionBaseApiBaseParams;
     uint32_t maxSeqLen = baseParams->get_maxSeqLen();
     bool isAlibi = maskType == SPARSE_MODE_ALIBI;
     if (maskType >= SPARSE_MODE_NORM) {
@@ -5947,7 +5946,7 @@ ge::graphStatus PromptFlashAttentionTiling::CheckBaseApiPse(ContextParamsForPFAT
             return ge::GRAPH_FAILED);
         return ge::GRAPH_SUCCESS;
     }
-    PromptAttentionBaseApiBaseParams* baseParams = &baseApiTilingData.promptAttentionBaseApiBaseParams;
+    PromptAttentionBaseApiBaseParams* baseParams = &baseApitilingData.promptAttentionBaseApiBaseParams;
     uint32_t batchSize = baseParams->get_batchSize();
     uint32_t kvHead = baseParams->get_kvHeadNumSize();
     uint32_t maxSeqLen = baseParams->get_maxSeqLen();
@@ -6198,7 +6197,7 @@ ge::graphStatus PromptFlashAttentionTiling::CheckBaseApiOptionalInput(ContextPar
             const gert::StorageShape* deqScale1Shape = contextKeyParams.deqScale1Shape;
             const gert::StorageShape* quantScale1Shape = contextKeyParams.scale1Shape;
             const gert::StorageShape* deqScale2Shape = contextKeyParams.deqScale2Shape;
-            PromptAttentionBaseApiBaseParams* baseParams = &baseApiTilingData.promptAttentionBaseApiBaseParams;
+            PromptAttentionBaseApiBaseParams* baseParams = &baseApitilingData.promptAttentionBaseApiBaseParams;
             uint32_t qHeads = baseParams->get_headSize();
 
             OP_CHECK_IF((deqScale1Shape != nullptr && (deqScale1Shape->GetStorageShape().GetShapeSize() != 1 ||
@@ -6732,7 +6731,7 @@ PFA_EXTERN_C ge::graphStatus TilingPromptFlashAttention(gert::TilingContext* con
                OPS_REPORT_VECTOR_INNER_ERR(context->GetNodeName(), "fail to memset tiling data"),
                return ge::GRAPH_FAILED);
     ContextParamsForPFATiling contextParamsForPFATiling;
-    uint64_t tilingKey = 7;  // 7: default tiling key
+    //uint64_t tilingKey = 7;  // 7: default tiling key
     g_tail = 7;
     g_newTiling = 0;
     g_qT = 0;
@@ -6764,5 +6763,6 @@ PFA_EXTERN_C ge::graphStatus TilingPromptFlashAttention(gert::TilingContext* con
     context->SetBlockDim(blockDimToBeSet);
     flashTiling.PromptFlashAttentionSetTilingData(context, tilingData);
     return ret;
+    }
 }
 }
