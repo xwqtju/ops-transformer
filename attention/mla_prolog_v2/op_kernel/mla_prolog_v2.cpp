@@ -53,11 +53,9 @@ mla_prolog_v2(
     __gm__ uint8_t *tiling) 
 {
     REGISTER_TILING_DEFAULT(optiling::MlaPrologTilingData);
-    if constexpr (CvMode) {
-        KERNEL_TASK_TYPE_DEFAULT(KERNEL_TYPE_MIX_AIC_1_1);
-    } else {
-        KERNEL_TASK_TYPE_DEFAULT(KERNEL_TYPE_MIX_AIC_1_2);
-    }
+    KERNEL_TASK_TYPE_DEFAULT(KERNEL_TYPE_MIX_AIC_1_2);
+    KERNEL_TASK_TYPE(16402, KERNEL_TYPE_MIX_AIC_1_1);
+    KERNEL_TASK_TYPE(16401, KERNEL_TYPE_MIX_AIC_1_1);
 
     constexpr auto emptyMode = static_cast<EMPTY_TENSOR_MODE>(EmptyTensorMode);
     if constexpr (emptyMode == EMPTY_TENSOR_MODE::EMPTY_QUERY) {
